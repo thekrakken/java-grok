@@ -14,6 +14,8 @@ Grok is a tool for parsing data (mostly log data)
 	//See the result
 	System.out.println(gm.toJson());
 
+See App.java
+
 ### Getting help
 mail: acorbacho@nflabs.com
 
