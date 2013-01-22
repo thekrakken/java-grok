@@ -18,6 +18,5 @@ Grok is a tool for parsing data (mostly log data)
 mail: acorbacho@nflabs.com
 [See also](http://www.nflabs.com)
 
-
 ### Info
 Grok is originally developed in C by [Jordan Sissel](https://github.com/jordansissel/grok)
