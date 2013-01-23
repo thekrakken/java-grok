@@ -8,10 +8,28 @@
   <packaging>jar</packaging>
   <name>Grok</name>
   <url>http://maven.apache.org</url>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+  
+  <licenses>
+  	<license>
+  	<name>Apache License, Version 2.0</name>
+  	<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+  	<distribution>repo</distribution>
+  	</license>
+  </licenses>
+  
+  <issueManagement>
+  	<system>GitHub</system>
+  	<url>https://github.com/NFLabs/java-grok/issues</url>
+  </issueManagement>
+  
+  <developers>
+  	<developer>
+  		<id>antnonycorbacho</id>
+  		<name>Anthony Corbacho</name>
+  		<email>acorbacho@nflabs.com</email>
+  		<url>https://github.com/anthonycorbacho</url>
+  	</developer>
+  </developers>
 
   <dependencies>
     <dependency>
@@ -25,18 +43,21 @@
     	<groupId>com.github.tony19</groupId>
     	<artifactId>named-regexp</artifactId>
     	<version>0.1.9</version>
+    	<scope>compile</scope>
     </dependency>
 
     <dependency>
     	<groupId>org.apache.commons</groupId>
     	<artifactId>commons-lang3</artifactId>
     	<version>3.1</version>
+    	<scope>compile</scope>
     </dependency>
 
     <dependency>
     	<groupId>com.google.code.gson</groupId>
     	<artifactId>gson</artifactId>
     	<version>2.2.2</version>
+    	<scope>compile</scope>
     </dependency>
   </dependencies>
 
@@ -44,4 +65,26 @@
   	<name>NFlabs</name>
   	<url>www.nflabs.com</url>
   </organization>
+  
+  <build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<finalName>${project.artifactId}-${project.version}</finalName>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+ 
+  <description>Grok pattern for java</description>
 </project>
