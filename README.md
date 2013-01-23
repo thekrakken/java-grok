@@ -10,7 +10,7 @@ just run maven pakage
 
 	mvn package
 	
-find the package in the target folder -> Grok-{version}.jar
+find the package in the target folder -> grok-{version}.jar
 
 ### Dependencies // build on the package
 +gson
