@@ -122,6 +122,14 @@ public class Match {
 	
 	/**
 	 * 
+	 * @return java map object from the matched element in the text
+	 */
+	public Map<String, String> toMap(){
+		return _capture;
+	}
+	
+	/**
+	 * 
 	 */
 	private void cleanMap(){
 		garbage.remove(_capture);
