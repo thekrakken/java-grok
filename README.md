@@ -4,7 +4,19 @@ Grok is a tool for parsing data (mostly log data)
 
 -----------------------
 
-### USE
+### Compile
+
+just run maven pakage
+	mvn package
+	
+find the package in the target folder -> Grok-{version}.jar
+
+### Dependencies
+gson
+common-lang3
+named-regex
+
+### Use
 
 	Grok g = new Grok();
 	g.addPatternFromFile(/path/to/pattern);
@@ -14,12 +26,10 @@ Grok is a tool for parsing data (mostly log data)
 	//See the result
 	System.out.println(gm.toJson());
 
-See App.java
-
 ### Getting help
-mail: acorbacho@nflabs.com
+mail: [acorbacho@nflabs.com](mailto:acorbacho@nflabs.com)
+
 [See also](http://www.nflabs.com)
 
 ### Info
-Grok is originally developed in C by [Jordan Sissel](https://github.com/jordansissel/grok)
-
+Grok is a concept of [Jordan Sissel](https://github.com/jordansissel/grok)
