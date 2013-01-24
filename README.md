@@ -12,7 +12,7 @@ just run maven pakage
 	
 find the package in the target folder -> grok-{version}.jar
 
-### Dependencies // build on the package
+### Dependencies
 +gson
 +common-lang3
 +named-regex
