@@ -27,6 +27,9 @@ find the package in the target folder -> Grok-{version}.jar
 	//See the result
 	System.out.println(gm.toJson());
 
+### Maven repository
+Visit [NFLabs Maven repository](https://github.com/NFLabs/mvn-repo)
+
 ### Getting help
 mail: [acorbacho@nflabs.com](mailto:acorbacho@nflabs.com)
 [See also](http://www.nflabs.com)
