@@ -65,26 +65,18 @@
   	<name>NFlabs</name>
   	<url>www.nflabs.com</url>
   </organization>
-  
-  <build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<finalName>${project.artifactId}-${project.version}</finalName>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
  
   <description>Grok pattern for java</description>
+  
+  <distributionManagement>
+    <repository>
+        <id>repo</id>
+        <url>https://github.com/NFLabs/mvn-repo/raw/master/releases</url>
+    </repository>
+    <snapshotRepository>
+        <id>snapshot-repo</id>
+        <url>https://github.com/NFLabs/mvn-repo/raw/master/snapshots</url>
+    </snapshotRepository>
+ </distributionManagement>
+
 </project>
