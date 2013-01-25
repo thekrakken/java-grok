@@ -155,6 +155,7 @@ public class Grok extends Object {
 			match.match = m;
 			match.start = m.start(0);
 			match.end = m.end(0);
+			match.line = text;
 			return match;
 		}
 		return match;

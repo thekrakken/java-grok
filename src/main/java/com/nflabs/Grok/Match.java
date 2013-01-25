@@ -16,6 +16,7 @@ public class Match {
 	public Matcher 					match;	//regex matcher
 	public int 						start; 	//offset
 	public int 						end;	//offset end
+	public String					line;	//source
 	public	Garbage					garbage;
 	
 	private String 					_subject;	//texte
@@ -67,8 +68,9 @@ public class Match {
 		if( this.match == null )
 			return GrokError.GROK_ERROR_UNINITIALIZED;
 		
+		_capture.put("LINE", this.line);
+		_capture.put("LENGTH", this.line.length() +"");
 		Map<String, String> mappedw = this.match.namedGroups();
-		//System.out.println(mappedw);
 		Iterator<Entry<String, String>> it = mappedw.entrySet().iterator();
 	    while (it.hasNext()) {
 	       
