@@ -125,18 +125,20 @@ public class Match {
 	 * @return java map object from the matched element in the text
 	 */
 	public Map<String, String> toMap(){
+		this.cleanMap();
 		return _capture;
 	}
 	
 	/**
-	 * 
+	 * remove and/or rename items 
 	 */
 	private void cleanMap(){
-		garbage.remove(_capture);
 		garbage.rename(_capture);
+		garbage.remove(_capture);
 	}
 	
-	
+	/**
+	 */
 	public Boolean isNull(){
 		if( this.match == null )
 			return true;
