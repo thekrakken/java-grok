@@ -24,6 +24,13 @@ public class GrokTest extends TestCase {
 
 		g.addPatternFromFile("patterns/base");
 			
+		
+		
+		
+		
+		
+		
+		//lol
 		g.compile("%{URI}");
 			
 		Match gm = g.match("http://www.google.com/search=lol");
