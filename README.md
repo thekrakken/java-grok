@@ -1,4 +1,4 @@
-# <img src="http://img703.imageshack.us/img703/4531/logounr.png" height="120" align="bottom"/>
+# <img src="http://peloton.nflabs.com/imgs/logo.png" height="120" align="bottom"/>
 Grok is a tool for parsing data (mostly log data)
 
 -----------------------
