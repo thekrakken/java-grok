@@ -10,7 +10,7 @@ import java.util.TreeMap;
 public class Garbage {
 
 	private List<String>			_remove;
-	private	Map<String, String>		_rename;
+	private	Map<String, Object>		_rename;
 	
 	/**
 	 ** Constructor 
@@ -18,7 +18,7 @@ public class Garbage {
 	public Garbage(){
 	
 		_remove = new ArrayList<String>();
-		_rename = new TreeMap<String, String>();
+		_rename = new TreeMap<String, Object>();
 		_remove.add("UNWANTED");
 		
 	}
@@ -30,9 +30,9 @@ public class Garbage {
 	 * @param original name
 	 * @param new name
 	 */
-	public int addToRename(String key, String value){
+	public int addToRename(String key, Object value){
 		if( key == null || value == null ) return GrokError.GROK_ERROR_UNINITIALIZED;
-		if( !key.isEmpty() && !value.isEmpty())
+		if( !key.isEmpty() && !value.toString().isEmpty())
 			_rename.put(key, value);
 		return GrokError.GROK_OK;
 	}
@@ -68,15 +68,15 @@ public class Garbage {
 	 * @param map to clean
 	 * @return nb of deleted item
 	 */
-	public int remove( Map<String, String> map){
+	public int remove( Map<String, Object> map){
 		int item = 0;
 
 		if( map == null )
 			return -1;
 		if( map.isEmpty() )
 			return -1;
-		for(Iterator<Map.Entry<String, String>> it = map.entrySet().iterator(); it.hasNext(); ) {
-		      Map.Entry<String, String> entry = it.next();
+		for(Iterator<Map.Entry<String, Object>> it = map.entrySet().iterator(); it.hasNext(); ) {
+		      Map.Entry<String, Object> entry = it.next();
 		      for (int i = 0; i < _remove.size(); i++)
 					if( entry.getKey().equals( _remove.get(i) ) ){
 						it.remove();
@@ -92,19 +92,19 @@ public class Garbage {
 	 * @param map
 	 * @return nb of renamed items
 	 */
-	public int rename( Map<String, String> map ){
+	public int rename( Map<String, Object> map ){
 		int item = 0;
 		
 		if( map == null ) return -1;
 		if( map.isEmpty() || _rename.isEmpty() )
 			return -1;
 		
-		for(Iterator<Map.Entry<String, String>> it = _rename.entrySet().iterator(); it.hasNext(); ) {
-		      Map.Entry<String, String> entry = it.next();
+		for(Iterator<Map.Entry<String, Object>> it = _rename.entrySet().iterator(); it.hasNext(); ) {
+		      Map.Entry<String, Object> entry = it.next();
 		      if( map.containsKey(entry.getKey()) )
 		      {
-		    	  String obj = map.remove(entry.getKey());
-		    	  map.put(entry.getValue(), obj);
+		    	  Object obj = map.remove(entry.getKey());
+		    	  map.put(entry.getValue().toString(), obj);
 		    	  item++;
 		      }
 		}

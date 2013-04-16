@@ -20,7 +20,7 @@ public class Match {
 	public	Garbage					garbage;
 	
 	private String 					_subject;	//texte
-	private Map<String, String> 	_capture;
+	private Map<String, Object> 	_capture;
 	
 	/**
 	 ** Contructor 
@@ -29,7 +29,7 @@ public class Match {
 		_subject = "Nothing";
 		grok = null;
 		match = null;
-		_capture = new TreeMap<String, String>();
+		_capture = new TreeMap<String, Object>();
 		garbage = new Garbage();
 		start = 0;
 		end = 0;
@@ -68,8 +68,9 @@ public class Match {
 		if( this.match == null )
 			return GrokError.GROK_ERROR_UNINITIALIZED;
 		
-		_capture.put("LINE", this.line);
-		_capture.put("LENGTH", this.line.length() +"");
+		//_capture.put("LINE", this.line);
+		//_capture.put("LENGTH", this.line.length() +"");
+		
 		Map<String, String> mappedw = this.match.namedGroups();
 		Iterator<Entry<String, String>> it = mappedw.entrySet().iterator();
 	    while (it.hasNext()) {
@@ -77,12 +78,17 @@ public class Match {
 			@SuppressWarnings("rawtypes")
 			Map.Entry pairs = (Map.Entry)it.next();
 	        String key = null;
-	        String value = null;
+	        Object value = null;
 	        if ( !this.grok.capture_name(pairs.getKey().toString()).isEmpty() )
 	        	key = this.grok.capture_name(pairs.getKey().toString());
-	        if( pairs.getValue() != null )
-	        	value = cleanString(pairs.getValue().toString());
-	        _capture.put( key  , value);
+	        if( pairs.getValue() != null ){
+	        	value = pairs.getValue().toString();
+	        	if( this.isInteger( value.toString() ) )
+	        		value = Integer.parseInt( value.toString() );
+	        	else
+	        		value = cleanString(pairs.getValue().toString());
+	        }
+	        _capture.put( key  , (Object)value);
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
 	    return GrokError.GROK_OK;
@@ -126,7 +132,7 @@ public class Match {
 	 * 
 	 * @return java map object from the matched element in the text
 	 */
-	public Map<String, String> toMap(){
+	public Map<String, Object> toMap(){
 		this.cleanMap();
 		return _capture;
 	}
@@ -147,4 +153,12 @@ public class Match {
 		return false;
 	}
 	
+	private boolean isInteger(String s) {
+	    try { 
+	        Integer.parseInt(s); 
+	    } catch(NumberFormatException e) { 
+	        return false; 
+	    }
+	    return true;
+	}
 }
