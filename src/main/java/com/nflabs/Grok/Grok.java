@@ -118,6 +118,8 @@ public class Grok extends Object {
 		File f = new File(file);
 		if(!f.exists())
 			return GrokError.GROK_ERROR_FILE_NOT_ACCESSIBLE;
+		if( !f.canRead() )
+			return GrokError.GROK_ERROR_FILE_NOT_ACCESSIBLE;
 		
 		BufferedReader br = new BufferedReader(new FileReader(file));
         String line;
@@ -191,10 +193,11 @@ public class Grok extends Object {
 				}
 				_captured_map.put( "name"+index, (group.get("subname") != null ? group.get("subname"):group.get("name")));
 				_expanded_pattern = StringUtils.replace(_expanded_pattern, "%{"+group.get("name")+"}", "(?<name"+index+">" + this.patterns.get(group.get("pattern"))+")");
-				//System.out.println(expanded_pattern);
+				//System.out.println(_expanded_pattern);
 				index++;
 			}			
 		}
+		//System.out.println(_captured_map);
 		//Compile the regex
 		if(!_expanded_pattern.isEmpty()){
 			_regexp = Pattern.compile(_expanded_pattern);
