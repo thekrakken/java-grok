@@ -109,12 +109,8 @@ QS %{QUOTEDSTRING}
 # LOGFORMAT SAMPLE
 ############
 SYSLOGBASE %{SYSLOGTIMESTAMP:timestamp} (?:%{SYSLOGFACILITY} )?%{SYSLOGHOST:logsource} %{SYSLOGPROG}:
-
-APACHE (?:%{APACHE_FULL}|%{APACHE_LIGHT})
-APACHE_2 %{IP} %{USER:hyphen} %{USER:user} \[%{HTTPDATE:timestamp}\] %{QUOTEDSTRING:query} %{NUMBER:response} (?:%{NUMBER:bytes}|-)(?: %{QUOTEDSTRING:Referer} %{QUOTEDSTRING:agent})?
-APACHE_FULL %{IP} %{USER:hyphen} %{USER:user} \[%{HTTPDATE:timestamp}\] %{QUOTEDSTRING:query} %{NUMBER:response} (?:%{NUMBER:bytes}|-) %{QUOTEDSTRING:Referer} %{QUOTEDSTRING:agent}
-APACHE_LIGHT %{IP} %{USER:hyphen} %{USER:user} \[%{HTTPDATE:timestamp}\] %{QUOTEDSTRING:query} %{NUMBER:response} (?:%{NUMBER:bytes}|-)
-
+APACHE %{IPORHOST} %{USER:hyphen} %{USER:user} \[%{HTTPDATE:timestamp}\] %{QUOTEDSTRING:query} %{NUMBER:response} (?:%{NUMBER:bytes}|-)(?: %{QUOTEDSTRING:Referer} %{QUOTEDSTRING:agent})?
+#drwxr-xr-x+  46 anthonyC  staff       1564 Dec 27 12:02 .
 DIRECTORYCONTNENT %{DATA:permission}%{SPACE:UNWANTED}%{INT:size}%{SPACE:UNWANTED}%{USER}%{SPACE:UNWANTED}%{USER:Group}%{SPACE:UNWANTED}%{INT:molla}%{SPACE:UNWANTED}%{MONTH}%{SPACE:UNWANTED}%{MONTHDAY}%{SPACE:UNWANTED}%{HOUR}:%{MINUTE}%{SPACE:UNWANTED}%{GREEDYDATA:fileorfolder}
 # Log Levels
 LOGLEVEL ([T|t]race|TRACE|[D|d]ebug|DEBUG|[N|n]otice|NOTICE|[I|i]nfo|INFO|[W|w]arn?(?:ing)?|WARN?(?:ING)?|[E|e]rr?(?:or)?|ERR?(?:OR)?|[C|c]rit?(?:ical)?|CRIT?(?:ICAL)?|[F|f]atal|FATAL|[S|s]evere|SEVERE)
