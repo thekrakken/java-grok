@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 import com.google.code.regexp.Matcher;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.nflabs.Grok.Grok;
 
 public class Match {
@@ -123,7 +124,7 @@ public class Match {
 			return null;
 		
 		this.cleanMap();
-		Gson gs = new Gson();		
+		Gson gs = new GsonBuilder().setPrettyPrinting().create();;//new Gson();		
 		return gs.toJson(/*cleanMap(*/_capture/*)*/);
 		
 	}

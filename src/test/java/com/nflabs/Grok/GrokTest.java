@@ -28,8 +28,8 @@ public class GrokTest extends TestCase {
 		Match gm = g.match("64.242.88.10 - - [07/Mar/2004:16:05:49 -0800] \"GET /twiki/bin/edit/Main/Double_bounce_sender?topicparent=Main.ConfigurationVariables HTTP/1.1\" 401 12846 ");
 		gm.captures();
 		System.out.println(gm.toJson());
-		
-		
+
+
 		//lol
 		/*g.compile("%{URI}");
 			
