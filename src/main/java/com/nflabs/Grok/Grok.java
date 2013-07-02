@@ -3,6 +3,7 @@ package com.nflabs.Grok;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.Reader;
 
 import com.google.code.regexp.Matcher;
 import com.google.code.regexp.Pattern;
@@ -121,7 +122,17 @@ public class Grok extends Object {
 		if( !f.canRead() )
 			return GrokError.GROK_ERROR_FILE_NOT_ACCESSIBLE;
 		
-		BufferedReader br = new BufferedReader(new FileReader(file));
+		return addPatternFromReader(new FileReader(f));
+	}
+	
+	/**
+	 * Add patterns to grok from a reader
+	 * 
+	 * @param reader that contains the grok patterns
+	 * @throws Throwable
+	 */
+	public int addPatternFromReader(Reader r) throws Throwable{
+		BufferedReader br = new BufferedReader(r);
         String line;
         //We dont want \n and commented line
         Pattern MY_PATTERN = Pattern.compile("^([A-z0-9_]+)\\s+(.*)$");
