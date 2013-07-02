@@ -22,26 +22,11 @@ public class GrokTest extends TestCase {
 	public void testGrok() throws Throwable{
     	Grok g = new Grok();
 
-		g.addPatternFromFile("patterns/base");
-		String a =  g.discover("64.242.88.10 - - [07/Mar/2004:16:05:49 -0800] \"GET /twiki/bin/edit/Main/Double_bounce_sender?topicparent=Main.ConfigurationVariables HTTP/1.1\" 401 12846 " );	
-		g.compile(a);
-		Match gm = g.match("64.242.88.10 - - [07/Mar/2004:16:05:49 -0800] \"GET /twiki/bin/edit/Main/Double_bounce_sender?topicparent=Main.ConfigurationVariables HTTP/1.1\" 401 12846 ");
-		gm.captures();
-		System.out.println(gm.toJson());
-
-
-		//lol
-		/*g.compile("%{URI}");
-			
-		Match gm = g.match("http://www.google.com/search=lol");
-		gm.captures();
-		
-		Map<String, String> map = gm.toMap();
-		System.out.println("lol");*/
-		/*assertEquals("www.google.com", map.get("HOSTNAME"));
-		assertEquals("www.google.com", map.get("host"));
-		assertEquals("http", map.get("proto"));
-		assertEquals(null, map.get("port"));
-		assertEquals("/search=lol", map.get("params"));*/
+    	g.addPatternFromFile("patterns/base");
+    	g.compile("%{APACHE}");
+    	Match gm = g.match("10.192.1.47 - - [23/May/2013:10:47:40] \"GET /flower1_store/category1.screen?category_id1=FLOWERS HTTP/1.1\" 200 10577 \"http://mystore.abc.com/flower1_store/main.screen&JSESSIONID=SD1SL10FF3ADFF3\" \"Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.10) Gecko/20070223 CentOS/1.5.0.10-0.1.el4.centos Firefox/1.5.0.10\" 3823 404");
+    	gm.captures();
+    	//See the result
+    	System.out.println(gm.toJson());
 	}
 }
