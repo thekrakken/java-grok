@@ -7,220 +7,245 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 @SuppressWarnings("unused")
-public class Grok {
-    // manage string like %{Foo} => Foo
-    private static final java.util.regex.Pattern PATTERN = java.util.regex.Pattern.compile("%\\{(.*?)\\}");
-    private static final java.util.regex.Pattern GROK_FILE_ENTRY_PATTERN = java.util.regex.Pattern.compile("^([A-z0-9_]+)\\s+(.*)$");
-    private static final Pattern PATTERN_RE = Pattern.compile("%\\{" +
-            "(?<name>" +
-            "(?<pattern>[A-z0-9]+)" +
-            "(?::(?<subname>[A-z0-9_:]+))?" +
-            ")" +
-            "(?:=(?<definition>" +
-            "(?:" +
-            "(?:[^{}]+|\\.+)+" +
-            ")+" +
-            ")" +
-            ")?" +
-            "\\}");
 
-    private Map<String, String> patterns;
-    private Map<String, String> capturedMap;
-    private String savedPattern;
-    private String expandedPattern;
-    private Pattern regexp;
-    private Discovery disco;
+public class Grok extends Object {
 
-    /**
-     * * Constructor.
-     */
-    public Grok() {
-        patterns = new HashMap<String, String>();
-        capturedMap = new HashMap<String, String>();
-    }
+	//Public
+	public Map< String,String > 			patterns;
+	public String 							saved_pattern = null;
 
-    /**
-     * Add a new pattern
-     *
-     * @param name    Name of the pattern
-     * @param pattern regex string
-     */
-    public void addPattern(String name, String pattern) {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("name is null or empty");
-        }
-        if (pattern == null || pattern.isEmpty()) {
-            throw new IllegalArgumentException("pattern is null or empty");
-        }
-        patterns.put(name, pattern);
-    }
+	//Private
+	private Map< String,String > 			_captured_map;
+	// manage string like %{Foo} => Foo
+	private java.util.regex.Pattern 		_PATTERN = java.util.regex.Pattern.compile("%\\{(.*?)\\}");
+	private Pattern 						_PATTERN_RE = Pattern.compile("%\\{" +
+			"(?<name>"+
+			"(?<pattern>[A-z0-9]+)"+
+			"(?::(?<subname>[A-z0-9_:]+))?"+
+			")"+
+			"(?:=(?<definition>"+
+			"(?:"+
+			"(?:[^{}]+|\\.+)+"+
+			")+" +
+			")" +
+			")?"+
+			"\\}");
+	private String 							_expanded_pattern;
+	private String 							_pattern_origin;
+	private Pattern 						_regexp;
+	private Discovery 						_disco;
 
-    /**
-     * Copy the map patterns into the grok pattern
-     *
-     * @param cpy of the pattern to copy
-     */
-    public void copyPatterns(Map<String, String> cpy) {
-        patterns.putAll(cpy);
-    }
+	/**
+	 ** Constructor.
+	 **/
+	public		Grok(){	
 
-    /**
-     * @return the current map grok patterns
-     */
-    public Map<String, String> getPatterns() {
-        return this.patterns;
-    }
+		_pattern_origin = null;
+		_disco = null;
+		_expanded_pattern = null;
+		_regexp = null;
+		patterns = new TreeMap<String, String>();
+		_captured_map = new TreeMap<String, String>();
+	}
 
-    /**
-     * @return the compiled regex of <tt>expanded_pattern</tt>
-     * @see #compile(String)
-     */
-    public Pattern getRegEx() {
-        return regexp;
-    }
+	/**
+	 * Add a new pattern
+	 * 
+	 *  @param name Name of the pattern
+	 *  @param pattern regex string
+	 **/
+	public int addPattern( String name, String pattern){
+		if( name.isEmpty() || pattern.isEmpty() )
+			return GrokError.GROK_ERROR_UNINITIALIZED;
+		patterns.put(name, pattern);
+		return GrokError.GROK_OK;
+	}
 
-    /**
-     * @return the string pattern
-     * @see #compile(String)
-     */
-    public String getExpandedPattern() {
-        return expandedPattern;
-    }
+	/**
+	 * Copy the map patterns into the grok pattern
+	 * 
+	 * @param Map of the pattern to copy
+	 **/
+	public int copyPatterns( Map<String, String> cpy ){
+		if( cpy.isEmpty() || cpy == null)
+			return GrokError.GROK_ERROR_UNINITIALIZED;
+		for (Map.Entry<String, String> entry : cpy.entrySet())
+			patterns.put(entry.getKey().toString(), entry.getValue().toString());
+		return GrokError.GROK_OK;
+	}
 
-    /**
-     * Add patterns to grok from a file
-     *
-     * @param file that contains the grok patterns
-     * @throws IOException
-     */
-    public void addPatternFromFile(String file) throws IOException {
-        addPatternFromReader(new FileReader(new File(file)));
-    }
+	/**
+	 * @return the current map grok patterns
+	 */
+	public Map< String,String > getPatterns(){
+		return this.patterns;
+	}
 
-    /**
-     * Add patterns to grok from a reader
-     *
-     * @param r that contains the grok patterns
-     */
-    public void addPatternFromReader(Reader r) throws IOException {
-        BufferedReader br = new BufferedReader(r);
-        String line;
-        //We dont want \n and commented line
-        while ((line = br.readLine()) != null) {
-            java.util.regex.Matcher m = GROK_FILE_ENTRY_PATTERN.matcher(line);
-            if (m.matches()) {
-                addPattern(m.group(1), m.group(2));
-            }
-        }
-        br.close();
-    }
+	/**
+	 * @return the compiled regex of <tt>expanded_pattern</tt>
+	 * @see compile
+	 */
+	public Pattern getRegEx(){
+		return _regexp;
+	}
 
-    /**
-     * Match the <tt>text</tt> with the pattern
-     *
-     * @param text to match
-     * @return Grok Match
-     * @see Match
-     */
-    public Match match(String text) {
-        if (regexp == null) {
-            throw new IllegalStateException("Pattern is not initialized call compile(String)");
-        }
-        Matcher m = regexp.matcher(text);
-        if (!m.find()) {
-            return null;
-        }
-        Match match = new Match(this);
-        match.setSubject(text);
-        match.setMatch(m);
-        return match;
-    }
+	/**
+	 * 
+	 * @return the string pattern
+	 * @see compile
+	 */
+	public String getExpandedPattern(){
+		return _expanded_pattern;
+	}
 
-    /**
-     * Transform grok regex into a compiled regex
-     *
-     * @param pattern pattern regex
-     */
-    public void compile(String pattern) {
-        expandedPattern = pattern;
-        int index = 0;
-        boolean Continue = true;
+	/**
+	 * Add patterns to grok from a file
+	 * 
+	 * @param file that contains the grok patterns
+	 * @throws Throwable
+	 */
+	public int addPatternFromFile( String file) throws Throwable{
 
-        //Replace %{foo} with the regex (mostly groupname regex)
-        //and then compile the regex
-        while (Continue) {
-            Continue = false;
+		File f = new File(file);
+		if(!f.exists())
+			return GrokError.GROK_ERROR_FILE_NOT_ACCESSIBLE;
+		if( !f.canRead() )
+			return GrokError.GROK_ERROR_FILE_NOT_ACCESSIBLE;
 
-            Matcher m = PATTERN_RE.matcher(expandedPattern);
-            // Match %{Foo:bar} -> pattern name and subname
-            // Match %{Foo=regex} -> add new regex definition
-            if (m.find()) {
-                Continue = true;
-                Map<String, String> group = m.namedGroups();
+		return addPatternFromReader(new FileReader(f));
+	}
 
-                if (group.get("definition") != null) {
-                    addPattern(group.get("pattern"), group.get("definition"));
-                    group.put("name", group.get("name") + "=" + group.get("definition"));
-                    //System.out.println("%{"+group.get("name")+"} =>" + this.patterns.get(group.get("pattern")));
-                }
-                capturedMap.put("name" + index, (group.get("subname") != null ? group.get("subname") : group.get("name")));
-                expandedPattern = StringUtils.replace(expandedPattern, "%{" + group.get("name") + "}", "(?<name" + index + ">" + this.patterns.get(group.get("pattern")) + ")");
-//                System.out.println(expandedPattern);
-                index++;
-            }
-        }
-        //System.out.println(capturedMap);
-        //Compile the regex
-        if (!expandedPattern.isEmpty()) {
-            regexp = Pattern.compile(expandedPattern);
-            return;
-        }
-        throw new IllegalStateException("Pattern not found: " + pattern);
-    }
+	/**
+	 * Add patterns to grok from a reader
+	 * 
+	 * @param reader that contains the grok patterns
+	 * @throws Throwable
+	 */
+	public int addPatternFromReader(Reader r) throws Throwable{
+		BufferedReader br = new BufferedReader(r);
+		String line;
+		//We dont want \n and commented line
+		Pattern MY_PATTERN = Pattern.compile("^([A-z0-9_]+)\\s+(.*)$");
+		while((line = br.readLine()) != null) {
+			Matcher m = MY_PATTERN.matcher(line);
+			if( m.matches() )
+				this.addPattern( m.group(1), m.group(2) );
+		}
+		br.close();
+		return GrokError.GROK_OK;
+	}
 
-    /**
-     * Grok can find the pattern
-     *
-     * @param input the file to analyze
-     * @return the grok pattern
-     */
-    public String discover(String input) {
+	/**
+	 * Match the <tt>text</tt> with the pattern
+	 * 
+	 * @param text to match
+	 * @return Grok Match
+	 * @see Match
+	 */
+	public Match match( String text ){
 
-        if (disco == null) {
-            disco = new Discovery(this);
-        }
-        return disco.discover(input);
-    }
+		if( _regexp == null)
+			return null;
 
-    /**
-     * @param id the id
-     * @return the value
-     */
-    public String captureName(String id) {
-        return capturedMap.get(id);
-    }
+		Matcher m = _regexp.matcher(text);
+		Match match = new Match();
+		//System.out.println(expanded_pattern);
+		if( m.find() )
+		{		
+			//System.out.println("LLL"+m.group() +" " + m.start(0) +" "+ m.end(0));
+			match.setSubject(text);
+			match.grok = this;
+			match.match = m;
+			match.start = m.start(0);
+			match.end = m.end(0);
+			match.line = text;
+			return match;
+		}
+		return match;
+	}
 
-    /**
-     * @return getter
-     */
-    public Map<String, String> getCaptured() {
-        return capturedMap;
-    }
+	/**
+	 * Transform grok regex into a compiled regex
+	 * 
+	 * @param Grok pattern regex
+	 */
+	public int compile( String pattern ){
+		_expanded_pattern = new String( pattern );
+		_pattern_origin = new String( pattern );
+		int index = 0;
+		Boolean Continue = true;
 
-    /**
-     * * Checkers
-     */
-    public boolean isPattern() {
-        return !(patterns == null || patterns.isEmpty());
-    }
+		//Replace %{foo} with the regex (mostly groupname regex) 
+		//and then compile the regex
+		while (Continue){
+			Continue=false;
 
-    public String getSavedPattern() {
-        return savedPattern;
-    }
+			Matcher m = _PATTERN_RE.matcher(_expanded_pattern);
+			// Match %{Foo:bar} -> pattern name and subname
+			// Match %{Foo=regex} -> add new regex definition
+			if (m.find() ){
+				Continue = true;
+				Map<String, String> group = m.namedGroups();
+				if(group.get("definition") != null){
+					addPattern(group.get("pattern"), group.get("definition"));
+					group.put("name", group.get("name") +"="+ group.get("definition") );			
+				}			
+				_captured_map.put( "name"+index, (group.get("subname") != null ? group.get("subname"):group.get("name")));
+				_expanded_pattern = StringUtils.replace(_expanded_pattern, "%{"+group.get("name")+"}", "(?<name"+index+">" + this.patterns.get(group.get("pattern"))+")");
+				//System.out.println(_expanded_pattern);
+				index++;
+			}			
+		}
+		
+		//Compile the regex
+		if(!_expanded_pattern.isEmpty()){
+			_regexp = Pattern.compile(_expanded_pattern);
+			return GrokError.GROK_OK;
+		}
+		return GrokError.GROK_ERROR_PATTERN_NOT_FOUND;
+	}
 
-    public void setSavedPattern(String savedPattern) {
-        this.savedPattern = savedPattern;
-    }
+	/**
+	 * Grok can find the pattern
+	 * 
+	 * @param input the file to analyze
+	 * @return the grok pattern
+	 */
+	public String discover( String input ){
+
+		if (_disco == null )
+			_disco = new Discovery( this );
+		return _disco.discover(input);
+	}
+
+	/**
+	 * 
+	 * @param Key
+	 * @return the value
+	 */
+	public String capture_name( String id ){
+		return _captured_map.get(id);
+	}
+
+	/**
+	 * 
+	 * @return getter
+	 */
+	public Map<String, String> getCaptured(){
+		return _captured_map;
+	}
+
+	/**
+	 ** Checkers 
+	 **/
+	public int isPattern(){
+		if( patterns == null )
+			return 0;
+		if(patterns.isEmpty())
+			return 0;
+		return 1;
+	}
 }
