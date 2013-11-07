@@ -1,23 +1,16 @@
 package com.nflabs.Grok;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.Reader;
-
 import com.google.code.regexp.Matcher;
 import com.google.code.regexp.Pattern;
-import com.nflabs.Grok.GrokError;
-import com.nflabs.Grok.Match;
-
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Map.Entry;
-
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
 @SuppressWarnings("unused")
+
 public class Grok extends Object {
 
 	//Public

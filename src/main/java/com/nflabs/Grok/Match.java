@@ -1,17 +1,18 @@
 package com.nflabs.Grok;
 
 
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.Map;
-import java.util.TreeMap;
-
 import com.google.code.regexp.Matcher;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.nflabs.Grok.Grok;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
+@SuppressWarnings("UnusedDeclaration")
 public class Match {
+
 	
 	public Grok 					grok;	//current grok instance
 	public Matcher 					match;	//regex matcher

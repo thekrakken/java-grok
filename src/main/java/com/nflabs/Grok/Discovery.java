@@ -1,19 +1,11 @@
 package com.nflabs.Grok;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.code.regexp.Matcher;
 import com.google.code.regexp.Pattern;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 public class Discovery {
 	

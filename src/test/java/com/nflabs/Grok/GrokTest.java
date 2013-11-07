@@ -4,13 +4,13 @@ import junit.framework.TestCase;
 
 public class GrokTest extends TestCase {
 
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
+    protected void setUp() throws Exception {
+        super.setUp();
+    }
 
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
+    protected void tearDown() throws Exception {
+        super.tearDown();
+    }
 
 	/**
 	 * Do some basic test
@@ -212,6 +212,5 @@ public class GrokTest extends TestCase {
 		//assertEquals("{HOSTPORT=www.google.fr:80, IPORHOST=www.google.fr, PORT=80}", gm.toMap().toString());
 
 	}
-
 
 }

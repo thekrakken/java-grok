@@ -30,7 +30,8 @@ find the package in the target folder -> grok-{version}.jar
 Visit [NFLabs Maven repository](https://github.com/NFLabs/mvn-repo)
 
 ### Getting help
-mail: [acorbacho@nflabs.com](mailto:acorbacho@nflabs.com)
+Maintainer: [Anthony CORBACHO](mailto:corbacho.anthony@gmail.com)
+
 [See also](http://www.nflabs.com)
 
 ### Info
