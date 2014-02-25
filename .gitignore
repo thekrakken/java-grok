@@ -23,6 +23,10 @@ ehthumbs.db
 Thumbs.db
 
 
+# Gradle
+.gradle
+build/
+
 ./target/
 ./src/main/java/com/nflabs/Grok/App.java
 
