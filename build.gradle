@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 
 sourceCompatibility = JavaVersion.VERSION_1_6
-version = '0.0.3.1'
+version = '0.0.3'
 
 task wrapper(type: Wrapper) {
   gradleVersion = '1.10'
@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    compile "com.github.tony19:named-regexp:0.1.9"
+    compile "com.github.tony19:named-regexp:0.2.3"
     compile "org.apache.commons:commons-lang3:3.1"
     compile "com.google.code.gson:gson:2.2.2"
     testCompile group: 'junit', name: 'junit', version: '4.11'

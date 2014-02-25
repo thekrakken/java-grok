@@ -4,7 +4,7 @@
 
   <groupId>com.nflabs</groupId>
   <artifactId>Grok</artifactId>
-  <version>0.0.3.1-SNAPSHOT</version>
+  <version>0.0.3</version>
   <packaging>jar</packaging>
   <name>Grok</name>
   <url>http://maven.apache.org</url>
@@ -42,7 +42,7 @@
     <dependency>
     	<groupId>com.github.tony19</groupId>
     	<artifactId>named-regexp</artifactId>
-    	<version>0.1.9</version>
+    	<version>0.2.3</version>
     	<scope>compile</scope>
     </dependency>
 
