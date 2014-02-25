@@ -1,4 +1,4 @@
-package com.nflabs.Grok;
+package com.nflabs.grok;
 
 import java.io.File;
 import java.util.*;

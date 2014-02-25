@@ -8,6 +8,10 @@ import java.util.Map;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
+import com.nflabs.grok.Grok;
+import com.nflabs.grok.GrokException;
+import com.nflabs.grok.Match;
+
 public class GrokTest {
 
 

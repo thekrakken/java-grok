@@ -1,4 +1,4 @@
-package com.nflabs.Grok;
+package com.nflabs.grok;
 
 /**
  * Signals that an Grok exception of some sort has occurred.

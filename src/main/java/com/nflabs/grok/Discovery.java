@@ -1,4 +1,4 @@
-package com.nflabs.Grok;
+package com.nflabs.grok;
 
 import com.google.code.regexp.Matcher;
 import com.google.code.regexp.Pattern;

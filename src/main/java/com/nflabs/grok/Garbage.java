@@ -1,4 +1,4 @@
-package com.nflabs.Grok;
+package com.nflabs.grok;
 
 import java.util.ArrayList;
 import java.util.Iterator;
