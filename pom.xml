@@ -8,7 +8,7 @@
   <packaging>jar</packaging>
   <name>Grok</name>
   <url>http://maven.apache.org</url>
-  
+
   <licenses>
   	<license>
   	<name>Apache License, Version 2.0</name>
@@ -16,12 +16,12 @@
   	<distribution>repo</distribution>
   	</license>
   </licenses>
-  
+
   <issueManagement>
   	<system>GitHub</system>
   	<url>https://github.com/NFLabs/java-grok/issues</url>
   </issueManagement>
-  
+
   <developers>
   	<developer>
   		<id>antnonycorbacho</id>
@@ -35,7 +35,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
+      <version>4.11</version>
       <scope>test</scope>
     </dependency>
 
@@ -65,9 +65,9 @@
   	<name>NFlabs</name>
   	<url>www.nflabs.com</url>
   </organization>
- 
+
   <description>Grok pattern for java</description>
-  
+
   <distributionManagement>
     <repository>
         <id>repo</id>
