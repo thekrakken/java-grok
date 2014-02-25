@@ -2,8 +2,6 @@ package com.nflabs.Grok;
 
 import java.util.*;
 
-
-@SuppressWarnings("UnusedDeclaration")
 public class CleanUpHandler {
 
     private Set<String> remove;
