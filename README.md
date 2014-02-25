@@ -22,7 +22,7 @@ Include Java Grok into you java project and use it like:
 	System.out.println(gm.toJson());
 
 ### Getting help
-Maintainer: [Anthony CORBACHO](mailto:corbacho.anthony@gmail.com)
+Maintainer: [@anthonycorbacho](https://github.com/anthonycorbacho)
 
 ### Thankx to
  * [@wouterdb](https://github.com/wouterdb)
