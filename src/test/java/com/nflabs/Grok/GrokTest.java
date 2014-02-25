@@ -1,16 +1,15 @@
 package com.nflabs.Grok;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
-public class GrokTest extends TestCase {
+import java.util.HashMap;
+import java.util.Map;
 
-    protected void setUp() throws Exception {
-        super.setUp();
-    }
+import org.junit.FixMethodOrder;
+import org.junit.Test;
 
-    protected void tearDown() throws Exception {
-        super.tearDown();
-    }
+public class GrokTest {
+
 
 	/**
 	 * Do some basic test
@@ -31,6 +30,46 @@ public class GrokTest extends TestCase {
 	}*/
 	private Grok g = new Grok();
 
+	@Test
+	public void test00_basic(){
+		Grok g = new Grok();
+		boolean thrown = false;
+
+		// expected exception
+		try {
+			g.addPatternFromFile("/good/luck");
+		} catch (GrokException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
+
+		thrown = false;
+
+		try {
+			g.addPattern(null, "");
+		} catch (GrokException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
+
+		thrown = false;
+		try {
+			g.copyPatterns(null);
+		} catch (GrokException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
+
+		thrown = false;
+		try {
+			g.copyPatterns(new HashMap<String, String>());
+		} catch (GrokException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
+	}
+
+	@Test
 	public void test001_username() throws Throwable{
 
 		g.addPatternFromFile("patterns/patterns");
@@ -57,6 +96,7 @@ public class GrokTest extends TestCase {
 		assertEquals("{USERNAME=john}", gm.toMap().toString());
 	}
 
+	@Test
 	public void test001_username2() throws Throwable{
 
 		g.addPatternFromFile("patterns/patterns");
@@ -83,6 +123,7 @@ public class GrokTest extends TestCase {
 		assertEquals("{USER=john}", gm.toMap().toString());
 	}
 
+	@Test
 	public void test002_numbers() throws Throwable{
 
 		g.addPatternFromFile("patterns/patterns");
@@ -94,6 +135,7 @@ public class GrokTest extends TestCase {
 
 	}
 
+	@Test
 	public void test003_word() throws Throwable{
 
 		g.addPatternFromFile("patterns/patterns");
@@ -102,13 +144,14 @@ public class GrokTest extends TestCase {
 		Match gm = g.match("a");
 		gm.captures();
 		assertEquals("{WORD=a}", gm.toMap().toString());
-		
+
 		gm = g.match("abc");
 		gm.captures();
 		assertEquals("{WORD=abc}", gm.toMap().toString());
 
 	}
-	
+
+	@Test
 	public void test004_SPACE() throws Throwable{
 
 		g.addPatternFromFile("patterns/patterns");
@@ -119,7 +162,8 @@ public class GrokTest extends TestCase {
 		assertEquals("{SPACE=}", gm.toMap().toString());
 
 	}
-	
+
+	@Test
 	public void test005_NOTSPACE() throws Throwable{
 
 		g.addPatternFromFile("patterns/patterns");
@@ -130,7 +174,8 @@ public class GrokTest extends TestCase {
 		assertEquals("{NOTSPACE=abc}", gm.toMap().toString());
 
 	}
-	
+
+	@Test
 	public void test006_QUOTEDSTRING() throws Throwable{
 
 		g.addPatternFromFile("patterns/patterns");
@@ -141,7 +186,8 @@ public class GrokTest extends TestCase {
 		assertEquals("{text=abc dc}", gm.toMap().toString());
 
 	}
-	
+
+	@Test
 	public void test007_UUID() throws Throwable{
 
 		g.addPatternFromFile("patterns/patterns");
@@ -150,17 +196,18 @@ public class GrokTest extends TestCase {
 		Match gm = g.match("61243740-4786-11e3-86a7-0002a5d5c51b");
 		gm.captures();
 		assertEquals("{UUID=61243740-4786-11e3-86a7-0002a5d5c51b}", gm.toMap().toString());
-		
+
 		gm = g.match("7F8C7CB0-4786-11E3-8F96-0800200C9A66");
 		gm.captures();
 		assertEquals("{UUID=7F8C7CB0-4786-11E3-8F96-0800200C9A66}", gm.toMap().toString());
-		
+
 		gm = g.match("03A8413C-F604-4D21-8F4D-24B19D98B5A7");
 		gm.captures();
 		assertEquals("{UUID=03A8413C-F604-4D21-8F4D-24B19D98B5A7}", gm.toMap().toString());
 
 	}
-	
+
+	@Test
 	public void test008_MAC() throws Throwable{
 
 		g.addPatternFromFile("patterns/patterns");
@@ -172,6 +219,7 @@ public class GrokTest extends TestCase {
 
 	}
 
+	@Test
 	public void test009_IPORHOST() throws Throwable{
 
 		g.addPatternFromFile("patterns/patterns");
@@ -182,7 +230,8 @@ public class GrokTest extends TestCase {
 		assertEquals("{IPORHOST=www.google.fr}", gm.toMap().toString());
 
 	}
-	
+
+	@Test
 	public void test010_HOSTPORT() throws Throwable{
 
 		g.addPatternFromFile("patterns/patterns");
@@ -193,7 +242,9 @@ public class GrokTest extends TestCase {
 		assertEquals("{HOSTPORT=www.google.fr:80, IPORHOST=www.google.fr, PORT=80}", gm.toMap().toString());
 
 	}
-	public void test01COMBINEDAPACHELOG() throws Throwable{
+
+	@Test
+	public void test01_COMBINEDAPACHELOG() throws Throwable{
 
 		g.addPatternFromFile("patterns/patterns");
 		g.compile("%{COMBINEDAPACHELOG}");
@@ -201,14 +252,14 @@ public class GrokTest extends TestCase {
 		Match gm = g.match("112.169.19.192 - - [06/Mar/2013:01:36:30 +0900] \"GET / HTTP/1.1\" 200 44346 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22\"");
 		gm.captures();
 		assertNotNull(gm.toJson());
-		System.out.println(gm.toJson());
-		
-		
+		//System.out.println(gm.toJson());
+
+
 		gm = g.match("112.169.19.192 - - [06/Mar/2013:01:36:30 +0900] \"GET /wp-content/plugins/easy-table/themes/default/style.css?ver=1.0 HTTP/1.1\" 304 - \"http://www.nflabs.com/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22\"");
 			gm.captures();
 		assertNotNull(gm.toJson());
-		System.out.println(gm.toJson());
-		
+		//System.out.println(gm.toJson());
+
 		//assertEquals("{HOSTPORT=www.google.fr:80, IPORHOST=www.google.fr, PORT=80}", gm.toMap().toString());
 
 	}

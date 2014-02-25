@@ -4,8 +4,9 @@ package com.nflabs.Grok;
  * Class of Grok errors
  */
 //TODO: looger for grok
+@Deprecated
 public class GrokError {
-	
+
 	public static final int GROK_OK = 0;
 	public static final int GROK_ERROR_FILE_NOT_ACCESSIBLE = 1;
 	public static final int GROK_ERROR_PATTERN_NOT_FOUND = 2;

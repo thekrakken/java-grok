@@ -10,24 +10,23 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-@SuppressWarnings("UnusedDeclaration")
 public class Match {
 
-	
-	public Grok 					grok;	//current grok instance
-	public Matcher 					match;	//regex matcher
-	public int 						start; 	//offset
-	public int 						end;	//offset end
-	public String					line;	//source
-	public	Garbage					garbage;
-	
-	private String 					_subject;	//texte
-	private Map<String, Object> 	_capture;
-	
+
+	public Grok grok;	//current grok instance
+	public Matcher match;	//regex matcher
+	public int start; 	//offset
+	public int end;	//offset end
+	public String line;	//source
+	public	Garbage garbage;
+
+	private String _subject;	//texte
+	private Map<String, Object> _capture;
+
 	/**
-	 ** Contructor 
+	 ** Contructor
 	 **/
-	public Match(){
+	public Match() {
 		_subject = "Nothing";
 		grok = null;
 		match = null;
@@ -36,21 +35,19 @@ public class Match {
 		start = 0;
 		end = 0;
 	}
-	
-	
+
+
 	/**
-	 * 
+	 *
 	 * @param line to analyze / save
 	 * @return
 	 */
-	public int	setSubject( String text ) {
-		if( text == null ) return GrokError.GROK_ERROR_UNINITIALIZED;
-		if( text.isEmpty() )
-			return GrokError.GROK_ERROR_UNINITIALIZED;
+	public void	setSubject( String text ) {
+		if( text == null ) return;
+		if( text.isEmpty() ) return;
 		_subject = text;
-		return GrokError.GROK_OK;
 	}
-	
+
 	/**
 	 * Getter
 	 * @return the subject
@@ -58,25 +55,24 @@ public class Match {
 	public String getSubject(){
 		return _subject;
 	}
-	
+
 	/**
 	 * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map
-	 * 
+	 *
 	 * @see getSubject
 	 * @see toJson
 	 * @return Grok success
 	 */
-	public int captures(){
-		if( this.match == null )
-			return GrokError.GROK_ERROR_UNINITIALIZED;
-		
+	public void captures(){
+		if( this.match == null ) return;
+
 		//_capture.put("LINE", this.line);
 		//_capture.put("LENGTH", this.line.length() +"");
-		
+
 		Map<String, String> mappedw = this.match.namedGroups();
 		Iterator<Entry<String, String>> it = mappedw.entrySet().iterator();
 	    while (it.hasNext()) {
-	       
+
 			@SuppressWarnings("rawtypes")
 			Map.Entry pairs = (Map.Entry)it.next();
 	        String key = null;
@@ -90,17 +86,16 @@ public class Match {
 	        	else
 	        		value = cleanString(pairs.getValue().toString());
 	        }
-	       
+
 	        _capture.put( key  , (Object)value);
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
-	    return GrokError.GROK_OK;
 	}
-	
-	
+
+
 	/**
 	 * remove from the string the quote and dquote
-	 * 
+	 *
 	 * @param string to pure: "my/text"
 	 * @return unquoted string: my/text
 	 */
@@ -113,10 +108,10 @@ public class Match {
     		value = value.substring(1, value.length()-1);
     	return value;
 	}
-	
-	
+
+
 	/**
-	 * 
+	 *
 	 * @return Json file from the matched element in the text
 	 * @see google json
 	 */
@@ -124,30 +119,30 @@ public class Match {
 		if( _capture == null ) return "{\"Error\":\"Error\"}";
 		if( _capture.isEmpty() )
 			return null;
-		
+
 		this.cleanMap();
-		Gson gs = new GsonBuilder().setPrettyPrinting().create();;//new Gson();		
+		Gson gs = new GsonBuilder().setPrettyPrinting().create();;//new Gson();
 		return gs.toJson(/*cleanMap(*/_capture/*)*/);
-		
+
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return java map object from the matched element in the text
 	 */
 	public Map<String, Object> toMap(){
 		this.cleanMap();
 		return _capture;
 	}
-	
+
 	/**
-	 * remove and/or rename items 
+	 * remove and/or rename items
 	 */
 	private void cleanMap(){
 		garbage.rename(_capture);
 		garbage.remove(_capture);
 	}
-	
+
 	/**
 	 */
 	public Boolean isNull(){
@@ -155,12 +150,12 @@ public class Match {
 			return true;
 		return false;
 	}
-	
+
 	private boolean isInteger(String s) {
-	    try { 
-	        Integer.parseInt(s); 
-	    } catch(NumberFormatException e) { 
-	        return false; 
+	    try {
+	        Integer.parseInt(s);
+	    } catch(NumberFormatException e) {
+	        return false;
 	    }
 	    return true;
 	}

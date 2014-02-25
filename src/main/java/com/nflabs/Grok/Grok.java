@@ -14,14 +14,14 @@ import java.util.TreeMap;
 public class Grok extends Object {
 
 	//Public
-	public Map< String,String > 			patterns;
-	public String 							saved_pattern = null;
+	public Map< String,String > patterns;
+	public String saved_pattern = null;
 
 	//Private
-	private Map< String,String > 			_captured_map;
-	// manage string like %{Foo} => Foo
-	private java.util.regex.Pattern 		_PATTERN = java.util.regex.Pattern.compile("%\\{(.*?)\\}");
-	private Pattern 						_PATTERN_RE = Pattern.compile("%\\{" +
+	private Map< String,String > _captured_map;
+	// Extract string like %{Foo} => Foo
+	private java.util.regex.Pattern _PATTERN = java.util.regex.Pattern.compile("%\\{(.*?)\\}");
+	private Pattern _PATTERN_RE = Pattern.compile("%\\{" +
 			"(?<name>"+
 			"(?<pattern>[A-z0-9]+)"+
 			"(?::(?<subname>[A-z0-9_:]+))?"+
@@ -33,16 +33,15 @@ public class Grok extends Object {
 			")" +
 			")?"+
 			"\\}");
-	private String 							_expanded_pattern;
-	private String 							_pattern_origin;
-	private Pattern 						_regexp;
-	private Discovery 						_disco;
+	private String _expanded_pattern;
+	private String _pattern_origin;
+	private Pattern _regexp;
+	private Discovery _disco;
 
 	/**
 	 ** Constructor.
 	 **/
-	public		Grok(){	
-
+	public Grok(){
 		_pattern_origin = null;
 		_disco = null;
 		_expanded_pattern = null;
@@ -52,40 +51,44 @@ public class Grok extends Object {
 	}
 
 	/**
-	 * Add a new pattern
-	 * 
-	 *  @param name Name of the pattern
-	 *  @param pattern regex string
+	 * Add a new pattern to Grok
+	 *
+	 * @param Name of the Pattern
+	 * @param Regexp
+	 * @throws GrokException
 	 **/
-	public int addPattern( String name, String pattern){
+	public void addPattern( String name, String pattern) throws GrokException{
+		if( name == "" || pattern == "" )
+			throw new GrokException("Invalid Pattern");
 		if( name.isEmpty() || pattern.isEmpty() )
-			return GrokError.GROK_ERROR_UNINITIALIZED;
+			throw new GrokException("Invalid Pattern");
 		patterns.put(name, pattern);
-		return GrokError.GROK_OK;
 	}
 
 	/**
-	 * Copy the map patterns into the grok pattern
-	 * 
-	 * @param Map of the pattern to copy
+	 * Copy patterns to Grok
+	 *
+	 * @param patterns to copy
+	 * @throws GrokException
 	 **/
-	public int copyPatterns( Map<String, String> cpy ){
+	public void copyPatterns( Map<String, String> cpy ) throws GrokException{
+		if( cpy == null)
+		throw new GrokException("Invalid Patterns");
 		if( cpy.isEmpty() || cpy == null)
-			return GrokError.GROK_ERROR_UNINITIALIZED;
+			throw new GrokException("Invalid Patterns");
 		for (Map.Entry<String, String> entry : cpy.entrySet())
 			patterns.put(entry.getKey().toString(), entry.getValue().toString());
-		return GrokError.GROK_OK;
 	}
 
 	/**
-	 * @return the current map grok patterns
+	 * @return The Grok patterns
 	 */
 	public Map< String,String > getPatterns(){
 		return this.patterns;
 	}
 
 	/**
-	 * @return the compiled regex of <tt>expanded_pattern</tt>
+	 * @return The compiled regex of <tt>expanded_pattern</tt>
 	 * @see compile
 	 */
 	public Pattern getRegEx(){
@@ -93,8 +96,7 @@ public class Grok extends Object {
 	}
 
 	/**
-	 * 
-	 * @return the string pattern
+	 * @return The representation of the regexp in Grok language
 	 * @see compile
 	 */
 	public String getExpandedPattern(){
@@ -102,48 +104,65 @@ public class Grok extends Object {
 	}
 
 	/**
-	 * Add patterns to grok from a file
-	 * 
-	 * @param file that contains the grok patterns
+	 * Add patterns to Grok from a file
+	 *
+	 * @param Pattern file
+	 * @throws GrokException
 	 * @throws Throwable
 	 */
-	public int addPatternFromFile( String file) throws Throwable{
+	public void addPatternFromFile( String file) throws GrokException   {
 
 		File f = new File(file);
 		if(!f.exists())
-			return GrokError.GROK_ERROR_FILE_NOT_ACCESSIBLE;
+			throw new GrokException("Pattern not found");
 		if( !f.canRead() )
-			return GrokError.GROK_ERROR_FILE_NOT_ACCESSIBLE;
+			throw new GrokException("Pattern cannot be read");
 
-		return addPatternFromReader(new FileReader(f));
+		FileReader r;
+		try {
+			r = new FileReader(f);
+			addPatternFromReader(r);
+			r.close();
+		} catch (FileNotFoundException e) {
+			throw new GrokException(e.getMessage());
+		} catch (IOException e) {
+			throw new GrokException(e.getMessage());
+		}
 	}
 
 	/**
-	 * Add patterns to grok from a reader
-	 * 
+	 * Add patterns to Grok from a Reader
+	 *
 	 * @param reader that contains the grok patterns
+	 * @throws GrokException
 	 * @throws Throwable
 	 */
-	public int addPatternFromReader(Reader r) throws Throwable{
+	public void addPatternFromReader(Reader r) throws GrokException {
 		BufferedReader br = new BufferedReader(r);
 		String line;
 		//We dont want \n and commented line
 		Pattern MY_PATTERN = Pattern.compile("^([A-z0-9_]+)\\s+(.*)$");
-		while((line = br.readLine()) != null) {
-			Matcher m = MY_PATTERN.matcher(line);
-			if( m.matches() )
-				this.addPattern( m.group(1), m.group(2) );
+		try {
+			while((line = br.readLine()) != null) {
+				Matcher m = MY_PATTERN.matcher(line);
+				if( m.matches() )
+					this.addPattern( m.group(1), m.group(2) );
+			}
+			br.close();
+		} catch (IOException e) {
+			throw new GrokException(e.getMessage());
+		} catch (GrokException e) {
+			throw new GrokException(e.getMessage());
 		}
-		br.close();
-		return GrokError.GROK_OK;
+
 	}
 
 	/**
 	 * Match the <tt>text</tt> with the pattern
-	 * 
+	 *
 	 * @param text to match
 	 * @return Grok Match
-	 * @see Match
+	 * @see Match.class
 	 */
 	public Match match( String text ){
 
@@ -154,7 +173,7 @@ public class Grok extends Object {
 		Match match = new Match();
 		//System.out.println(expanded_pattern);
 		if( m.find() )
-		{		
+		{
 			//System.out.println("LLL"+m.group() +" " + m.start(0) +" "+ m.end(0));
 			match.setSubject(text);
 			match.grok = this;
@@ -168,17 +187,18 @@ public class Grok extends Object {
 	}
 
 	/**
-	 * Transform grok regex into a compiled regex
-	 * 
-	 * @param Grok pattern regex
+	 * Compile the regexp to Grok language
+	 *
+	 * @param  Pattern regex
+	 * @throws GrokException
 	 */
-	public int compile( String pattern ){
-		_expanded_pattern = new String( pattern );
-		_pattern_origin = new String( pattern );
+	public void compile( String pattern ) throws GrokException{
+		_expanded_pattern = pattern;
+		_pattern_origin = pattern;
 		int index = 0;
 		Boolean Continue = true;
 
-		//Replace %{foo} with the regex (mostly groupname regex) 
+		//Replace %{foo} with the regex (mostly groupname regex)
 		//and then compile the regex
 		while (Continue){
 			Continue=false;
@@ -190,29 +210,32 @@ public class Grok extends Object {
 				Continue = true;
 				Map<String, String> group = m.namedGroups();
 				if(group.get("definition") != null){
-					addPattern(group.get("pattern"), group.get("definition"));
-					group.put("name", group.get("name") +"="+ group.get("definition") );			
-				}			
+					try {
+						addPattern(group.get("pattern"), group.get("definition"));
+						group.put("name", group.get("name") +"="+ group.get("definition") );
+					} catch (GrokException e) {
+						//Log the exeception
+					}
+				}
 				_captured_map.put( "name"+index, (group.get("subname") != null ? group.get("subname"):group.get("name")));
 				_expanded_pattern = StringUtils.replace(_expanded_pattern, "%{"+group.get("name")+"}", "(?<name"+index+">" + this.patterns.get(group.get("pattern"))+")");
 				//System.out.println(_expanded_pattern);
 				index++;
-			}			
+			}
 		}
-		
+
+		if(_expanded_pattern.isEmpty()){
+			throw new GrokException("Pattern not fount");
+		}
 		//Compile the regex
-		if(!_expanded_pattern.isEmpty()){
-			_regexp = Pattern.compile(_expanded_pattern);
-			return GrokError.GROK_OK;
-		}
-		return GrokError.GROK_ERROR_PATTERN_NOT_FOUND;
+		_regexp = Pattern.compile(_expanded_pattern);
 	}
 
 	/**
-	 * Grok can find the pattern
-	 * 
-	 * @param input the file to analyze
-	 * @return the grok pattern
+	 * Discover the pattern from a log line
+	 *
+	 * @param Log
+	 * @return the Grok pattern
 	 */
 	public String discover( String input ){
 
@@ -222,7 +245,7 @@ public class Grok extends Object {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param Key
 	 * @return the value
 	 */
@@ -231,7 +254,7 @@ public class Grok extends Object {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return getter
 	 */
 	public Map<String, String> getCaptured(){
@@ -239,7 +262,7 @@ public class Grok extends Object {
 	}
 
 	/**
-	 ** Checkers 
+	 ** Checkers
 	 **/
 	public int isPattern(){
 		if( patterns == null )
