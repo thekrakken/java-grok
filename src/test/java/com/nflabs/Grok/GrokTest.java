@@ -2,6 +2,9 @@ package com.nflabs.Grok;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
@@ -26,6 +29,45 @@ public class GrokTest {
 
 	}*/
 	private Grok g = new Grok();
+
+	@Test
+	public void test00_basic(){
+		Grok g = new Grok();
+		boolean thrown = false;
+
+		// expected exception
+		try {
+			g.addPatternFromFile("/good/luck");
+		} catch (GrokException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
+
+		thrown = false;
+
+		try {
+			g.addPattern(null, "");
+		} catch (GrokException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
+
+		thrown = false;
+		try {
+			g.copyPatterns(null);
+		} catch (GrokException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
+
+		thrown = false;
+		try {
+			g.copyPatterns(new HashMap<String, String>());
+		} catch (GrokException e) {
+			thrown = true;
+		}
+		assertTrue(thrown);
+	}
 
 	@Test
 	public void test001_username() throws Throwable{
