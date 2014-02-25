@@ -32,5 +32,5 @@ Visit [NFLabs Maven repository](https://github.com/NFLabs/mvn-repo)
 Maintainer: [Anthony CORBACHO](mailto:corbacho.anthony@gmail.com)
 
 ### Thankx to
-[@wouterdb](https://github.com/wouterdb)
-[@Leemoonsoo](https://github.com/Leemoonsoo)
+ * [@wouterdb](https://github.com/wouterdb)
+ * [@Leemoonsoo](https://github.com/Leemoonsoo)
