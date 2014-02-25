@@ -11,7 +11,7 @@ Java Grok support Maven and Gradle
  2. Gradle ``gradle build``, If you dont have gradle installed you can use ``./gradlew build``.
 
 ### Usage
-Include Java Grok into you java project and use it like:
+Include Java Grok into your java project and use it like:
 
 	Grok g = new Grok();
 	g.addPatternFromFile(/path/to/pattern);
