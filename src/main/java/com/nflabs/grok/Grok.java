@@ -10,8 +10,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 @SuppressWarnings("unused")
-
-public class Grok extends Object {
+public class Grok {
 
 	//Public
 	public Map< String,String > patterns;
@@ -53,8 +52,8 @@ public class Grok extends Object {
 	/**
 	 * Add a new pattern to Grok
 	 *
-	 * @param Name of the Pattern
-	 * @param Regexp
+	 * @param Pattern Name
+	 * @param Regular expression
 	 * @throws GrokException
 	 **/
 	public void addPattern( String name, String pattern) throws GrokException{
@@ -66,21 +65,23 @@ public class Grok extends Object {
 	}
 
 	/**
-	 * Copy patterns to Grok
+	 * Copy the given list of patterns (pattern name, regular expression) to Grok, duplicate element will be overwrite
 	 *
-	 * @param patterns to copy
+	 * @param Map to copy
 	 * @throws GrokException
 	 **/
 	public void copyPatterns( Map<String, String> cpy ) throws GrokException{
 		if( cpy == null)
-		throw new GrokException("Invalid Patterns");
-		if( cpy.isEmpty() || cpy == null)
+			throw new GrokException("Invalid Patterns");
+		if( cpy.isEmpty())
 			throw new GrokException("Invalid Patterns");
 		for (Map.Entry<String, String> entry : cpy.entrySet())
 			patterns.put(entry.getKey().toString(), entry.getValue().toString());
 	}
 
 	/**
+	 * Get the current Grok patterns list
+	 * 
 	 * @return The Grok patterns
 	 */
 	public Map< String,String > getPatterns(){
