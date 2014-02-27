@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 
 sourceCompatibility = JavaVersion.VERSION_1_6
-version = '0.0.3'
+version = '0.0.4'
 
 task wrapper(type: Wrapper) {
   gradleVersion = '1.10'
