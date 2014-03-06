@@ -21,6 +21,27 @@ Include Java Grok into your java project and use it like:
 	//See the result
 	System.out.println(gm.toJson());
 
+### Maven repository
+
+	<dependency>
+	  <groupId>com.nflabs</groupId>
+	  <artifactId>grok</artifactId>
+	  <version>0.0.4-SNAPSHOT</version>
+	</dependency>
+
+	<repository>
+	  <id>oss.sonatype.org-snapshot</id>
+	  <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+	  <releases>
+	    <enabled>false</enabled>
+	  </releases>
+	  <snapshots>
+	    <enabled>true</enabled>
+	  </snapshots>
+	</repository>
+	
+Release version will be available soon.
+
 ### Getting help
 Maintainer: [@anthonycorbacho](https://github.com/anthonycorbacho)
 
@@ -30,5 +51,3 @@ Maintainer: [@anthonycorbacho](https://github.com/anthonycorbacho)
  
 **Any contributions are warmly welcome**
 
-### Maven repository
-Visit [NFLabs Maven repository](https://github.com/NFLabs/mvn-repo)
