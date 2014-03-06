@@ -77,8 +77,11 @@ public class Match {
 			Map.Entry pairs = (Map.Entry)it.next();
 	        String key = null;
 	        Object value = null;
-	        if ( !this.grok.capture_name(pairs.getKey().toString()).isEmpty() )
-	        	key = this.grok.capture_name(pairs.getKey().toString());
+	        if (this.grok.capture_name(pairs.getKey().toString()) == null) {
+              key = pairs.getKey().toString();
+          } else if ( !this.grok.capture_name(pairs.getKey().toString()).isEmpty() ) {
+              key = this.grok.capture_name(pairs.getKey().toString());
+          }
 	        if( pairs.getValue() != null ){
 	        	value = pairs.getValue().toString();
 	        	if( this.isInteger( value.toString() ) )
