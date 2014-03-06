@@ -7,11 +7,13 @@ import java.util.Map;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import com.nflabs.grok.Grok;
 import com.nflabs.grok.GrokException;
 import com.nflabs.grok.Match;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GrokTest {
 
 
@@ -33,7 +35,7 @@ public class GrokTest {
   private Grok g = new Grok();
 
   @Test
-  public void test00_basic() {
+  public void test001_basic() {
     Grok g = new Grok();
     boolean thrown = false;
 
