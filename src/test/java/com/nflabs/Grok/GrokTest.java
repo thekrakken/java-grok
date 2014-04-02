@@ -249,7 +249,7 @@ public class GrokTest {
   }
 
   @Test
-  public void test01_COMBINEDAPACHELOG() throws Throwable {
+  public void test011_COMBINEDAPACHELOG() throws Throwable {
 
     g.addPatternFromFile("patterns/patterns");
     g.compile("%{COMBINEDAPACHELOG}");
@@ -258,14 +258,22 @@ public class GrokTest {
         g.match("112.169.19.192 - - [06/Mar/2013:01:36:30 +0900] \"GET / HTTP/1.1\" 200 44346 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22\"");
     gm.captures();
     assertNotNull(gm.toJson());
-    // System.out.println(gm.toJson());
-
+    assertEquals(gm.toMap().get("agent").toString(), "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22");
+    assertEquals(gm.toMap().get("clientip").toString(), "112.169.19.192");
+    assertEquals(gm.toMap().get("httpversion").toString(), "1.1");
+    assertEquals(gm.toMap().get("timestamp").toString(), "06/Mar/2013:01:36:30 +0900");
+    assertEquals(gm.toMap().get("TIME").toString(), "01:36:30");
 
     gm =
         g.match("112.169.19.192 - - [06/Mar/2013:01:36:30 +0900] \"GET /wp-content/plugins/easy-table/themes/default/style.css?ver=1.0 HTTP/1.1\" 304 - \"http://www.nflabs.com/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22\"");
     gm.captures();
     assertNotNull(gm.toJson());
-    // System.out.println(gm.toJson());
+     System.out.println(gm.toJson());
+     assertEquals(gm.toMap().get("agent").toString(), "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22");
+     assertEquals(gm.toMap().get("clientip").toString(), "112.169.19.192");
+     assertEquals(gm.toMap().get("httpversion").toString(), "1.1");
+     assertEquals(gm.toMap().get("request").toString(), "/wp-content/plugins/easy-table/themes/default/style.css?ver=1.0");
+     assertEquals(gm.toMap().get("TIME").toString(), "01:36:30");
 
     // assertEquals("{HOSTPORT=www.google.fr:80, IPORHOST=www.google.fr, PORT=80}",
     // gm.toMap().toString());
