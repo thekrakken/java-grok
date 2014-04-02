@@ -6,15 +6,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-
+/**
+ * The Leon the professional of {@code Grok}
+ *
+ * @author anthonycorbacho
+ * @since 0.0.2
+ */
 public class Garbage {
 
   private List<String> _remove;
   private Map<String, Object> _rename;
 
   /**
-   ** Constructor
-   **/
+   * Create a new {@code Garbage} object
+   */
   public Garbage() {
 
     _remove = new ArrayList<String>();
@@ -38,10 +43,10 @@ public class Garbage {
   }
 
   /**
-   * Set a field list to remove from the final matched map
+   * Set a field name to be remove from the final matched map
    *
    * @see remove
-   * @param item to remove
+   * @param Name of the field to remove
    */
   public void addToRemove(String item) {
     if (item == null)
@@ -51,6 +56,8 @@ public class Garbage {
   }
 
   /**
+   * Set a list of field name to be remove from the final matched map
+   *
    * @see addToRemove
    * @param lst
    */
@@ -86,6 +93,8 @@ public class Garbage {
   }
 
   /**
+   * Rename the item from the map
+   *
    * @see addToRename
    * @param map
    * @return nb of renamed items
@@ -106,7 +115,6 @@ public class Garbage {
         item++;
       }
     }
-
     return item;
   }
 

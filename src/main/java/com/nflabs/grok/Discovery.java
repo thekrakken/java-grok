@@ -7,13 +7,21 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.*;
 import java.util.Map.Entry;
 
+/**
+ * {@code Discovery} try to find the best pattern for the given string
+ *
+ * @author anthonycorbacho
+ * @since 0.0.2
+ */
 public class Discovery {
 
   private Grok _grok;
 
   /**
-   ** Constructor
-   **/
+   * Create a new {@code Discovery} object
+   *
+   * @param Grok instance
+   */
   public Discovery(Grok grok) {
     _grok = grok;
   }
@@ -65,9 +73,9 @@ public class Discovery {
   }
 
   /**
-   * Find a pattern from a log line
+   * Find a pattern from a log
    *
-   * @param Log
+   * @param Single line
    * @return Grok pattern %{Foo}...
    */
   public String discover(String text) {
@@ -143,7 +151,7 @@ public class Discovery {
   }
 
   /**
-   * Get the substring tht match with the text
+   * Get the substring that match with the text
    *
    * @param Grok Match
    * @param texte

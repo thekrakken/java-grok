@@ -10,6 +10,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+/**
+ * {@code Match} is a representation in {@code Grok} world of your log
+ *
+ * @author anthonycorbacho
+ * @since 0.0.1
+ */
 public class Match {
 
 
@@ -24,8 +30,8 @@ public class Match {
   private Map<String, Object> _capture;
 
   /**
-   ** Contructor
-   **/
+   *Create a new {@code Match} object
+   */
   public Match() {
     _subject = "Nothing";
     grok = null;
@@ -38,8 +44,9 @@ public class Match {
 
 
   /**
+   *  Set the single line of log to parse
    *
-   * @param line to analyze / save
+   * @param single line of log
    * @return
    */
   public void setSubject(String text) {
@@ -51,9 +58,9 @@ public class Match {
   }
 
   /**
-   * Getter
+   * Retrurn the single line of log
    *
-   * @return the subject
+   * @return the single line of log
    */
   public String getSubject() {
     return _subject;
@@ -101,7 +108,7 @@ public class Match {
 
 
   /**
-   * remove from the string the quote and dquote
+   * remove from the string the quote and double quote
    *
    * @param string to pure: "my/text"
    * @return unquoted string: my/text
@@ -118,15 +125,22 @@ public class Match {
 
 
   /**
+   * Get the json representation of the matched element
+   * <p>
+   * example:
+   * map [ {IP: 127.0.0.1}, {status:200}]
+   * will return
+   * {"IP":"127.0.0.1", "status":200}
+   * </p>
    *
-   * @return Json file from the matched element in the text
-   * @see google json
+   * @return Json of the matched element in the text
+   * @see google gson
    */
   public String toJson() {
     if (_capture == null)
       return "{\"Error\":\"Error\"}";
     if (_capture.isEmpty())
-      return null;
+      return "{\"Error\":\"Error\"}";;
 
     this.cleanMap();
     Gson gs = new GsonBuilder().setPrettyPrinting().create();;// new Gson();
@@ -135,8 +149,10 @@ public class Match {
   }
 
   /**
+   * Get the map representation of the matched element in the text
    *
-   * @return java map object from the matched element in the text
+   * @see Map.toString();
+   * @return map object from the matched element in the text
    */
   public Map<String, Object> toMap() {
     this.cleanMap();
@@ -144,7 +160,7 @@ public class Match {
   }
 
   /**
-   * remove and/or rename items
+   * Remove and rename the unwanted elelents in the matched map
    */
   private void cleanMap() {
     garbage.rename(_capture);
@@ -152,13 +168,22 @@ public class Match {
   }
 
   /**
-	 */
+   * Util fct
+   *
+   * @return
+   */
   public Boolean isNull() {
     if (this.match == null)
       return true;
     return false;
   }
 
+  /**
+   * Util fct
+   *
+   * @param s
+   * @return
+   */
   private boolean isInteger(String s) {
     try {
       Integer.parseInt(s);

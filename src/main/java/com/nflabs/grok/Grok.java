@@ -9,6 +9,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+
+/**
+ * {@code Grok} parse arbitrary text and structure it
+ *
+ * @since 0.0.1
+ * @author anthonycorbacho
+ */
 @SuppressWarnings("unused")
 public class Grok {
 
@@ -29,8 +36,8 @@ public class Grok {
   private Discovery _disco;
 
   /**
-   ** Constructor.
-   **/
+   * Create a new {@code Grok} object
+   */
   public Grok() {
     _pattern_origin = null;
     _disco = null;
@@ -41,7 +48,7 @@ public class Grok {
   }
 
   /**
-   * Add a new pattern to Grok
+   * Add a new pattern to the current {@code Grok} instance
    *
    * @param Pattern Name
    * @param Regular expression
@@ -56,7 +63,7 @@ public class Grok {
   }
 
   /**
-   * Copy the given list of patterns (pattern name, regular expression) to Grok, duplicate element
+   * Copy the given Map of patterns (pattern name, regular expression) to {@code Grok}, duplicate element
    * will be overwrite
    *
    * @param Map to copy
@@ -72,24 +79,18 @@ public class Grok {
   }
 
   /**
-   * Get the current Grok patterns list
+   * Get the current map of {@code Grok} pattern
    *
-   * @return The Grok patterns
+   * @return Patterns (name, regular expression)
    */
   public Map<String, String> getPatterns() {
     return this.patterns;
   }
 
   /**
-   * @return The compiled regex of <tt>expanded_pattern</tt>
-   * @see compile
-   */
-  public Pattern getRegEx() {
-    return _regexp;
-  }
-
-  /**
-   * @return The representation of the regexp in Grok language
+   * The representation of the regexp in {@code Grok} language
+   *
+   * @return Regexp in Grok language
    * @see compile
    */
   public String getExpandedPattern() {
@@ -97,11 +98,10 @@ public class Grok {
   }
 
   /**
-   * Add patterns to Grok from a file
+   * Add patterns to {@code Grok} instance from the given file
    *
-   * @param Pattern file
+   * @param Path of the pattern file
    * @throws GrokException
-   * @throws Throwable
    */
   public void addPatternFromFile(String file) throws GrokException {
 
@@ -124,11 +124,10 @@ public class Grok {
   }
 
   /**
-   * Add patterns to Grok from a Reader
+   * Add patterns to {@code Grok} from a Reader
    *
-   * @param reader that contains the grok patterns
+   * @param Reader with {@code Grok} patterns
    * @throws GrokException
-   * @throws Throwable
    */
   public void addPatternFromReader(Reader r) throws GrokException {
     BufferedReader br = new BufferedReader(r);
@@ -151,9 +150,10 @@ public class Grok {
   }
 
   /**
-   * Match the <tt>text</tt> with the pattern
+   * Match the given <tt>string</tt> with the compiled pattern
+   * {@code Grok} will extract data from the string and create an extence of {@code Match}
    *
-   * @param text to match
+   * @param Single line of log
    * @return Grok Match
    * @see Match.class
    */
@@ -179,7 +179,7 @@ public class Grok {
   }
 
   /**
-   * Compile the regexp to Grok language
+   * Compile the regexp to {@code Grok} language
    *
    * @param Pattern regex
    * @throws GrokException
@@ -227,10 +227,11 @@ public class Grok {
   }
 
   /**
-   * Discover the pattern from a log line
+   * {@code Grok} will try to find the best Grok expression that will match your input
    *
-   * @param Log
+   * @param Single line of log
    * @return the Grok pattern
+   * @see Discover.class
    */
   public String discover(String input) {
 
@@ -240,6 +241,7 @@ public class Grok {
   }
 
   /**
+   * Get the {@code Grok} regexp from his name
    *
    * @param Key
    * @return the value

@@ -1,9 +1,11 @@
 package com.nflabs.grok;
 
-/*
- * Class of Grok errors
+/**
+ * Not used, too much c style..
+ *
+ * @author anthonycorbacho
+ *
  */
-// TODO: looger for grok
 @Deprecated
 public class GrokError {
 

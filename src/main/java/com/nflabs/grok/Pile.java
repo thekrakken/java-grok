@@ -3,6 +3,12 @@ package com.nflabs.grok;
 import java.io.File;
 import java.util.*;
 
+/**
+ * Set of Groks instance
+ *
+ * @author anthonycorbacho
+ * @since 0.0.1
+ */
 @Deprecated
 public class Pile {
 
