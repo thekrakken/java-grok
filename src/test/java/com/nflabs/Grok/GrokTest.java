@@ -232,7 +232,6 @@ public class GrokTest {
     Match gm = g.match("www.google.fr");
     gm.captures();
     assertEquals("{IPORHOST=www.google.fr}", gm.toMap().toString());
-
   }
 
   @Test
@@ -243,9 +242,7 @@ public class GrokTest {
 
     Match gm = g.match("www.google.fr:80");
     gm.captures();
-    assertEquals("{HOSTPORT=www.google.fr:80, IPORHOST=www.google.fr, PORT=80}", gm.toMap()
-        .toString());
-
+    assertEquals("{HOSTPORT=www.google.fr:80, IPORHOST=www.google.fr, PORT=80}", gm.toMap().toString());
   }
 
   @Test
@@ -268,7 +265,7 @@ public class GrokTest {
         g.match("112.169.19.192 - - [06/Mar/2013:01:36:30 +0900] \"GET /wp-content/plugins/easy-table/themes/default/style.css?ver=1.0 HTTP/1.1\" 304 - \"http://www.nflabs.com/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22\"");
     gm.captures();
     assertNotNull(gm.toJson());
-     System.out.println(gm.toJson());
+     //System.out.println(gm.toJson());
      assertEquals(gm.toMap().get("agent").toString(), "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22");
      assertEquals(gm.toMap().get("clientip").toString(), "112.169.19.192");
      assertEquals(gm.toMap().get("httpversion").toString(), "1.1");
