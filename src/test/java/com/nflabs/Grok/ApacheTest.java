@@ -29,8 +29,9 @@ public class ApacheTest {
 
     BufferedReader br = new BufferedReader(new FileReader(LOG_FILE));
     String line;
+    System.out.println("Starting test with httpd log");
     while ((line = br.readLine()) != null) {
-      System.out.println(line);
+      //System.out.println(line);
       Match gm = g.match(line);
       gm.captures();
       assertNotNull(gm.toJson());
