@@ -32,7 +32,7 @@ public class Match {
   /**
    *Create a new {@code Match} object
    */
-  public Match() {
+  private Match() {
     _subject = "Nothing";
     grok = null;
     match = null;
@@ -40,6 +40,19 @@ public class Match {
     garbage = new Garbage();
     start = 0;
     end = 0;
+  }
+
+  /**
+   * Singleton
+   *
+   * @return instance of Match
+   */
+  public static Match getInstance() {
+    return MatchHolder.INSTANCE;
+  }
+
+  private static class MatchHolder {
+    private static final Match INSTANCE = new Match();
   }
 
 
@@ -76,6 +89,7 @@ public class Match {
   public void captures() {
     if (this.match == null)
       return;
+    _capture.clear();
 
     // _capture.put("LINE", this.line);
     // _capture.put("LENGTH", this.line.length() +"");

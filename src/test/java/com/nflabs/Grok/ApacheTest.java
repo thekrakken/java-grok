@@ -23,9 +23,7 @@ public class ApacheTest {
 
   @Test
   public void test001_httpd_access() throws GrokException, IOException {
-    Grok g = new Grok();
-    g.addPatternFromFile("patterns/patterns");
-    g.compile("%{COMMONAPACHELOG}");
+    Grok g = Grok.create("patterns/patterns", "%{COMMONAPACHELOG}");
 
     BufferedReader br = new BufferedReader(new FileReader(LOG_FILE));
     String line;
@@ -42,10 +40,7 @@ public class ApacheTest {
 
   @Test
   public void test002_nasa_httpd_access() throws GrokException, IOException {
-    Grok g = new Grok();
-    g.addPatternFromFile("patterns/patterns");
-    g.compile("%{COMMONAPACHELOG}");
-
+    Grok g = Grok.create("patterns/patterns", "%{COMMONAPACHELOG}");
     System.out.println("Starting test with nasa log -- may take a while");
     BufferedReader br;
     String line;

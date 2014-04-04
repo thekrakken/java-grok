@@ -3,6 +3,8 @@ package com.nflabs.grok;
 import com.google.code.regexp.Matcher;
 import com.google.code.regexp.Pattern;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.HashMap;
@@ -21,7 +23,7 @@ public class Grok {
 
   // Public
   public Map<String, String> patterns;
-  public String saved_pattern = null;
+  public String saved_pattern = StringUtils.EMPTY;
 
   // Private
   private Map<String, String> _captured_map;
@@ -35,16 +37,43 @@ public class Grok {
   private Pattern _regexp;
   private Discovery _disco;
 
+  private static final Logger LOG = LoggerFactory.getLogger(Grok.class);
+
   /**
-   * Create a new {@code Grok} object
+   * Create Empty {@code Grok}
+   */
+  public static Grok EMPTY = new Grok();
+
+  /**
+   * Create a new <i>empty</i>{@code Grok} object
    */
   public Grok() {
-    _pattern_origin = null;
+    _pattern_origin = StringUtils.EMPTY;
     _disco = null;
-    _expanded_pattern = null;
+    _expanded_pattern = StringUtils.EMPTY;
     _regexp = null;
     patterns = new TreeMap<String, String>();
     _captured_map = new TreeMap<String, String>();
+  }
+
+  /**
+   * Create a {@code Grok} instance with the given patterns and (this is an optional parameter)
+   * a {@code Grok} pattern
+   *
+   * @param grokPatternPath path to the pattern file
+   * @param grokExpression  - <b>OPTIONAL</b> - Grok pattern to compile ex: %{APACHELOG}
+   * @return {@code Grok} instance
+   * @throws GrokException
+   */
+  public static Grok create(String grokPatternPath, String grokExpression)
+      throws GrokException {
+    if (StringUtils.isBlank(grokPatternPath))
+      throw new GrokException("{grokPatternPath} should not be empty or null");
+    Grok g = new Grok();
+    g.addPatternFromFile(grokPatternPath);
+    if (StringUtils.isNotBlank(grokExpression))
+      g.compile(grokExpression);
+    return g;
   }
 
   /**
@@ -163,7 +192,7 @@ public class Grok {
       return null;
 
     Matcher m = _regexp.matcher(text);
-    Match match = new Match();
+    Match match = Match.getInstance();
     // System.out.println(expanded_pattern);
     if (m.find()) {
       // System.out.println("LLL"+m.group() +" " + m.start(0) +" "+ m.end(0));
@@ -173,7 +202,7 @@ public class Grok {
       match.start = m.start(0);
       match.end = m.end(0);
       match.line = text;
-      return match;
+      //return match;
     }
     return match;
   }
@@ -185,6 +214,10 @@ public class Grok {
    * @throws GrokException
    */
   public void compile(String pattern) throws GrokException {
+
+    if (StringUtils.isBlank(pattern))
+      throw new GrokException("{pattern} should not be empty or null");
+
     _expanded_pattern = pattern;
     _pattern_origin = pattern;
     int index = 0;
