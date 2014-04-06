@@ -272,6 +272,15 @@ public class Grok {
       _disco = new Discovery(this);
     return _disco.discover(input);
   }
+  
+  /**
+   * Get the original patern
+   * 
+   * @return String of the original pattern
+   */
+  public String getPatern(){
+    return _pattern_origin;
+  }
 
   /**
    * Get the {@code Grok} regexp from his name
