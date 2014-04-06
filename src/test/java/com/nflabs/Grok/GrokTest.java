@@ -3,7 +3,6 @@ package com.nflabs.Grok;
 import static org.junit.Assert.*;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
