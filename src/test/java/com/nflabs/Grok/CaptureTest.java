@@ -88,7 +88,7 @@ public class CaptureTest {
     m.captures();
     assertEquals(1, m.toMap().size());
     assertEquals("Hello", m.toMap().get(subname).toString());
-    System.out.println(m.toMap());
+    assertEquals("{abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_abc:def=Hello}", m.toMap().toString());
   }
 
 }
