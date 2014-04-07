@@ -13,7 +13,7 @@ Java Grok support Maven and Gradle
  1. Maven ``mvn package``.
  2. Gradle ``gradle build``, If you dont have gradle installed you can use ``./gradlew build``.
 
-### Usage ([Grok java documentation](http://grok.nflabs.com/))
+### Usage ([Grok java documentation](http://grok.nflabs.com/javadoc))
 Include Java Grok into your java project and use it like:
 
 	Grok g = new Grok();
