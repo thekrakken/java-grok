@@ -7,11 +7,11 @@ Java Grok is simple tool that allows you to easily parse logs and other files (s
 
 -----------------------
 
-### Build Java Grok
-
-Java Grok support Maven and Gradle
- 1. Maven ``mvn package``.
- 2. Gradle ``gradle build``, If you dont have gradle installed you can use ``./gradlew build``.
+### What can I use Grok for?
+* reporting errors and other patterns from logs and processes
+* parsing complex text output and converting it to json for external processing
+* apply 'write-once use-everywhere' to regular expressions
+* automatically providing patterns for unknown text inputs (logs you want patterns generated for future matching)
 
 ### Usage ([Grok java documentation](http://grok.nflabs.com/javadoc))
 Include Java Grok into your java project and use it like:
@@ -31,7 +31,12 @@ Include Java Grok into your java project and use it like:
 	  <artifactId>grok</artifactId>
 	  <version>0.0.4</version>
 	</dependency>
-	
+
+### Build Java Grok
+
+Java Grok support Maven and Gradle
+ 1. Maven ``mvn package``.
+ 2. Gradle ``gradle build``, If you dont have gradle installed you can use ``./gradlew build``.	
 
 ### Getting help
 Maintainer: [@anthonycorbacho](https://github.com/anthonycorbacho)
