@@ -221,12 +221,18 @@ public class Grok {
     _expanded_pattern = pattern;
     _pattern_origin = pattern;
     int index = 0;
+    /** flag for infinite recurtion */
+    int iteration_left = 1000;
     Boolean Continue = true;
 
     // Replace %{foo} with the regex (mostly groupname regex)
     // and then compile the regex
     while (Continue) {
       Continue = false;
+      if (iteration_left <= 0) {
+        throw new GrokException("Deep recursion pattern compilation of " + _pattern_origin);
+      }
+      iteration_left--;
 
       Matcher m = _PATTERN_RE.matcher(_expanded_pattern);
       // Match %{Foo:bar} -> pattern name and subname
@@ -272,10 +278,10 @@ public class Grok {
       _disco = new Discovery(this);
     return _disco.discover(input);
   }
-  
+
   /**
    * Get the original patern
-   * 
+   *
    * @return String of the original pattern
    */
   public String getPatern(){
