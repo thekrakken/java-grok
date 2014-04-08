@@ -188,21 +188,20 @@ public class Grok {
    */
   public Match match(String text) {
 
+    /** Not longer needed
     if (_regexp == null)
       return null;
+    */
 
     Matcher m = _regexp.matcher(text);
     Match match = Match.getInstance();
-    // System.out.println(expanded_pattern);
     if (m.find()) {
-      // System.out.println("LLL"+m.group() +" " + m.start(0) +" "+ m.end(0));
       match.setSubject(text);
       match.grok = this;
       match.match = m;
       match.start = m.start(0);
       match.end = m.end(0);
       match.line = text;
-      //return match;
     }
     return match;
   }

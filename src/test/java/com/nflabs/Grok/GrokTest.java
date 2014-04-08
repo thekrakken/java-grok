@@ -2,7 +2,13 @@ package com.nflabs.Grok;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -220,6 +226,18 @@ public class GrokTest {
   }
 
   @Test
+  public void test004_number() throws Throwable {
+
+    g.addPatternFromFile("patterns/patterns");
+    g.compile("%{NUMBER}");
+
+    Match gm = g.match("Something costs $55.4!");
+    gm.captures();
+    assertEquals("{NUMBER=55.4}", gm.toMap().toString());
+
+  }
+
+  @Test
   public void test005_NOTSPACE() throws Throwable {
 
     g.addPatternFromFile("patterns/patterns");
@@ -284,6 +302,10 @@ public class GrokTest {
     Match gm = g.match("www.google.fr");
     gm.captures();
     assertEquals("{IPORHOST=www.google.fr}", gm.toMap().toString());
+
+    gm = g.match("www.google.com");
+    gm.captures();
+    assertEquals("{IPORHOST=www.google.com}", gm.toMap().toString());
   }
 
   @Test
@@ -333,6 +355,150 @@ public class GrokTest {
     // assertEquals("{HOSTPORT=www.google.fr:80, IPORHOST=www.google.fr, PORT=80}",
     // gm.toMap().toString());
 
+  }
+
+  /** FROM HERE WE WILL USE STATIC GROK */
+
+  @Test
+  public void test012_day() throws Throwable {
+
+    Grok grok = Grok.create("patterns/patterns", "%{DAY}");
+
+    List<String> days = new ArrayList<String>();
+    days.add("Mon");
+    days.add("Monday");
+    days.add("Tue");
+    days.add("Tuesday");
+    days.add("Wed");
+    days.add("Wednesday");
+    days.add("Thu");
+    days.add("Thursday");
+    days.add("Fri");
+    days.add("Friday");
+    days.add("Sat");
+    days.add("Saturday");
+    days.add("Sun");
+    days.add("Sunday");
+
+    int i = 0;
+    for(String day : days){
+      Match m = grok.match(day);
+      m.captures();
+      assertNotNull(m.toMap());
+      assertEquals(m.toMap().get("DAY"), days.get(i));
+      i++;
+    }
+  }
+
+  @Test
+  public void test013_IpSet() throws Throwable {
+    Grok grok = Grok.create("patterns/patterns", "%{IP}");
+
+    BufferedReader br = new BufferedReader(new FileReader("src/test/resources/ip"));
+    String line;
+    System.out.println("Starting test with ip");
+    while ((line = br.readLine()) != null) {
+      Match gm = grok.match(line);
+      gm.captures();
+      assertNotNull(gm.toJson());
+      assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
+      assertEquals(gm.toMap().get("IP"), line);
+    }
+  }
+
+  @Test
+  public void test014_month() throws Throwable {
+
+    Grok grok = Grok.create("patterns/patterns", "%{MONTH}");
+
+    String[] array = {"Jan", "January", "Feb", "February", "Mar", "March", "Apr", "April", "May", "Jun", "June",
+            "Jul", "July", "Aug", "August", "Sep", "September", "Oct", "October", "Nov",
+            "November", "Dec", "December"};
+    List<String> months = new ArrayList<String>(Arrays.asList(array));
+    int i = 0;
+    for (String month : months) {
+      Match m = grok.match(month);
+      m.captures();
+      assertNotNull(m.toMap());
+      assertEquals(m.toMap().get("MONTH"), months.get(i));
+      i++;
+    }
+  }
+
+  @Test
+  public void test015_iso8601() throws GrokException{
+    Grok grok = Grok.create("patterns/patterns", "%{TIMESTAMP_ISO8601}");
+
+    String[] array =
+        {"2001-01-01T00:00:00",
+        "1974-03-02T04:09:09",
+        "2010-05-03T08:18:18+00:00",
+        "2004-07-04T12:27:27-00:00",
+        "2001-09-05T16:36:36+0000",
+        "2001-11-06T20:45:45-0000",
+        "2001-12-07T23:54:54Z",
+        "2001-01-01T00:00:00.123456",
+        "1974-03-02T04:09:09.123456",
+        "2010-05-03T08:18:18.123456+00:00",
+        "2004-07-04T12:27:27.123456-00:00",
+        "2001-09-05T16:36:36.123456+0000",
+        "2001-11-06T20:45:45.123456-0000",
+        "2001-12-07T23:54:54.123456Z"};
+
+    List<String> times = new ArrayList<String>(Arrays.asList(array));
+    int i = 0;
+    for (String time : times) {
+      Match m = grok.match(time);
+      m.captures();
+      assertNotNull(m.toMap());
+      assertEquals(m.toMap().get("TIMESTAMP_ISO8601"), times.get(i));
+      i++;
+    }
+  }
+
+  @Test
+  public void test016_uri() throws GrokException{
+    Grok grok = Grok.create("patterns/patterns", "%{URI}");
+
+    String[] array =
+        {
+            "http://www.google.com",
+            "telnet://helloworld",
+            "http://www.example.com/",
+            "http://www.example.com/test.html",
+            "http://www.example.com/test.html?foo=bar",
+            "http://www.example.com/test.html?foo=bar&fizzle=baz",
+            "http://www.example.com:80/test.html?foo=bar&fizzle=baz",
+            "https://www.example.com:443/test.html?foo=bar&fizzle=baz",
+            "https://user@www.example.com:443/test.html?foo=bar&fizzle=baz",
+            "https://user:pass@somehost/fetch.pl",
+            "puppet:///",
+            "http://www.foo.com",
+            "http://www.foo.com/",
+            "http://www.foo.com/?testing",
+            "http://www.foo.com/?one=two",
+            "http://www.foo.com/?one=two&foo=bar",
+            "foo://somehost.com:12345",
+            "foo://user@somehost.com:12345",
+            "foo://user@somehost.com:12345/",
+            "foo://user@somehost.com:12345/foo.bar/baz/fizz",
+            "foo://user@somehost.com:12345/foo.bar/baz/fizz?test",
+            "foo://user@somehost.com:12345/foo.bar/baz/fizz?test=1&sink&foo=4",
+            "http://www.google.com/search?hl=en&source=hp&q=hello+world+%5E%40%23%24&btnG=Google+Search",
+            "http://www.freebsd.org/cgi/url.cgi?ports/sysutils/grok/pkg-descr",
+            "http://www.google.com/search?q=CAPTCHA+ssh&start=0&ie=utf-8&oe=utf-8&client=firefox-a&rls=org.mozilla:en-US:official",
+            "svn+ssh://somehost:12345/testing"};
+
+    List<String> uris = new ArrayList<String>(Arrays.asList(array));
+    int i = 0;
+    for (String uri : uris) {
+      Match m = grok.match(uri);
+      m.captures();
+      assertNotNull(m.toMap());
+      assertEquals(m.toMap().get("URI"), uris.get(i));
+      assertNotNull(m.toMap().get("URIPROTO"));
+      i++;
+    }
   }
 
 }
