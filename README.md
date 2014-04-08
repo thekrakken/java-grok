@@ -29,7 +29,7 @@ Include Java Grok into your java project and use it like:
 	<dependency>
 	  <groupId>com.nflabs</groupId>
 	  <artifactId>grok</artifactId>
-	  <version>0.0.4</version>
+	  <version>0.0.5</version>
 	</dependency>
 
 ### Build Java Grok
