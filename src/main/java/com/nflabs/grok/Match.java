@@ -157,7 +157,7 @@ public class Match {
       return "{\"Error\":\"Error\"}";;
 
     this.cleanMap();
-    Gson gs = new GsonBuilder().setPrettyPrinting().create();;// new Gson();
+    Gson gs = new GsonBuilder().setPrettyPrinting().create();// new Gson();
     return gs.toJson(/* cleanMap( */_capture/* ) */);
 
   }
