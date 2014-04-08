@@ -104,7 +104,7 @@ JB :
         tracking_id : 'UA-38575365-6'
     google_universal : 
         tracking_id : 'UA-38575365-6'
-        domain : 'gork.nflabs.com'
+        domain : 'grok.nflabs.com'
     getclicky :
       site_id : 
     mixpanel :
