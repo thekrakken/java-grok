@@ -63,7 +63,7 @@ If your pattern was '%{FOO:bar}' you can access the value with this shorthand '%
 In grok patterns, you specify a named pattern with %{name}, where 'name' is the name of your pattern. Grok comes with a handful of patterns already defined in the [Grok Pattern](https://raw.githubusercontent.com/NFLabs/java-grok/master/patterns/patterns) file.
 
 ### Rename ``%{name}``
-With Grok you have the ability to rename patterns with the following syntax `%{name : newName}`
+With Grok you have the ability to rename patterns with the following syntax `%{name:semantic}`
 
 Example
 
@@ -74,7 +74,7 @@ Grok grok = Grok.EMPTY;
 // add a pattern to grok
 grok.addPattern("foo", "\\w+");
 
-// compile - rename
+// compile and add semantic
 grok.compile("%{"foo:bar"}");
 
 // Match with some log
