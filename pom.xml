@@ -89,6 +89,12 @@
       <version>1.7.5</version>
       <scope>compile</scope>
     </dependency>
+
+	<dependency>
+		<groupId>io.airlift</groupId>
+		<artifactId>airline</artifactId>
+		<version>0.6</version>
+	</dependency>
   </dependencies>
 
   <build>
