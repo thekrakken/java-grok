@@ -1,6 +1,6 @@
 <img src="http://peloton.nflabs.com/imgs/logo.png" height="120" align="bottom"/>
 
-[![Build Status](https://secure.travis-ci.org/NFLabs/java-grok.png?branch=master)](https://travis-ci.org/NFLabs/java-grok)
+[![Build Status](https://secure.travis-ci.org/thekrakken/java-grok.png?branch=master)](https://travis-ci.org/thekrakken/java-grok)
 
 Java Grok is simple tool that allows you to easily parse logs and other files (single line). With Java Grok, you can turn unstructured log and event data into structured data (JSON).
 
