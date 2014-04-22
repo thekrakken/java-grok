@@ -16,12 +16,11 @@ Java Grok is simple API that allows you to easily parse logs and other files (si
 ### Usage ([Grok java documentation](http://grok.nflabs.com/javadoc))
 Include Java Grok into your java project and use it like:
 
-	Grok g = new Grok();
-	g.addPatternFromFile(/path/to/pattern);
-	g.compile("%{URI}");
-	Match gm = g.match(yourlog);
-	gm.captures();
-	//See the result
+        Grok grok = Grok.create("patterns/patterns");
+        grok.compile("%{USER}");
+        Match gm = grok.match("root");
+        gm.captures();
+	// See the output
 	System.out.println(gm.toJson());
 
 ### Maven repository
@@ -31,6 +30,10 @@ Include Java Grok into your java project and use it like:
 	  <artifactId>grok</artifactId>
 	  <version>0.0.5</version>
 	</dependency>
+
+Or with gradle
+   	
+	compile "com.nflabs:grok:0.0.5"
 
 ### Build Java Grok
 

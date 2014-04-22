@@ -74,8 +74,7 @@ public class Match {
   /**
    *  Set the single line of log to parse
    *
-   * @param single line of log
-   * @return
+   * @param text : single line of log
    */
   public void setSubject(String text) {
     if (text == null)
@@ -97,9 +96,6 @@ public class Match {
   /**
    * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map
    *
-   * @see getSubject
-   * @see toJson
-   * @return Grok success
    */
   public void captures() {
     if (this.match == null)
@@ -117,10 +113,10 @@ public class Match {
       Map.Entry pairs = (Map.Entry) it.next();
       String key = null;
       Object value = null;
-      if (this.grok.capture_name(pairs.getKey().toString()) == null) {
+      if (this.grok.getNamedRegexCollectionById(pairs.getKey().toString()) == null) {
         key = pairs.getKey().toString();
-      } else if (!this.grok.capture_name(pairs.getKey().toString()).isEmpty()) {
-        key = this.grok.capture_name(pairs.getKey().toString());
+      } else if (!this.grok.getNamedRegexCollectionById(pairs.getKey().toString()).isEmpty()) {
+        key = this.grok.getNamedRegexCollectionById(pairs.getKey().toString());
       }
       if (pairs.getValue() != null) {
         value = pairs.getValue().toString();
@@ -163,7 +159,6 @@ public class Match {
    * </p>
    *
    * @return Json of the matched element in the text
-   * @see google gson
    */
   public String toJson() {
     if (_capture == null)
@@ -180,7 +175,6 @@ public class Match {
   /**
    * Get the map representation of the matched element in the text
    *
-   * @see Map.toString();
    * @return map object from the matched element in the text
    */
   public Map<String, Object> toMap() {
@@ -199,7 +193,7 @@ public class Match {
   /**
    * Util fct
    *
-   * @return
+   * @return boolean
    */
   public Boolean isNull() {
     if (this.match == null)
@@ -211,7 +205,7 @@ public class Match {
    * Util fct
    *
    * @param s
-   * @return
+   * @return boolean
    */
   private boolean isInteger(String s) {
     try {

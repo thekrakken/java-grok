@@ -27,6 +27,7 @@ Thumbs.db
 # Gradle
 .gradle
 build/
+bin/
 
 ./target/
 ./src/main/java/com/nflabs/Grok/App.java

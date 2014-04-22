@@ -47,7 +47,7 @@ public class Pile {
    *
    * @param name of the pattern
    * @param file path
-   * @return
+   * @return success or not
    */
   public int addPattern(String name, String file) {
     if (name.isEmpty() || file.isEmpty())
@@ -80,8 +80,8 @@ public class Pile {
   /**
    * Add pattern to grok from a file
    *
-   * @param patch file
-   * @return
+   * @param file
+   * @return success or not
    */
   public int addPatternFromFile(String file) {
 

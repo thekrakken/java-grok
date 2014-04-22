@@ -28,7 +28,19 @@ import java.util.TreeMap;
 
 
 /**
- * {@code Grok} parse arbitrary text and structure it
+ * {@code Grok} parse arbitrary text and structure it.<p/>
+ *
+ * {@code Grok} is simple API that allows you to easily parse logs
+ * and other files (single line). With {@code Grok},
+ * you can turn unstructured log and event data into structured data (JSON).
+ *<p/>
+ * example:<p/>
+ * <pre>
+ *  Grok grok = Grok.create("patterns/patterns");
+ *  grok.compile("%{USER}");
+ *  Match gm = grok.match("root");
+ *  gm.captures();
+ * </pre>
  *
  * @since 0.0.1
  * @author anthonycorbacho
@@ -36,23 +48,35 @@ import java.util.TreeMap;
 @SuppressWarnings("unused")
 public class Grok {
 
-  // Public
-  public Map<String, String> patterns;
-  public String saved_pattern = StringUtils.EMPTY;
-
-  // Private
-  private Map<String, String> _captured_map;
-  // Extract string like %{Foo} => Foo
-  private java.util.regex.Pattern _PATTERN = java.util.regex.Pattern.compile("%\\{(.*?)\\}");
-  private Pattern _PATTERN_RE = Pattern.compile("%\\{" + "(?<name>" + "(?<pattern>[A-z0-9]+)"
-      + "(?::(?<subname>[A-z0-9_:]+))?" + ")" + "(?:=(?<definition>" + "(?:" + "(?:[^{}]+|\\.+)+"
-      + ")+" + ")" + ")?" + "\\}");
-  private String _expanded_pattern;
-  private String _pattern_origin;
-  private Pattern _regexp;
-  private Discovery _disco;
-
   private static final Logger LOG = LoggerFactory.getLogger(Grok.class);
+  /**
+   * Named regex of the originalGrokPattern
+   */
+  private String namedRegex;
+  /**
+   * Map of the named regex of the originalGrokPattern
+   * with id = namedregexid and value = namedregex
+   */
+  private Map<String, String> namedRegexCollection;
+  /**
+   * Original {@code Grok} pattern (expl: %{IP})
+   */
+  private String originalGrokPattern;
+  /**
+   * Pattern of the namedRegex
+   */
+  private Pattern compiledNamedRegex;
+  /**
+   * {@code Grok} discovery
+   */
+  private Discovery disco;
+  /**
+   * {@code Grok} patterns definition
+   */
+  private Map<String, String> grokPatternDefinition;
+
+  /** only use in grok discovery */
+  private String savedPattern;
 
   /**
    * Create Empty {@code Grok}
@@ -63,19 +87,28 @@ public class Grok {
    * Create a new <i>empty</i>{@code Grok} object
    */
   public Grok() {
-    _pattern_origin = StringUtils.EMPTY;
-    _disco = null;
-    _expanded_pattern = StringUtils.EMPTY;
-    _regexp = null;
-    patterns = new TreeMap<String, String>();
-    _captured_map = new TreeMap<String, String>();
+    originalGrokPattern = StringUtils.EMPTY;
+    disco = null;
+    namedRegex = StringUtils.EMPTY;
+    compiledNamedRegex = null;
+    grokPatternDefinition = new TreeMap<String, String>();
+    namedRegexCollection = new TreeMap<String, String>();
+    savedPattern = StringUtils.EMPTY;
+  }
+
+  public String getSaved_pattern() {
+    return savedPattern;
+  }
+
+  public void setSaved_pattern(String saved_pattern) {
+    this.savedPattern = saved_pattern;
   }
 
   /**
-   * Create a {@code Grok} instance with the given patterns and (this is an optional parameter)
+   * Create a {@code Grok} instance with the given patterns file and
    * a {@code Grok} pattern
    *
-   * @param grokPatternPath path to the pattern file
+   * @param grokPatternPath Path to the pattern file
    * @param grokExpression  - <b>OPTIONAL</b> - Grok pattern to compile ex: %{APACHELOG}
    * @return {@code Grok} instance
    * @throws GrokException
@@ -92,10 +125,21 @@ public class Grok {
   }
 
   /**
-   * Add a new pattern to the current {@code Grok} instance
+   * Create a {@code Grok} instance with the given grok patterns file.
    *
-   * @param Pattern Name
-   * @param Regular expression
+   * @param  grokPatternPath : Path to the pattern file
+   * @return Grok
+   * @throws GrokException
+   */
+  public static Grok create(String grokPatternPath) throws GrokException {
+    return create(grokPatternPath, null);
+  }
+
+  /**
+   * Add custom pattern to grok in the runtime
+   *
+   * @param name : Pattern Name
+   * @param pattern : Regular expression Or {@code Grok} pattern
    * @throws GrokException
    **/
   public void addPattern(String name, String pattern) throws GrokException {
@@ -103,14 +147,14 @@ public class Grok {
       throw new GrokException("Invalid Pattern");
     if (name.isEmpty() || pattern.isEmpty())
       throw new GrokException("Invalid Pattern");
-    patterns.put(name, pattern);
+    grokPatternDefinition.put(name, pattern);
   }
 
   /**
    * Copy the given Map of patterns (pattern name, regular expression) to {@code Grok}, duplicate element
-   * will be overwrite
+   * will be override
    *
-   * @param Map to copy
+   * @param cpy : Map to copy
    * @throws GrokException
    **/
   public void copyPatterns(Map<String, String> cpy) throws GrokException {
@@ -119,7 +163,7 @@ public class Grok {
     if (cpy.isEmpty())
       throw new GrokException("Invalid Patterns");
     for (Map.Entry<String, String> entry : cpy.entrySet())
-      patterns.put(entry.getKey().toString(), entry.getValue().toString());
+      grokPatternDefinition.put(entry.getKey().toString(), entry.getValue().toString());
   }
 
   /**
@@ -128,23 +172,22 @@ public class Grok {
    * @return Patterns (name, regular expression)
    */
   public Map<String, String> getPatterns() {
-    return this.patterns;
+    return grokPatternDefinition;
   }
 
   /**
-   * The representation of the regexp in {@code Grok} language
-   *
-   * @return Regexp in Grok language
-   * @see compile
+   * Get the named regex from the {@code Grok} pattern </p>
+   * See {@link #compile(String)} for more detail.
+   * @return named regex
    */
-  public String getExpandedPattern() {
-    return _expanded_pattern;
+  public String getNamedRegex() {
+    return namedRegex;
   }
 
   /**
-   * Add patterns to {@code Grok} instance from the given file
+   * Add patterns to {@code Grok} from the given file
    *
-   * @param Path of the pattern file
+   * @param file : Path of the grok pattern
    * @throws GrokException
    */
   public void addPatternFromFile(String file) throws GrokException {
@@ -170,7 +213,7 @@ public class Grok {
   /**
    * Add patterns to {@code Grok} from a Reader
    *
-   * @param Reader with {@code Grok} patterns
+   * @param r : Reader with {@code Grok} patterns
    * @throws GrokException
    */
   public void addPatternFromReader(Reader r) throws GrokException {
@@ -194,21 +237,17 @@ public class Grok {
   }
 
   /**
-   * Match the given <tt>string</tt> with the compiled pattern
-   * {@code Grok} will extract data from the string and create an extence of {@code Match}
+   * Match the given <tt>text</tt> with the named regex
+   * {@code Grok} will extract data from the string and get an extence of {@link Match}
    *
-   * @param Single line of log
+   * @param text : Single line of log
    * @return Grok Match
-   * @see Match.class
    */
   public Match match(String text) {
-
-    /** Not longer needed
-    if (_regexp == null)
-      return null;
-    */
-
-    Matcher m = _regexp.matcher(text);
+    if (compiledNamedRegex == null){
+      return Match.getInstance();
+    }
+    Matcher m = compiledNamedRegex.matcher(text);
     Match match = Match.getInstance();
     if (m.find()) {
       match.setSubject(text);
@@ -222,9 +261,9 @@ public class Grok {
   }
 
   /**
-   * Compile the regexp to {@code Grok} language
+   * Compile the {@code Grok} pattern to named regex pattern
    *
-   * @param Pattern regex
+   * @param pattern : Grok pattern (ex: %{IP})
    * @throws GrokException
    */
   public void compile(String pattern) throws GrokException {
@@ -232,8 +271,8 @@ public class Grok {
     if (StringUtils.isBlank(pattern))
       throw new GrokException("{pattern} should not be empty or null");
 
-    _expanded_pattern = pattern;
-    _pattern_origin = pattern;
+    namedRegex = pattern;
+    originalGrokPattern = pattern;
     int index = 0;
     /** flag for infinite recurtion */
     int iteration_left = 1000;
@@ -244,11 +283,11 @@ public class Grok {
     while (Continue) {
       Continue = false;
       if (iteration_left <= 0) {
-        throw new GrokException("Deep recursion pattern compilation of " + _pattern_origin);
+        throw new GrokException("Deep recursion pattern compilation of " + originalGrokPattern);
       }
       iteration_left--;
 
-      Matcher m = _PATTERN_RE.matcher(_expanded_pattern);
+      Matcher m = GrokUtils.GROK_PATTERN.matcher(namedRegex);
       // Match %{Foo:bar} -> pattern name and subname
       // Match %{Foo=regex} -> add new regex definition
       if (m.find()) {
@@ -262,72 +301,59 @@ public class Grok {
             // Log the exeception
           }
         }
-        _captured_map.put("name" + index, (group.get("subname") != null ? group.get("subname")
-            : group.get("name")));
-        _expanded_pattern =
-            StringUtils.replace(_expanded_pattern, "%{" + group.get("name") + "}", "(?<name"
-                + index + ">" + this.patterns.get(group.get("pattern")) + ")");
+        namedRegexCollection.put("name" + index, (group.get("subname") != null ? group.get("subname") : group.get("name")));
+        namedRegex = StringUtils.replace(namedRegex, "%{" + group.get("name") + "}", "(?<name" + index + ">" + grokPatternDefinition.get(group.get("pattern")) + ")");
         // System.out.println(_expanded_pattern);
         index++;
       }
     }
 
-    if (_expanded_pattern.isEmpty()) {
+    if (namedRegex.isEmpty()) {
       throw new GrokException("Pattern not fount");
     }
     // Compile the regex
-    _regexp = Pattern.compile(_expanded_pattern);
+    compiledNamedRegex = Pattern.compile(namedRegex);
   }
 
   /**
-   * {@code Grok} will try to find the best Grok expression that will match your input
+   * {@code Grok} will try to find the best expression that will match your input </p>
+   * {@link Discovery}
    *
-   * @param Single line of log
+   * @param input : Single line of log
    * @return the Grok pattern
-   * @see Discover.class
    */
   public String discover(String input) {
 
-    if (_disco == null)
-      _disco = new Discovery(this);
-    return _disco.discover(input);
+    if (disco == null)
+      disco = new Discovery(this);
+    return disco.discover(input);
   }
 
   /**
-   * Get the original patern
+   * Original grok pattern used to compile
+   * to the named regex
    *
-   * @return String of the original pattern
+   * @return String Original Grok pattern
    */
-  public String getPatern(){
-    return _pattern_origin;
+  public String getOriginalGrokPattern(){
+    return originalGrokPattern;
   }
 
   /**
-   * Get the {@code Grok} regexp from his name
+   * Get the named regex from the given id
    *
-   * @param Key
-   * @return the value
+   * @param id : named regex id
+   * @return String of the named regex
    */
-  public String capture_name(String id) {
-    return _captured_map.get(id);
+  public String getNamedRegexCollectionById(String id) {
+    return namedRegexCollection.get(id);
   }
 
   /**
-   *
-   * @return getter
+   * Get the full collection of the named regex
+   * @return named RegexCollection
    */
-  public Map<String, String> getCaptured() {
-    return _captured_map;
-  }
-
-  /**
-   ** Checkers
-   **/
-  public int isPattern() {
-    if (patterns == null)
-      return 0;
-    if (patterns.isEmpty())
-      return 0;
-    return 1;
+  public Map<String, String> getNamedRegexCollection() {
+    return namedRegexCollection;
   }
 }

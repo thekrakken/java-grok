@@ -46,9 +46,8 @@ public class Garbage {
   /**
    * Set a map of matched field to re name
    *
-   * @see rename
-   * @param original name
-   * @param new name
+   * @param key : Original field name
+   * @param value : New field name to apply
    */
   public void addToRename(String key, Object value) {
     if (key == null || value == null)
@@ -60,8 +59,7 @@ public class Garbage {
   /**
    * Set a field name to be remove from the final matched map
    *
-   * @see remove
-   * @param Name of the field to remove
+   * @param item : Name of the field to remove
    */
   public void addToRemove(String item) {
     if (item == null)
@@ -73,7 +71,6 @@ public class Garbage {
   /**
    * Set a list of field name to be remove from the final matched map
    *
-   * @see addToRemove
    * @param lst
    */
   public void addFromListRemove(List<String> lst) {
@@ -110,7 +107,6 @@ public class Garbage {
   /**
    * Rename the item from the map
    *
-   * @see addToRename
    * @param map
    * @return nb of renamed items
    */

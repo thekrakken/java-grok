@@ -49,7 +49,7 @@ public class BasicTest {
   @Test
   public void test002_complaleSuccessValidExpression() throws GrokException {
 
-    Grok g = Grok.create("patterns/patterns", null);
+    Grok g = Grok.create("patterns/patterns");
 
     List<String> regxp = new ArrayList<String>();
     regxp.add("[hello]");
@@ -64,32 +64,32 @@ public class BasicTest {
 
   @Test
   public void test003_samePattern() throws GrokException {
-    Grok g = Grok.create("patterns/patterns", null);
+    Grok g = Grok.create("patterns/patterns");
 
     String pattern = "Hello World";
     g.compile(pattern);
-    assertEquals(pattern, g.getPatern());
+    assertEquals(pattern, g.getOriginalGrokPattern());
   }
 
   @Test
   public void test004_sameExpantedPatern() throws GrokException {
-    Grok g = Grok.create("patterns/patterns", null);
+    Grok g = Grok.create("patterns/patterns");
 
     g.addPattern("test", "hello world");
     g.compile("%{test}");
-    assertEquals("(?<name0>hello world)", g.getExpandedPattern());
+    assertEquals("(?<name0>hello world)", g.getNamedRegex());
   }
-  
+
   @Test
   public void test005_testLoadPatternFromFile() throws IOException, GrokException{
     File temp = File.createTempFile("grok-tmp-pattern", ".tmp");getClass();
     BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
     bw.write("TEST \\d+");
     bw.close();
-    
-    Grok grok = Grok.create(temp.getAbsolutePath(), null);
+
+    Grok grok = Grok.create(temp.getAbsolutePath());
     grok.compile("%{TEST}");
-    assertEquals("(?<name0>\\d+)", grok.getExpandedPattern());
+    assertEquals("(?<name0>\\d+)", grok.getNamedRegex());
     temp.delete();
   }
 

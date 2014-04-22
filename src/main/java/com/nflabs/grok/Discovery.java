@@ -35,7 +35,7 @@ public class Discovery {
   /**
    * Create a new {@code Discovery} object
    *
-   * @param Grok instance
+   * @param grok
    */
   public Discovery(Grok grok) {
     _grok = grok;
@@ -54,7 +54,7 @@ public class Discovery {
     Collections.sort(groky, new Comparator<Grok>() {
 
       public int compare(Grok g1, Grok g2) {
-        return (this.complexity(g1.getExpandedPattern()) < this.complexity(g2.getExpandedPattern())) ? 1
+        return (this.complexity(g1.getNamedRegex()) < this.complexity(g2.getNamedRegex())) ? 1
             : 0;
       }
 
@@ -67,7 +67,7 @@ public class Discovery {
     });
 
     for (Grok g : groky) {
-      mGrok.put(g.saved_pattern, g);
+      mGrok.put(g.getSaved_pattern(), g);
     }
     return mGrok;
 
@@ -90,7 +90,7 @@ public class Discovery {
   /**
    * Find a pattern from a log
    *
-   * @param Single line
+   * @param text witch is the representation of your single
    * @return Grok pattern %{Foo}...
    */
   public String discover(String text) {
@@ -113,7 +113,7 @@ public class Discovery {
       // g.patterns.putAll( gPatterns );
       try {
         g.copyPatterns(gPatterns);
-        g.saved_pattern = key;
+        g.setSaved_pattern(key);
         g.compile("%{" + key + "}");
         groks.put(key, g);
       } catch (GrokException e) {
@@ -137,7 +137,7 @@ public class Discovery {
 
       // We want to search with more complex pattern
       // We avoid word, small number, space....
-      if (this.complexity(value.getExpandedPattern()) < 20)
+      if (this.complexity(value.getNamedRegex()) < 20)
         continue;
 
       Match m = value.match(text);
