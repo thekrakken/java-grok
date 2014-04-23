@@ -30,7 +30,7 @@ import java.util.Map.Entry;
  */
 public class Discovery {
 
-  private Grok _grok;
+  private Grok grok;
 
   /**
    * Create a new {@code Discovery} object
@@ -38,7 +38,7 @@ public class Discovery {
    * @param grok
    */
   public Discovery(Grok grok) {
-    _grok = grok;
+    this.grok = grok;
   }
 
   /**
@@ -98,7 +98,7 @@ public class Discovery {
       return "";
 
     Map<String, Grok> groks = new TreeMap<String, Grok>();
-    Map<String, String> gPatterns = _grok.getPatterns();
+    Map<String, String> gPatterns = grok.getPatterns();
     // Boolean done = false;
     String texte = new String(text);
 
@@ -177,6 +177,6 @@ public class Discovery {
     if (m == null || text == null)
       return "";
 
-    return text.substring(m.start, m.end);
+    return text.substring(m.getStart(), m.getEnd());
   }
 }

@@ -143,7 +143,7 @@ public class Grok {
    * @throws GrokException
    **/
   public void addPattern(String name, String pattern) throws GrokException {
-    if (name == "" || pattern == "")
+    if (name == null || pattern == null)
       throw new GrokException("Invalid Pattern");
     if (name.isEmpty() || pattern.isEmpty())
       throw new GrokException("Invalid Pattern");
@@ -244,18 +244,17 @@ public class Grok {
    * @return Grok Match
    */
   public Match match(String text) {
-    if (compiledNamedRegex == null){
+    if (compiledNamedRegex == null || text == null){
       return Match.getInstance();
     }
     Matcher m = compiledNamedRegex.matcher(text);
     Match match = Match.getInstance();
     if (m.find()) {
       match.setSubject(text);
-      match.grok = this;
-      match.match = m;
-      match.start = m.start(0);
-      match.end = m.end(0);
-      match.line = text;
+      match.setGrok(this);
+      match.setMatch(m);
+      match.setStart(m.start(0));
+      match.setEnd(m.end(0));
     }
     return match;
   }

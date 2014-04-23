@@ -3,7 +3,7 @@ package com.nflabs.grok;
 import com.google.code.regexp.Pattern;
 
 /**
- * {@code GrokUtils} contain set of usfull tools
+ * {@code GrokUtils} contain set of useful tools or methods
  *
  * @author anthonycorbacho
  * @since 0.0.6

@@ -40,7 +40,7 @@ public class GrokTest {
   private Grok g = Grok.EMPTY;
 
   @Test
-  public void test001_basic() {
+  public void test000_basic() {
     Grok g = new Grok();
     boolean thrown = false;
 
@@ -79,7 +79,7 @@ public class GrokTest {
   }
 
   @Test
-  public void test001_dummy() throws Throwable {
+  public void test000_dummy() throws Throwable {
     g.addPatternFromFile("patterns/patterns");
     boolean thrown = false;
     /** This check if grok throw */

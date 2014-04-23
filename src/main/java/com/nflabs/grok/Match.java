@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * {@code Match} is a representation in {@code Grok} world of your log
  *
@@ -33,28 +35,54 @@ import java.util.TreeMap;
  */
 public class Match {
 
-
-  public Grok grok; // current grok instance
-  public Matcher match; // regex matcher
-  public int start; // offset
-  public int end; // offset end
-  public String line; // source
-  public Garbage garbage;
-
-  private String _subject; // texte
-  private Map<String, Object> _capture;
+  private String subject; // texte
+  private Map<String, Object> capture;
+  private Garbage garbage;
+  private Grok grok;
+  private Matcher match;
+  private int start;
+  private int end;
 
   /**
    *Create a new {@code Match} object
    */
   private Match() {
-    _subject = "Nothing";
+    subject = "Nothing";
     grok = null;
     match = null;
-    _capture = new TreeMap<String, Object>();
+    capture = new TreeMap<String, Object>();
     garbage = new Garbage();
     start = 0;
     end = 0;
+  }
+
+  public void setGrok(Grok grok){
+    if(grok != null)
+      this.grok = grok;
+  }
+
+  public Matcher getMatch() {
+    return match;
+  }
+
+  public void setMatch(Matcher match) {
+    this.match = match;
+  }
+
+  public int getStart() {
+    return start;
+  }
+
+  public void setStart(int start) {
+    this.start = start;
+  }
+
+  public int getEnd() {
+    return end;
+  }
+
+  public void setEnd(int end) {
+    this.end = end;
   }
 
   /**
@@ -81,7 +109,7 @@ public class Match {
       return;
     if (text.isEmpty())
       return;
-    _subject = text;
+    subject = text;
   }
 
   /**
@@ -90,7 +118,7 @@ public class Match {
    * @return the single line of log
    */
   public String getSubject() {
-    return _subject;
+    return subject;
   }
 
   /**
@@ -100,7 +128,7 @@ public class Match {
   public void captures() {
     if (this.match == null)
       return;
-    _capture.clear();
+    capture.clear();
 
     // _capture.put("LINE", this.line);
     // _capture.put("LENGTH", this.line.length() +"");
@@ -126,7 +154,7 @@ public class Match {
           value = cleanString(pairs.getValue().toString());
       }
 
-      _capture.put(key, (Object) value);
+      capture.put(key, (Object) value);
       it.remove(); // avoids a ConcurrentModificationException
     }
   }
@@ -139,7 +167,9 @@ public class Match {
    * @return unquoted string: my/text
    */
   private String cleanString(String value) {
-    if (value == null || value.isEmpty())
+    if (value == null)
+      return value;
+    if(value.isEmpty())
       return value;
     char[] tmp = value.toCharArray();
     if ((tmp[0] == '"' && tmp[value.length() - 1] == '"')
@@ -161,14 +191,14 @@ public class Match {
    * @return Json of the matched element in the text
    */
   public String toJson() {
-    if (_capture == null)
-      return "{\"Error\":\"Error\"}";
-    if (_capture.isEmpty())
-      return "{\"Error\":\"Error\"}";;
+    if (capture == null)
+      return "{}";
+    if (capture.isEmpty())
+      return "{}";
 
     this.cleanMap();
     Gson gs = new GsonBuilder().setPrettyPrinting().create();// new Gson();
-    return gs.toJson(/* cleanMap( */_capture/* ) */);
+    return gs.toJson(/* cleanMap( */capture/* ) */);
 
   }
 
@@ -179,15 +209,15 @@ public class Match {
    */
   public Map<String, Object> toMap() {
     this.cleanMap();
-    return _capture;
+    return capture;
   }
 
   /**
    * Remove and rename the unwanted elelents in the matched map
    */
   private void cleanMap() {
-    garbage.rename(_capture);
-    garbage.remove(_capture);
+    garbage.rename(capture);
+    garbage.remove(capture);
   }
 
   /**

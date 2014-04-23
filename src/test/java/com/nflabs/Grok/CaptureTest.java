@@ -28,7 +28,7 @@ public class CaptureTest {
     grok.compile("%{foo}");
     Match m = grok.match("Hello World");
     assertEquals("(?<name0>.*)", grok.getNamedRegex());
-    assertEquals("Hello World", m.line);
+    assertEquals("Hello World", m.getSubject());
     m.captures();
     assertEquals(1, m.toMap().size());
     assertEquals("Hello World", m.toMap().get("foo"));
@@ -42,7 +42,7 @@ public class CaptureTest {
     grok.compile("%{foo} %{bar}");
     Match m = grok.match("Hello World");
     assertEquals("(?<name0>.*) (?<name1>.*)", grok.getNamedRegex());
-    assertEquals("Hello World", m.line);
+    assertEquals("Hello World", m.getSubject());
     m.captures();
     assertEquals(2, m.toMap().size());
     assertEquals("Hello", m.toMap().get("foo"));
@@ -57,7 +57,7 @@ public class CaptureTest {
     grok.compile("%{foo}");
     Match m = grok.match("Hello World");
     assertEquals("(?<name0>\\w+ (?<name1>\\w+))", grok.getNamedRegex());
-    assertEquals("Hello World", m.line);
+    assertEquals("Hello World", m.getSubject());
     m.captures();
     assertEquals(2, m.toMap().size());
     assertEquals("Hello World", m.toMap().get("foo"));

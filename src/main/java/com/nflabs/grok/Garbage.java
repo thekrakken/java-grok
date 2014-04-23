@@ -22,62 +22,63 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * The Leon the professional of {@code Grok}
+ * The Leon the professional of {@code Grok} </p>
+ * Garbage is use by grok to remove or rename elements before getting the final output
  *
  * @author anthonycorbacho
  * @since 0.0.2
  */
 public class Garbage {
 
-  private List<String> _remove;
-  private Map<String, Object> _rename;
+  private List<String> toRemove;
+  private Map<String, Object> toRename;
 
   /**
    * Create a new {@code Garbage} object
    */
   public Garbage() {
 
-    _remove = new ArrayList<String>();
-    _rename = new TreeMap<String, Object>();
-    _remove.add("UNWANTED");
-
+    toRemove = new ArrayList<String>();
+    toRename = new TreeMap<String, Object>();
+    /** this is a default value to remove */
+    toRemove.add("UNWANTED");
   }
 
   /**
-   * Set a map of matched field to re name
+   * Set a new name to be change when exporting the final output
    *
-   * @param key : Original field name
+   * @param origin: original field name
    * @param value : New field name to apply
    */
-  public void addToRename(String key, Object value) {
-    if (key == null || value == null)
+  public void addToRename(String origin, Object value) {
+    if (origin == null || value == null)
       return;
-    if (!key.isEmpty() && !value.toString().isEmpty())
-      _rename.put(key, value);
+    if (!origin.isEmpty() && !value.toString().isEmpty())
+      toRename.put(origin, value);
   }
 
   /**
-   * Set a field name to be remove from the final matched map
+   * Set a field to be remove when exporting the final output
    *
-   * @param item : Name of the field to remove
+   * @param name of the field to remove
    */
-  public void addToRemove(String item) {
-    if (item == null)
+  public void addToRemove(String name) {
+    if (name == null)
       return;
-    if (!item.isEmpty())
-      _remove.add(item);
+    if (!name.isEmpty())
+      toRemove.add(name);
   }
 
   /**
-   * Set a list of field name to be remove from the final matched map
+   * Set a list of field name to be remove when exporting the final output
    *
    * @param lst
    */
-  public void addFromListRemove(List<String> lst) {
+  public void addToRemove(List<String> lst) {
     if (lst == null)
       return;
     if (!lst.isEmpty())
-      _remove.addAll(lst);
+      toRemove.addAll(lst);
   }
 
   /**
@@ -90,13 +91,13 @@ public class Garbage {
     int item = 0;
 
     if (map == null)
-      return -1;
+      return item;
     if (map.isEmpty())
-      return -1;
+      return item;
     for (Iterator<Map.Entry<String, Object>> it = map.entrySet().iterator(); it.hasNext();) {
       Map.Entry<String, Object> entry = it.next();
-      for (int i = 0; i < _remove.size(); i++)
-        if (entry.getKey().equals(_remove.get(i))) {
+      for (int i = 0; i < toRemove.size(); i++)
+        if (entry.getKey().equals(toRemove.get(i))) {
           it.remove();
           item++;
         }
@@ -114,11 +115,11 @@ public class Garbage {
     int item = 0;
 
     if (map == null)
-      return -1;
-    if (map.isEmpty() || _rename.isEmpty())
-      return -1;
+      return item;
+    if (map.isEmpty() || toRename.isEmpty())
+      return item;
 
-    for (Iterator<Map.Entry<String, Object>> it = _rename.entrySet().iterator(); it.hasNext();) {
+    for (Iterator<Map.Entry<String, Object>> it = toRename.entrySet().iterator(); it.hasNext();) {
       Map.Entry<String, Object> entry = it.next();
       if (map.containsKey(entry.getKey())) {
         Object obj = map.remove(entry.getKey());
