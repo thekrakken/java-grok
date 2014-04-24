@@ -37,7 +37,7 @@
   <scm>
     <connection>scm:git:git@github.com:thekrakken/java-grok.git</connection>
     <developerConnection>scm:git:git@github.com:thekrakken/java-grok.git</developerConnection>
-    <url>https://github.com/thekrakken/java-grok</url>
+    <url>scm:git:git@github.com:thekrakken/java-grok.git</url>
   </scm>
 
   <issueManagement>
