@@ -35,14 +35,14 @@
   </developers>
 
   <scm>
-    <connection>scm:git:https://github.com/NFLabs/java-grok.git</connection>
-    <developerConnection>scm:git:https://github.com/NFLabs/java-grok.git</developerConnection>
-    <url>https://github.com/NFLabs/java-grok</url>
+    <connection>scm:git:git@github.com:thekrakken/java-grok.git</connection>
+    <developerConnection>scm:git:git@github.com:thekrakken/java-grok.git</developerConnection>
+    <url>https://github.com/thekrakken/java-grok</url>
   </scm>
 
   <issueManagement>
     <system>GitHub</system>
-    <url>https://github.com/NFLabs/java-grok/issues</url>
+    <url>https://github.com/thekrakken/java-grok/issues</url>
   </issueManagement>
 
   <properties>
