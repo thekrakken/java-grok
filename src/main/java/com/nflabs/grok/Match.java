@@ -199,7 +199,31 @@ public class Match {
     this.cleanMap();
     Gson gs = new GsonBuilder().setPrettyPrinting().create();// new Gson();
     return gs.toJson(/* cleanMap( */capture/* ) */);
+  }
 
+  /**
+   * Get the json representation of the matched element
+   * <p>
+   * example:
+   * map [ {IP: 127.0.0.1}, {status:200}]
+   * will return
+   * {"IP":"127.0.0.1", "status":200}
+   * </p>
+   *
+   * @param pretty : pretty output
+   * @return Json of the matched element in the text
+   */
+  public String toJson(Boolean pretty) {
+    if(pretty){
+     return toJson();
+    }
+    if (capture == null)
+      return "{}";
+    if (capture.isEmpty())
+      return "{}";
+    this.cleanMap();
+    Gson gs = new GsonBuilder().create();;
+    return gs.toJson(capture);
   }
 
   /**
