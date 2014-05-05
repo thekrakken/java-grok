@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * {@code Match} is a representation in {@code Grok} world of your log
  *

@@ -81,7 +81,7 @@ public class Grok {
   /**
    * Create Empty {@code Grok}
    */
-  public static Grok EMPTY = new Grok();
+  public static final Grok EMPTY = new Grok();
 
   /**
    * Create a new <i>empty</i>{@code Grok} object
