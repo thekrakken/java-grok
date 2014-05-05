@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.nflabs</groupId>
+  <groupId>io.thekraken.grok.api</groupId>
   <artifactId>grok</artifactId>
   <version>0.0.7-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>Grok</name>
-  <description>Grok pattern for java</description>
+  <description>Simple API that allows you to easily parse logs and other files</description>
   <url>http://maven.apache.org</url>
 
   <parent>

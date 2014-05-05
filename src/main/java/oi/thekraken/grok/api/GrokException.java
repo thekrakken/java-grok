@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.nflabs.grok;
+package oi.thekraken.grok.api;
 
 /**
  * Signals that an {@code Grok} exception of some sort has occurred. This class is the general class of

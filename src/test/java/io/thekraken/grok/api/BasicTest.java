@@ -1,4 +1,4 @@
-package com.nflabs.Grok;
+package io.thekraken.grok.api;
 
 import static org.junit.Assert.*;
 
@@ -10,12 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
+import oi.thekraken.grok.api.Grok;
+import oi.thekraken.grok.api.GrokException;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import com.nflabs.grok.Grok;
-import com.nflabs.grok.GrokException;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BasicTest {

@@ -1,4 +1,4 @@
-package com.nflabs.Grok;
+package io.thekraken.grok.api;
 
 import static org.junit.Assert.*;
 
@@ -6,11 +6,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+import oi.thekraken.grok.api.Grok;
+import oi.thekraken.grok.api.GrokException;
+import oi.thekraken.grok.api.Match;
+
 import org.junit.Test;
 
-import com.nflabs.grok.Grok;
-import com.nflabs.grok.GrokException;
-import com.nflabs.grok.Match;
 
 public class MessagesTest {
 
