@@ -25,11 +25,11 @@
 
   <developers>
     <developer>
-      <id>antnonycorbacho</id>
+      <id>anthony-corbacho</id>
       <name>Anthony Corbacho</name>
-      <email>acorbacho@nflabs.com</email>
-      <organization>NFLabs</organization>
-      <organizationUrl>http://www.nflabs.com</organizationUrl>
+      <email>corbacho.anthony@gmail.com</email>
+      <organization>Thekraken</organization>
+      <organizationUrl>http://release.thekraken.io</organizationUrl>
       <url>https://github.com/anthonycorbacho</url>
     </developer>
   </developers>
@@ -40,8 +40,13 @@
     <url>scm:git:git@github.com:thekrakken/java-grok.git</url>
   </scm>
 
+  <ciManagement>
+    <system>Travis</system>
+  	<url>https://travis-ci.org/thekrakken/java-grok</url>
+  </ciManagement>
+
   <issueManagement>
-    <system>GitHub</system>
+    <system>Github</system>
     <url>https://github.com/thekrakken/java-grok/issues</url>
   </issueManagement>
 
