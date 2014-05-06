@@ -17,6 +17,9 @@ package oi.thekraken.grok.api;
 
 import com.google.code.regexp.Matcher;
 import com.google.code.regexp.Pattern;
+
+import oi.thekraken.grok.api.exception.GrokException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +48,6 @@ import java.util.TreeMap;
  * @since 0.0.1
  * @author anthonycorbacho
  */
-@SuppressWarnings("unused")
 public class Grok {
 
   private static final Logger LOG = LoggerFactory.getLogger(Grok.class);

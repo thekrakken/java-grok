@@ -18,6 +18,8 @@ package oi.thekraken.grok.api;
 import java.io.File;
 import java.util.*;
 
+import oi.thekraken.grok.api.exception.GrokError;
+
 /**
  * Set of Groks instance
  *

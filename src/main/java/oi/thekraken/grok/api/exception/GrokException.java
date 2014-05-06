@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package oi.thekraken.grok.api;
+package oi.thekraken.grok.api.exception;
 
 /**
  * Signals that an {@code Grok} exception of some sort has occurred. This class is the general class of
