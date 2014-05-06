@@ -7,8 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import oi.thekraken.grok.api.Grok;
-import oi.thekraken.grok.api.GrokException;
 import oi.thekraken.grok.api.Match;
+import oi.thekraken.grok.api.exception.GrokException;
 
 import org.junit.Test;
 

@@ -3,8 +3,8 @@ package io.thekraken.grok.api;
 import static org.junit.Assert.*;
 
 import oi.thekraken.grok.api.Grok;
-import oi.thekraken.grok.api.GrokException;
 import oi.thekraken.grok.api.Match;
+import oi.thekraken.grok.api.exception.GrokException;
 
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;

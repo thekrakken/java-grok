@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import oi.thekraken.grok.api.Grok;
-import oi.thekraken.grok.api.GrokException;
 import oi.thekraken.grok.api.Match;
+import oi.thekraken.grok.api.exception.GrokException;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
