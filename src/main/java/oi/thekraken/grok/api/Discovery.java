@@ -111,7 +111,7 @@ public class Discovery {
     Map<String, Grok> groks = new TreeMap<String, Grok>();
     Map<String, String> gPatterns = grok.getPatterns();
     // Boolean done = false;
-    String texte = new String(text);
+    String texte = text;
 
     // Compile the pattern
     Iterator<Entry<String, String>> it = gPatterns.entrySet().iterator();

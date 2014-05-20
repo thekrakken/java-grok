@@ -217,15 +217,22 @@ public class Grok {
       throw new GrokException("Pattern cannot be read");
     }
 
-    FileReader r;
+    FileReader r = null;
     try {
       r = new FileReader(f);
       addPatternFromReader(r);
-      r.close();
     } catch (FileNotFoundException e) {
       throw new GrokException(e.getMessage());
-    } catch (IOException e) {
+    } catch (@SuppressWarnings("hiding") IOException e) {
       throw new GrokException(e.getMessage());
+    } finally {
+      try {
+        if (r != null) {
+          r.close();
+        }
+      } catch (IOException io) {
+        // TODO(anthony) : log the error
+      }
     }
   }
 

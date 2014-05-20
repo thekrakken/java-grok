@@ -1,6 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'checkstyle'
+apply plugin: "findbugs"
 
 sourceCompatibility = JavaVersion.VERSION_1_6
 version = '0.0.9'
@@ -60,4 +61,19 @@ checkstyleReport << {
   final output = "$buildDir/reports/checkstyle/${project.checkType}.html"
   println("HTML report can be found at: " + output)
   ant.xslt(in: source, style: xls, out: output)
+}
+
+findbugs {
+  ignoreFailures = true
+  toolVersion = "2.0.1"
+  sourceSets = [sourceSets.main]
+  reportsDir = file("$project.buildDir/reports/findbugs")
+  effort = "max"
+}
+
+findbugsMain {
+  reports {
+    xml.enabled = false
+    html.enabled = true
+  }
 }
