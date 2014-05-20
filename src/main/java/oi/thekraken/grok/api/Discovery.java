@@ -15,18 +15,25 @@
  *******************************************************************************/
 package oi.thekraken.grok.api;
 
-import com.google.code.regexp.Matcher;
-import com.google.code.regexp.Pattern;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import oi.thekraken.grok.api.exception.GrokException;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
-import java.util.Map.Entry;
+import com.google.code.regexp.Matcher;
+import com.google.code.regexp.Pattern;
 
 /**
- * {@code Discovery} try to find the best pattern for the given string
+ * {@code Discovery} try to find the best pattern for the given string.
  *
  * @author anthonycorbacho
  * @since 0.0.2
@@ -36,7 +43,7 @@ public class Discovery {
   private Grok grok;
 
   /**
-   * Create a new {@code Discovery} object
+   * Create a new {@code Discovery} object.
    *
    * @param grok
    */
@@ -45,12 +52,12 @@ public class Discovery {
   }
 
   /**
-   * Sort by regex complexity
+   * Sort by regex complexity.
    *
    * @param Map of the pattern name and grok instance
    * @return the map sorted by grok pattern complexity
    */
-  private Map<String, Grok> Sort(Map<String, Grok> groks) {
+  private Map<String, Grok> sort(Map<String, Grok> groks) {
 
     List<Grok> groky = new ArrayList<Grok>(groks.values());
     Map<String, Grok> mGrok = new LinkedHashMap<String, Grok>();
@@ -91,14 +98,15 @@ public class Discovery {
   }
 
   /**
-   * Find a pattern from a log
+   * Find a pattern from a log.
    *
    * @param text witch is the representation of your single
    * @return Grok pattern %{Foo}...
    */
   public String discover(String text) {
-    if (text == null)
+    if (text == null) {
       return "";
+    }
 
     Map<String, Grok> groks = new TreeMap<String, Grok>();
     Map<String, String> gPatterns = grok.getPatterns();
@@ -127,7 +135,7 @@ public class Discovery {
     }
 
     // Sort patterns by complexity
-    Map<String, Grok> patterns = this.Sort(groks);
+    Map<String, Grok> patterns = this.sort(groks);
 
     // while (!done){
     // done = true;
@@ -140,27 +148,31 @@ public class Discovery {
 
       // We want to search with more complex pattern
       // We avoid word, small number, space....
-      if (this.complexity(value.getNamedRegex()) < 20)
+      if (this.complexity(value.getNamedRegex()) < 20) {
         continue;
+      }
 
       Match m = value.match(text);
-      if (m.isNull())
+      if (m.isNull()) {
         continue;
+      }
       // get the part of the matched text
       String part = getPart(m, text);
 
       // we skip boundary word
-      Pattern MY_PATTERN = Pattern.compile(".\\b.");
-      Matcher ma = MY_PATTERN.matcher(part);
-      if (!ma.find())
+      Pattern pattern = Pattern.compile(".\\b.");
+      Matcher ma = pattern.matcher(part);
+      if (!ma.find()) {
         continue;
+      }
 
       // We skip the part that already include %{Foo}
-      Pattern MY_PATTERN2 = Pattern.compile("%\\{[^}+]\\}");
-      Matcher ma2 = MY_PATTERN2.matcher(part);
+      Pattern pattern2 = Pattern.compile("%\\{[^}+]\\}");
+      Matcher ma2 = pattern2.matcher(part);
 
-      if (ma2.find())
+      if (ma2.find()) {
         continue;
+      }
       texte = StringUtils.replace(texte, part, "%{" + key + "}");
     }
     // }
@@ -169,7 +181,7 @@ public class Discovery {
   }
 
   /**
-   * Get the substring that match with the text
+   * Get the substring that match with the text.
    *
    * @param Grok Match
    * @param texte
@@ -177,8 +189,9 @@ public class Discovery {
    */
   private String getPart(Match m, String text) {
 
-    if (m == null || text == null)
+    if (m == null || text == null) {
       return "";
+    }
 
     return text.substring(m.getStart(), m.getEnd());
   }

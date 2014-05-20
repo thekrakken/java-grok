@@ -16,17 +16,17 @@
 package oi.thekraken.grok.api;
 
 
-import com.google.code.regexp.Matcher;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import com.google.code.regexp.Matcher;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 /**
- * {@code Match} is a representation in {@code Grok} world of your log
+ * {@code Match} is a representation in {@code Grok} world of your log.
  *
  * @author anthonycorbacho
  * @since 0.0.1
@@ -42,7 +42,7 @@ public class Match {
   private int end;
 
   /**
-   *Create a new {@code Match} object
+   *Create a new {@code Match} object.
    */
   private Match() {
     subject = "Nothing";
@@ -55,8 +55,9 @@ public class Match {
   }
 
   public void setGrok(Grok grok){
-    if(grok != null)
+    if (grok != null) {
       this.grok = grok;
+    }
   }
 
   public Matcher getMatch() {
@@ -84,7 +85,7 @@ public class Match {
   }
 
   /**
-   * Singleton
+   * Singleton.
    *
    * @return instance of Match
    */
@@ -98,20 +99,22 @@ public class Match {
 
 
   /**
-   *  Set the single line of log to parse
+   *  Set the single line of log to parse.
    *
    * @param text : single line of log
    */
   public void setSubject(String text) {
-    if (text == null)
+    if (text == null) {
       return;
-    if (text.isEmpty())
+    }
+    if (text.isEmpty()) {
       return;
+    }
     subject = text;
   }
 
   /**
-   * Retrurn the single line of log
+   * Retrurn the single line of log.
    *
    * @return the single line of log
    */
@@ -120,12 +123,13 @@ public class Match {
   }
 
   /**
-   * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map
+   * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map.
    *
    */
   public void captures() {
-    if (this.match == null)
+    if (this.match == null) {
       return;
+    }
     capture.clear();
 
     // _capture.put("LINE", this.line);
@@ -146,10 +150,11 @@ public class Match {
       }
       if (pairs.getValue() != null) {
         value = pairs.getValue().toString();
-        if (this.isInteger(value.toString()))
+        if (this.isInteger(value.toString())) {
           value = Integer.parseInt(value.toString());
-        else
+        } else {
           value = cleanString(pairs.getValue().toString());
+        }
       }
 
       capture.put(key, (Object) value);
@@ -159,26 +164,29 @@ public class Match {
 
 
   /**
-   * remove from the string the quote and double quote
+   * remove from the string the quote and double quote.
    *
    * @param string to pure: "my/text"
    * @return unquoted string: my/text
    */
   private String cleanString(String value) {
-    if (value == null)
+    if (value == null) {
       return value;
-    if(value.isEmpty())
+    }
+    if (value.isEmpty()) {
       return value;
+    }
     char[] tmp = value.toCharArray();
     if ((tmp[0] == '"' && tmp[value.length() - 1] == '"')
-        || (tmp[0] == '\'' && tmp[value.length() - 1] == '\''))
+        || (tmp[0] == '\'' && tmp[value.length() - 1] == '\'')) {
       value = value.substring(1, value.length() - 1);
+    }
     return value;
   }
 
 
   /**
-   * Get the json representation of the matched element
+   * Get the json representation of the matched element.
    * <p>
    * example:
    * map [ {IP: 127.0.0.1}, {status:200}]
@@ -190,15 +198,17 @@ public class Match {
    * @return Json of the matched element in the text
    */
   public String toJson(Boolean pretty) {
-    if (capture == null)
+    if (capture == null) {
       return "{}";
-    if (capture.isEmpty())
+    }
+    if (capture.isEmpty()) {
       return "{}";
+    }
 
     this.cleanMap();
     Gson gs;
-    if(pretty){
-     gs = new GsonBuilder().setPrettyPrinting().create();// new Gson();
+    if (pretty) {
+     gs = new GsonBuilder().setPrettyPrinting().create();
     } else {
       gs = new Gson();
     }
@@ -206,7 +216,7 @@ public class Match {
   }
 
   /**
-   * Get the json representation of the matched element
+   * Get the json representation of the matched element.
    * <p>
    * example:
    * map [ {IP: 127.0.0.1}, {status:200}]
@@ -221,7 +231,7 @@ public class Match {
   }
 
   /**
-   * Get the map representation of the matched element in the text
+   * Get the map representation of the matched element in the text.
    *
    * @return map object from the matched element in the text
    */
@@ -231,7 +241,7 @@ public class Match {
   }
 
   /**
-   * Remove and rename the unwanted elelents in the matched map
+   * Remove and rename the unwanted elelents in the matched map.
    */
   private void cleanMap() {
     garbage.rename(capture);
@@ -239,18 +249,19 @@ public class Match {
   }
 
   /**
-   * Util fct
+   * Util fct.
    *
    * @return boolean
    */
   public Boolean isNull() {
-    if (this.match == null)
+    if (this.match == null) {
       return true;
+    }
     return false;
   }
 
   /**
-   * Util fct
+   * Util fct.
    *
    * @param s
    * @return boolean

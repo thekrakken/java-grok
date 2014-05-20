@@ -16,7 +16,8 @@
 package oi.thekraken.grok.api.exception;
 
 /**
- * Signals that an {@code Grok} exception of some sort has occurred. This class is the general class of
+ * Signals that an {@code Grok} exception of some sort has occurred.
+ * This class is the general class of
  * exceptions produced by failed or interrupted Grok operations.
  *
  * @author anthonycorbacho

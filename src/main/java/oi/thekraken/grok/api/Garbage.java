@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * The Leon the professional of {@code Grok} </p>
+ * The Leon the professional of {@code Grok}. <p></p>
  * Garbage is use by grok to remove or rename elements before getting the final output
  *
  * @author anthonycorbacho
@@ -34,7 +34,7 @@ public class Garbage {
   private Map<String, Object> toRename;
 
   /**
-   * Create a new {@code Garbage} object
+   * Create a new {@code Garbage} object.
    */
   public Garbage() {
 
@@ -45,44 +45,53 @@ public class Garbage {
   }
 
   /**
-   * Set a new name to be change when exporting the final output
+   * Set a new name to be change when exporting the final output.
    *
-   * @param origin: original field name
+   * @param origin : original field name
    * @param value : New field name to apply
    */
   public void addToRename(String origin, Object value) {
-    if (origin == null || value == null)
+    if (origin == null || value == null) {
       return;
-    if (!origin.isEmpty() && !value.toString().isEmpty())
+    }
+
+    if (!origin.isEmpty() && !value.toString().isEmpty()) {
       toRename.put(origin, value);
+    }
   }
 
   /**
-   * Set a field to be remove when exporting the final output
+   * Set a field to be remove when exporting the final output.
    *
    * @param name of the field to remove
    */
   public void addToRemove(String name) {
-    if (name == null)
+    if (name == null) {
       return;
-    if (!name.isEmpty())
+    }
+
+    if (!name.isEmpty()) {
       toRemove.add(name);
+    }
   }
 
   /**
-   * Set a list of field name to be remove when exporting the final output
+   * Set a list of field name to be remove when exporting the final output.
    *
    * @param lst
    */
   public void addToRemove(List<String> lst) {
-    if (lst == null)
+    if (lst == null) {
       return;
-    if (!lst.isEmpty())
+    }
+
+    if (!lst.isEmpty()) {
       toRemove.addAll(lst);
+    }
   }
 
   /**
-   * Remove from the map the unwilling items
+   * Remove from the map the unwilling items.
    *
    * @param map to clean
    * @return nb of deleted item
@@ -90,23 +99,28 @@ public class Garbage {
   public int remove(Map<String, Object> map) {
     int item = 0;
 
-    if (map == null)
+    if (map == null) {
       return item;
-    if (map.isEmpty())
+    }
+
+    if (map.isEmpty()) {
       return item;
+    }
+
     for (Iterator<Map.Entry<String, Object>> it = map.entrySet().iterator(); it.hasNext();) {
       Map.Entry<String, Object> entry = it.next();
-      for (int i = 0; i < toRemove.size(); i++)
+      for (int i = 0; i < toRemove.size(); i++) {
         if (entry.getKey().equals(toRemove.get(i))) {
           it.remove();
           item++;
         }
+      }
     }
     return item;
   }
 
   /**
-   * Rename the item from the map
+   * Rename the item from the map.
    *
    * @param map
    * @return nb of renamed items
@@ -114,10 +128,13 @@ public class Garbage {
   public int rename(Map<String, Object> map) {
     int item = 0;
 
-    if (map == null)
+    if (map == null) {
       return item;
-    if (map.isEmpty() || toRename.isEmpty())
+    }
+
+    if (map.isEmpty() || toRename.isEmpty()) {
       return item;
+    }
 
     for (Iterator<Map.Entry<String, Object>> it = toRename.entrySet().iterator(); it.hasNext();) {
       Map.Entry<String, Object> entry = it.next();
