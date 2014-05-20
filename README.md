@@ -21,7 +21,7 @@ Java Grok is simple API that allows you to easily parse logs and other files (si
 	</dependency>
 
 Or with gradle
-   	
+
 	compile "com.nflabs:grok:0.0.8"
 
 ### Usage ([Grok java documentation](http://grok.nflabs.com/javadoc))
@@ -29,17 +29,17 @@ Example of how to use java-grok:
 
     /** Create a new grok instance */
     Grok grok = Grok.create("patterns/patterns");
-    
+
     /** Grok pattern to compile, here httpd logs */
     grok.compile("%{COMBINEDAPACHELOG}");
-    
+
     /** Line of log to match */
-    String log = 
+    String log =
     "112.169.19.192 - - [06/Mar/2013:01:36:30 +0900] \"GET / HTTP/1.1\" 200 44346 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22\""
-    
+
     Match gm = grok.match(log);
     gm.captures();
-    
+
     /** Get the output */
     System.out.println(gm.toJson());
 
@@ -47,7 +47,7 @@ Example of how to use java-grok:
 
 Java Grok support Maven and Gradle
  1. Maven ``mvn package``.
- 2. Gradle ``gradle build``, If you dont have gradle installed you can use ``./gradlew build``.	
+ 2. Gradle ``gradle build``, If you dont have gradle installed you can use ``./gradlew build``.
 
 ### Getting help
 Maintainer: [@anthonycorbacho](https://github.com/anthonycorbacho)
@@ -55,6 +55,7 @@ Maintainer: [@anthonycorbacho](https://github.com/anthonycorbacho)
 ### Thankx to
  * [@wouterdb](https://github.com/wouterdb)
  * [@Leemoonsoo](https://github.com/Leemoonsoo)
- 
+
 **Any contributions are warmly welcome**
 
+Grok is inspired by the logstash inteceptor or filter available [here](http://logstash.net/docs/1.4.1/filters/grok)

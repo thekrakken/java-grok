@@ -1,3 +1,5 @@
+# Forked from https://github.com/elasticsearch/logstash/tree/v1.4.0/patterns
+
 USERNAME [a-zA-Z0-9._-]+
 USER %{USERNAME:UNWANTED}
 INT (?:[+-]?(?:[0-9]+))
