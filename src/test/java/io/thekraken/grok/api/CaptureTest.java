@@ -1,15 +1,16 @@
-package com.nflabs.Grok;
+package io.thekraken.grok.api;
 
 import static org.junit.Assert.*;
+
+import oi.thekraken.grok.api.Grok;
+import oi.thekraken.grok.api.Match;
+import oi.thekraken.grok.api.exception.GrokException;
 
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import com.nflabs.grok.Grok;
-import com.nflabs.grok.GrokException;
-import com.nflabs.grok.Match;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CaptureTest {

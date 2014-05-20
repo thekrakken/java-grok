@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.nflabs.grok;
+package oi.thekraken.grok.api;
 
 import com.google.code.regexp.Matcher;
 import com.google.code.regexp.Pattern;
+
+import oi.thekraken.grok.api.exception.GrokException;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;

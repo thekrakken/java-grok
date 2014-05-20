@@ -1,4 +1,4 @@
-package com.nflabs.grok;
+package oi.thekraken.grok.api;
 
 import com.google.code.regexp.Pattern;
 

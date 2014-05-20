@@ -13,16 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.nflabs.grok;
+package oi.thekraken.grok.api;
 
 import com.google.code.regexp.Matcher;
 import com.google.code.regexp.Pattern;
+
+import oi.thekraken.grok.api.exception.GrokException;
+
 import org.apache.commons.lang3.StringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -45,7 +56,6 @@ import java.util.TreeMap;
  * @since 0.0.1
  * @author anthonycorbacho
  */
-@SuppressWarnings("unused")
 public class Grok {
 
   private static final Logger LOG = LoggerFactory.getLogger(Grok.class);
@@ -81,7 +91,7 @@ public class Grok {
   /**
    * Create Empty {@code Grok}
    */
-  public static Grok EMPTY = new Grok();
+  public static final Grok EMPTY = new Grok();
 
   /**
    * Create a new <i>empty</i>{@code Grok} object
@@ -236,6 +246,36 @@ public class Grok {
 
   }
 
+  /**
+   * Match the given <tt>log</tt> with the named regex
+   * and return the json representation of the matched element
+   * 
+   * @param log : log to match
+   * @return json representation og the log
+   */
+  public String capture(String log){
+    Match match = match(log);
+    match.captures();
+    return match.toJson();
+  }
+  
+  /**
+   * Match the given list of <tt>log</tt> with the named regex
+   * and return the list of json representation of the matched elements
+   * 
+   * @param logs: list of log
+   * @return list of json representation of the log
+   */
+  public List<String> captures(List<String> logs){ 
+    List<String> matched = new ArrayList<String>();
+    for (String log : logs) {
+      Match match = match(log);
+      match.captures();
+      matched.add(match.toJson());
+    }
+    return matched;
+  }
+  
   /**
    * Match the given <tt>text</tt> with the named regex
    * {@code Grok} will extract data from the string and get an extence of {@link Match}
