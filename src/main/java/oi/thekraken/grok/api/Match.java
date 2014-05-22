@@ -41,6 +41,9 @@ public class Match {
   private int start;
   private int end;
   
+  /**
+   * For thread safety
+   */
   private static ThreadLocal<Match> matchHolder = new ThreadLocal<Match>() {
 	  @Override
 	  protected Match initialValue() {
