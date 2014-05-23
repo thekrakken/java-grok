@@ -53,6 +53,7 @@ Java Grok support Maven and Gradle
 Maintainer: [@anthonycorbacho](https://github.com/anthonycorbacho)
 
 ### Thankx to
+ * [@nokk](https://github.com/nokk)
  * [@wouterdb](https://github.com/wouterdb)
  * [@Leemoonsoo](https://github.com/Leemoonsoo)
 
