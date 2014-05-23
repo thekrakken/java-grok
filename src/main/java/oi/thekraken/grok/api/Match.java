@@ -40,6 +40,16 @@ public class Match {
   private Matcher match;
   private int start;
   private int end;
+  
+  /**
+   * For thread safety
+   */
+  private static ThreadLocal<Match> matchHolder = new ThreadLocal<Match>() {
+	  @Override
+	  protected Match initialValue() {
+		  return new Match();
+	  }
+  };
 
   /**
    *Create a new {@code Match} object.
@@ -90,13 +100,8 @@ public class Match {
    * @return instance of Match
    */
   public static Match getInstance() {
-    return MatchHolder.INSTANCE;
+	 return matchHolder.get();
   }
-
-  private static class MatchHolder {
-    private static final Match INSTANCE = new Match();
-  }
-
 
   /**
    *  Set the single line of log to parse.
