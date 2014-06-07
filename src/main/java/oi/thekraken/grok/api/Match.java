@@ -137,7 +137,7 @@ public class Match {
    *
    */
   public void captures() {
-    if (this.match == null) {
+    if (match == null) {
       return;
     }
     capture.clear();

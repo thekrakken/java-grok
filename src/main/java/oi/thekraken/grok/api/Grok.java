@@ -301,12 +301,12 @@ public class Grok {
    * @return Grok Match
    */
   public Match match(String text) {
-    if (compiledNamedRegex == null ||StringUtils.isBlank(text)) {
+    if (compiledNamedRegex == null || StringUtils.isBlank(text)) {
       return Match.EMPTY;
     }
 
     Matcher m = compiledNamedRegex.matcher(text);
-    Match match = Match.getInstance();
+    Match match = new Match();
     if (m.find()) {
       match.setSubject(text);
       match.setGrok(this);
