@@ -4,7 +4,7 @@ apply plugin: 'checkstyle'
 apply plugin: "findbugs"
 
 sourceCompatibility = JavaVersion.VERSION_1_6
-version = '0.0.9'
+version = '0.1.0'
 
 task wrapper(type: Wrapper) {
   gradleVersion = '1.10'

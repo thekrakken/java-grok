@@ -17,12 +17,12 @@ Java Grok is simple API that allows you to easily parse logs and other files (si
     <dependency>
       <groupId>io.thekraken</groupId>
 	  <artifactId>grok</artifactId>
-	  <version>0.0.9</version>
+	  <version>0.1.0</version>
 	</dependency>
 
 Or with gradle
 
-	compile "com.nflabs:grok:0.0.9"
+	compile "com.nflabs:grok:0.1.0"
 
 ### Usage ([Grok java documentation](http://grok.nflabs.com/javadoc))
 Example of how to use java-grok:
