@@ -27,14 +27,14 @@ For **MAVEN** project: Add to your `pom.xml`
 <dependency>
   <groupId>com.nflabs</groupId>
   <artifactId>grok</artifactId>
-  <version>0.0.5</version>
+  <version>0.1.0</version>
 </dependency>
 ```
 
 For **GRADLE** project: Add to your `build.gradle`
 
 ```java
-  compile "com.nflabs:grok:0.0.5"
+  compile "com.nflabs:grok:0.1.0"
 ```
 
 ### Build Java Grok
