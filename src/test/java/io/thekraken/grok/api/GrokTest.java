@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -500,6 +501,31 @@ public class GrokTest {
       assertNotNull(m.toMap().get("URIPROTO"));
       i++;
     }
+  }
+
+  @Test
+  public void test017_nonMachingList() throws GrokException {
+    Grok grok = Grok.create("patterns/patterns", "%{URI}");
+
+    String[] array =
+        {
+        "http://www.google.com",
+        "telnet://helloworld",
+        "",
+        "svn+ssh://somehost:12345/testing"
+        };
+    List<String> uris = new ArrayList<String>(Arrays.asList(array));
+    int i = 0;
+    for (String uri : uris) {
+      Match m = grok.match(uri);
+      m.captures();
+      assertNotNull(m.toMap());
+      if (i == 2) {
+        assertEquals(Collections.EMPTY_MAP, m.toMap());
+      }
+      i++;
+    }
+    assertEquals(i, 4);
   }
 
 }

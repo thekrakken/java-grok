@@ -40,7 +40,7 @@ public class Match {
   private Matcher match;
   private int start;
   private int end;
-  
+
   /**
    * For thread safety
    */
@@ -54,7 +54,7 @@ public class Match {
   /**
    *Create a new {@code Match} object.
    */
-  private Match() {
+  public Match() {
     subject = "Nothing";
     grok = null;
     match = null;
@@ -63,6 +63,11 @@ public class Match {
     start = 0;
     end = 0;
   }
+
+  /**
+   * Create Empty grok matcher
+   */
+  public static final Match EMPTY = new Match();
 
   public void setGrok(Grok grok){
     if (grok != null) {

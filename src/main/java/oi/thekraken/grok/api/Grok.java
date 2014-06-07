@@ -301,9 +301,10 @@ public class Grok {
    * @return Grok Match
    */
   public Match match(String text) {
-    if (compiledNamedRegex == null || text == null) {
-      return Match.getInstance();
+    if (compiledNamedRegex == null ||StringUtils.isBlank(text)) {
+      return Match.EMPTY;
     }
+
     Matcher m = compiledNamedRegex.matcher(text);
     Match match = Match.getInstance();
     if (m.find()) {
