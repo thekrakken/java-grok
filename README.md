@@ -1,4 +1,3 @@
-<img src="http://peloton.nflabs.com/imgs/logo.png" height="120" align="bottom"/>
 [![Build Status](https://secure.travis-ci.org/thekrakken/java-grok.png?branch=master)](https://travis-ci.org/thekrakken/java-grok)
 
 Java Grok is simple API that allows you to easily parse logs and other files (single line). With Java Grok, you can turn unstructured log and event data into structured data (JSON).
@@ -22,7 +21,7 @@ Java Grok is simple API that allows you to easily parse logs and other files (si
 
 Or with gradle
 
-	compile "com.nflabs:grok:0.1.0"
+	compile "io.thekraken:grok:0.1.0"
 
 ### Usage ([Grok java documentation](http://grok.nflabs.com/javadoc))
 Example of how to use java-grok:
