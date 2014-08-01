@@ -153,10 +153,10 @@ public class Grok {
    * @throws GrokException
    **/
   public void addPattern(String name, String pattern) throws GrokException {
-    if (name == null || pattern == null) {
-      throw new GrokException("Invalid Pattern");
+    if (StringUtils.isBlank(name)) {
+      throw new GrokException("Invalid Pattern name");
     }
-    if (name.isEmpty() || pattern.isEmpty()) {
+    if (StringUtils.isBlank(name)) {
       throw new GrokException("Invalid Pattern");
     }
     grokPatternDefinition.put(name, pattern);
