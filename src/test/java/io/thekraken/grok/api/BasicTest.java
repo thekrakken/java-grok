@@ -48,7 +48,7 @@ public class BasicTest {
   }
 
   @Test
-  public void test002_complaleSuccessValidExpression() throws GrokException {
+  public void test002_compileSuccessValidExpression() throws GrokException {
 
     Grok g = Grok.create("patterns/patterns");
 
