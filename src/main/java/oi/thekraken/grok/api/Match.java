@@ -160,14 +160,26 @@ public class Match {
       }
       if (pairs.getValue() != null) {
         value = pairs.getValue().toString();
-        if (this.isInteger(value.toString())) {
-          value = Integer.parseInt(value.toString());
+        
+        KeyValue keyValue = Converter.convert(key, value);
+        
+        //get validated key
+        key = keyValue.getKey();
+        
+        //resolve value
+        if (keyValue.getValue() instanceof String) {
+        	 value = cleanString((String)keyValue.getValue());
         } else {
-          value = cleanString(pairs.getValue().toString());
+        	value = keyValue.getValue();
+        }
+        
+        //set if grok failure
+        if (keyValue.hasGrokFailure()) {
+        	capture.put(key + "_grokfailure", keyValue.getGrokFailure());
         }
       }
 
-      capture.put(key, (Object) value);
+      capture.put(key, value);
       it.remove(); // avoids a ConcurrentModificationException
     }
   }
@@ -284,4 +296,6 @@ public class Match {
     }
     return true;
   }
+  
 }
+
