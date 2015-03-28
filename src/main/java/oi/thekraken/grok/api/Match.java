@@ -193,7 +193,7 @@ public class Match {
    */
   private String cleanString(String value) {
     if (value == null) {
-      return value;
+      return null;
     }
     if (value.isEmpty()) {
       return value;
