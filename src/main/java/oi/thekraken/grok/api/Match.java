@@ -276,10 +276,7 @@ public class Match {
    * @return boolean
    */
   public Boolean isNull() {
-    if (this.match == null) {
-      return true;
-    }
-    return false;
+    return this.match == null;
   }
 
   /**
