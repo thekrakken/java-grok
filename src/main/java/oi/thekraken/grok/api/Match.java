@@ -281,21 +281,4 @@ public class Match {
     }
     return false;
   }
-
-  /**
-   * Util fct.
-   *
-   * @param s
-   * @return boolean
-   */
-  private boolean isInteger(String s) {
-    try {
-      Integer.parseInt(s);
-    } catch (NumberFormatException e) {
-      return false;
-    }
-    return true;
-  }
-  
 }
-
