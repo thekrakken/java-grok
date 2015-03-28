@@ -188,7 +188,7 @@ public class Match {
   /**
    * remove from the string the quote and double quote.
    *
-   * @param string to pure: "my/text"
+   * @param value string to pure: "my/text"
    * @return unquoted string: my/text
    */
   private String cleanString(String value) {
