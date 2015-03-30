@@ -278,21 +278,4 @@ public class Match {
   public Boolean isNull() {
     return this.match == null;
   }
-
-  /**
-   * Util fct.
-   *
-   * @param s
-   * @return boolean
-   */
-  private boolean isInteger(String s) {
-    try {
-      Integer.parseInt(s);
-    } catch (NumberFormatException e) {
-      return false;
-    }
-    return true;
-  }
-  
 }
-
