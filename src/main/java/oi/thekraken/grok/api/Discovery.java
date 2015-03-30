@@ -54,7 +54,7 @@ public class Discovery {
   /**
    * Sort by regex complexity.
    *
-   * @param Map of the pattern name and grok instance
+   * @param groks Map of the pattern name and grok instance
    * @return the map sorted by grok pattern complexity
    */
   private Map<String, Grok> sort(Map<String, Grok> groks) {
@@ -85,7 +85,7 @@ public class Discovery {
 
   /**
    *
-   * @param regex string
+   * @param expandedPattern regex string
    * @return the complexity of the regex
    */
   private int complexity(String expandedPattern) {
@@ -183,8 +183,8 @@ public class Discovery {
   /**
    * Get the substring that match with the text.
    *
-   * @param Grok Match
-   * @param texte
+   * @param m Grok Match
+   * @param text text
    * @return string
    */
   private String getPart(Match m, String text) {

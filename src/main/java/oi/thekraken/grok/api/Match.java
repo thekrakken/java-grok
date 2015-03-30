@@ -188,12 +188,12 @@ public class Match {
   /**
    * remove from the string the quote and double quote.
    *
-   * @param string to pure: "my/text"
+   * @param value string to pure: "my/text"
    * @return unquoted string: my/text
    */
   private String cleanString(String value) {
     if (value == null) {
-      return value;
+      return null;
     }
     if (value.isEmpty()) {
       return value;
@@ -276,10 +276,7 @@ public class Match {
    * @return boolean
    */
   public Boolean isNull() {
-    if (this.match == null) {
-      return true;
-    }
-    return false;
+    return this.match == null;
   }
 
   /**
