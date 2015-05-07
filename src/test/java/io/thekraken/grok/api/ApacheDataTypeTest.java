@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 import oi.thekraken.grok.api.Grok;
@@ -24,7 +25,10 @@ public class ApacheDataTypeTest {
   public final static String LOG_FILE = "src/test/resources/access_log";
   public final static String LOG_DIR_NASA = "src/test/resources/nasa/";
 
-
+  static {
+    Locale.setDefault(Locale.ENGLISH);
+  }
+  
   @Test
   public void test002_httpd_access() throws GrokException, IOException {
     Grok g = Grok.create("patterns/patterns", "%{COMMONAPACHELOG_DATATYPED}");
