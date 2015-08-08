@@ -1,3 +1,4 @@
+# Grok
 [![Build Status](https://secure.travis-ci.org/thekrakken/java-grok.png?branch=master)](https://travis-ci.org/thekrakken/java-grok)
 
 Java Grok is simple API that allows you to easily parse logs and other files (single line). With Java Grok, you can turn unstructured log and event data into structured data (JSON).
@@ -50,10 +51,8 @@ System.out.println(gm.toJson());
 
 ### Build Java Grok
 
-Java Grok support Maven and Gradle
- 1. Maven ``mvn package``.
- 2. Gradle ``gradle build``, If you dont have gradle installed you can use ``./gradlew build``.
-
+Java Grok support Gradle: ``./gradlew build``
+ 
 ### Getting help
 Maintainer: [@anthonycorbacho](https://github.com/anthonycorbacho)
 
