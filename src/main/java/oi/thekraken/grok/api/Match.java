@@ -42,17 +42,17 @@ public class Match {
   private int end;
 
   /**
-   * For thread safety
+   * For thread safety.
    */
   private static ThreadLocal<Match> matchHolder = new ThreadLocal<Match>() {
-	  @Override
-	  protected Match initialValue() {
-		  return new Match();
-	  }
+    @Override
+    protected Match initialValue() {
+      return new Match();
+    }
   };
 
   /**
-   *Create a new {@code Match} object.
+   * Create a new {@code Match} object.
    */
   public Match() {
     subject = "Nothing";
@@ -65,11 +65,11 @@ public class Match {
   }
 
   /**
-   * Create Empty grok matcher
+   * Create Empty grok matcher.
    */
   public static final Match EMPTY = new Match();
 
-  public void setGrok(Grok grok){
+  public void setGrok(Grok grok) {
     if (grok != null) {
       this.grok = grok;
     }
@@ -105,11 +105,11 @@ public class Match {
    * @return instance of Match
    */
   public static Match getInstance() {
-	 return matchHolder.get();
+    return matchHolder.get();
   }
 
   /**
-   *  Set the single line of log to parse.
+   * Set the single line of log to parse.
    *
    * @param text : single line of log
    */
@@ -160,22 +160,22 @@ public class Match {
       }
       if (pairs.getValue() != null) {
         value = pairs.getValue().toString();
-        
+
         KeyValue keyValue = Converter.convert(key, value);
-        
-        //get validated key
+
+        // get validated key
         key = keyValue.getKey();
-        
-        //resolve value
+
+        // resolve value
         if (keyValue.getValue() instanceof String) {
-        	 value = cleanString((String)keyValue.getValue());
+          value = cleanString((String) keyValue.getValue());
         } else {
-        	value = keyValue.getValue();
+          value = keyValue.getValue();
         }
-        
-        //set if grok failure
+
+        // set if grok failure
         if (keyValue.hasGrokFailure()) {
-        	capture.put(key + "_grokfailure", keyValue.getGrokFailure());
+          capture.put(key + "_grokfailure", keyValue.getGrokFailure());
         }
       }
 
@@ -210,10 +210,7 @@ public class Match {
   /**
    * Get the json representation of the matched element.
    * <p>
-   * example:
-   * map [ {IP: 127.0.0.1}, {status:200}]
-   * will return
-   * {"IP":"127.0.0.1", "status":200}
+   * example: map [ {IP: 127.0.0.1}, {status:200}] will return {"IP":"127.0.0.1", "status":200}
    * </p>
    * If pretty is set to true, json will return prettyprint json string.
    *
@@ -230,7 +227,7 @@ public class Match {
     this.cleanMap();
     Gson gs;
     if (pretty) {
-     gs = new GsonBuilder().setPrettyPrinting().create();
+      gs = new GsonBuilder().setPrettyPrinting().create();
     } else {
       gs = new Gson();
     }
@@ -240,10 +237,7 @@ public class Match {
   /**
    * Get the json representation of the matched element.
    * <p>
-   * example:
-   * map [ {IP: 127.0.0.1}, {status:200}]
-   * will return
-   * {"IP":"127.0.0.1", "status":200}
+   * example: map [ {IP: 127.0.0.1}, {status:200}] will return {"IP":"127.0.0.1", "status":200}
    * </p>
    *
    * @return Json of the matched element in the text

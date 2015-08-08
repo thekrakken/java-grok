@@ -6,6 +6,7 @@ apply plugin: "findbugs"
 //
 checkstyle {
   configFile = new File(rootDir, './_tools/checkstyle/checkstyle.xml')
+  sourceSets = [sourceSets.main]
   ignoreFailures = true
 }
 
