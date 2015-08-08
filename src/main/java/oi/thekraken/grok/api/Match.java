@@ -100,12 +100,12 @@ public class Match {
   }
 
   /**
-   * Singleton.
+   * return a new Matcher.
    *
    * @return instance of Match
    */
   public static Match getInstance() {
-	 return matchHolder.get();
+      return new Match();
   }
 
   /**
