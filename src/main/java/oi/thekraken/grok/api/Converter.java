@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -15,6 +16,7 @@ import java.util.Map;
 public class Converter {
 
   public static Map<String, IConverter<?>> converters = new HashMap<String, IConverter<?>>();
+  public static Locale locale = Locale.ENGLISH;
 
   static {
     converters.put("byte", new ByteConverter());
@@ -184,12 +186,14 @@ class StringConverter extends IConverter<String> {
 class DateConverter extends IConverter<Date> {
   @Override
   public Date convert(String value) throws Exception {
-    return DateFormat.getInstance().parse(value);
+    return DateFormat.getDateTimeInstance(DateFormat.SHORT,
+                                          DateFormat.SHORT,
+                                          Converter.locale).parse(value);
   }
 
   @Override
   public Date convert(String value, String informat) throws Exception {
-    SimpleDateFormat formatter = new SimpleDateFormat(informat);
+    SimpleDateFormat formatter = new SimpleDateFormat(informat, Converter.locale);
     return formatter.parse(value);
   }
 
