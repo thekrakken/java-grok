@@ -1,79 +1,33 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
-apply plugin: 'checkstyle'
-apply plugin: "findbugs"
 
-sourceCompatibility = JavaVersion.VERSION_1_6
-version = '0.1.1'
+// Apply code quality checks
+apply from: "$rootProject.projectDir/gradle/codeQuality.gradle"
+// Publish artifact to Maven repositiory
+if (project.hasProperty("signing")) {
+  apply from: "$rootProject.projectDir/gradle/publishArtifact.gradle"
+}
 
 task wrapper(type: Wrapper) {
   gradleVersion = '2.5'
 }
 
 repositories {
-    mavenLocal()
-    mavenCentral()
+  mavenLocal()
+  mavenCentral()
 }
+
+sourceCompatibility = JavaVersion.VERSION_1_6
+group = "oi.thekraken"
+archivesBaseName = "grok"
+version = '0.1.1'
 
 dependencies {
-    compile "com.github.tony19:named-regexp:0.2.3"
-    compile "org.apache.commons:commons-lang3:3.1"
-    compile "com.google.code.gson:gson:2.2.2"
-    compile "org.slf4j:slf4j-api:1.7.5"
-    testCompile group: 'junit', name: 'junit', version: '4.11'
+  compile "com.github.tony19:named-regexp:0.2.3"
+  compile "org.apache.commons:commons-lang3:3.1"
+  compile "com.google.code.gson:gson:2.2.2"
+  compile "org.slf4j:slf4j-api:1.7.5"
+
+  testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
-/**
-* Check the source code convention
-*/
-checkstyle {
-  configFile = new File(rootDir, '_tools/checkstyle/checkstyle.xml')
-  ignoreFailures = true
-}
-
-checkstyleMain {
-  include('**/*.java')
-  exclude('**/Pile.java')
-  doLast {
-    println("checkstyle main")
-    project.ext.checkType = "main"
-    tasks.checkstyleReport.execute()
-  }
-}
-
-checkstyleTest {
-  include ( '**/*.java')
-  doLast {
-    println("checkstyle test")
-    project.ext.checkType = "test"
-    tasks.checkstyleReport.execute()
-  }
-}
-
-task checkstyleReport {
-  checkstyleReport.outputs.upToDateWhen { false }
-}
-
-checkstyleReport << {
-  logger.info("Producing checkstyle html report")
-  final source = "${project.projectDir}/build/reports/checkstyle/${project.checkType}.xml"
-  final xls = "./_tools/checkstyle/checkstyle.xls"
-  final output = "$buildDir/reports/checkstyle/${project.checkType}.html"
-  println("HTML report can be found at: " + output)
-  ant.xslt(in: source, style: xls, out: output)
-}
-
-findbugs {
-  ignoreFailures = true
-  toolVersion = "2.0.1"
-  sourceSets = [sourceSets.main]
-  reportsDir = file("$project.buildDir/reports/findbugs")
-  effort = "max"
-}
-
-findbugsMain {
-  reports {
-    xml.enabled = false
-    html.enabled = true
-  }
-}
