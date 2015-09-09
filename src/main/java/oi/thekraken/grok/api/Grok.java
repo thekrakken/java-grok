@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,7 @@ import com.google.code.regexp.Pattern;
  * @since 0.0.1
  * @author anthonycorbacho
  */
-public class Grok {
+public class Grok implements Serializable {
 
   private static final Logger LOG = LoggerFactory.getLogger(Grok.class);
   /**
