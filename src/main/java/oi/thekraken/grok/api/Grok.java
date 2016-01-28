@@ -157,7 +157,7 @@ public class Grok implements Serializable {
     if (StringUtils.isBlank(name)) {
       throw new GrokException("Invalid Pattern name");
     }
-    if (StringUtils.isBlank(name)) {
+    if (StringUtils.isBlank(pattern)) {
       throw new GrokException("Invalid Pattern");
     }
     grokPatternDefinition.put(name, pattern);
