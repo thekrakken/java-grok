@@ -1,38 +1,38 @@
 package io.thekraken.grok.api;
 
-import static org.junit.Assert.*;
+import oi.thekraken.grok.api.Grok;
+import oi.thekraken.grok.api.Match;
+import oi.thekraken.grok.api.exception.GrokException;
+import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import oi.thekraken.grok.api.Grok;
-import oi.thekraken.grok.api.Match;
-import oi.thekraken.grok.api.exception.GrokException;
-
-import org.junit.Test;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 
 public class MessagesTest {
 
-  public final static String LOG_FILE = "src/test/resources/message/messages";
+    public final static String LOG_FILE = ResourceManager.MESSAGES;
 
-  @Test
-  public void test001_linux_messages() throws GrokException, IOException {
-    Grok g = new Grok();
-    g.addPatternFromFile("patterns/patterns");
-    g.compile("%{MESSAGESLOG}");
+    @Test
+    public void test001_linux_messages() throws GrokException, IOException {
+        Grok g = new Grok();
+        g.addPatternFromFile(ResourceManager.PATTERNS);
+        g.compile("%{MESSAGESLOG}");
 
-    BufferedReader br = new BufferedReader(new FileReader(LOG_FILE));
-    String line;
-    System.out.println("Starting test with linux messages log -- may take a while");
-    while ((line = br.readLine()) != null) {
-      Match gm = g.match(line);
-      gm.captures();
-      assertNotNull(gm.toJson());
-      assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
+        BufferedReader br = new BufferedReader(new FileReader(LOG_FILE));
+        String line;
+        System.out.println("Starting test with linux messages log -- may take a while");
+        while ((line = br.readLine()) != null) {
+            Match gm = g.match(line);
+            gm.captures();
+            assertNotNull(gm.toJson());
+            assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
+        }
+        br.close();
     }
-    br.close();
-  }
 
 }
