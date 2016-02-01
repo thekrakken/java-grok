@@ -360,6 +360,9 @@ public class Grok implements Serializable {
             // Log the exeception
           }
         }
+        if(!grokPatternDefinition.containsKey(group.get("pattern"))){
+        	throw new GrokException("Pattern name " + group.get("pattern") + " unknown!");
+        }
         namedRegexCollection.put("name" + index,
             (group.get("subname") != null ? group.get("subname") : group.get("name")));
         namedRegex =
