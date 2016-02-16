@@ -41,7 +41,7 @@ public class Converter {
   }
 
   public static KeyValue convert(String key, Object value) {
-    String[] spec = key.split(";");
+    String[] spec = key.split(";|:",3);
     try {
       if (spec.length == 1) {
         return new KeyValue(spec[0], value);

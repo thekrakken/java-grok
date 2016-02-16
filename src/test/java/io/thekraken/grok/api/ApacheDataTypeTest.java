@@ -1,57 +1,70 @@
 package io.thekraken.grok.api;
 
-import oi.thekraken.grok.api.Grok;
-import oi.thekraken.grok.api.Match;
-import oi.thekraken.grok.api.exception.GrokException;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.Map;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import oi.thekraken.grok.api.Grok;
+import oi.thekraken.grok.api.Match;
+import oi.thekraken.grok.api.exception.GrokException;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ApacheDataTypeTest {
 
-    public final static String LOG_FILE = ResourceManager.ACCESS_LOG;
-    public final static String LOG_DIR_NASA = ResourceManager.NASA;
+	private final String line = "64.242.88.10 - - [07/Mar/2004:16:45:56 -0800] \"GET /twiki/bin/attach/Main/PostfixCommands HTTP/1.1\" 401 12846";
 
     static {
         Locale.setDefault(Locale.ENGLISH);
     }
 
     @Test
-    public void test002_httpd_access() throws GrokException, IOException {
-        Grok g = Grok.create(ResourceManager.PATTERNS, "%{COMMONAPACHELOG_DATATYPED}");
+    public void test002_httpd_access_semi() throws GrokException, IOException, ParseException {
+        Grok g = Grok.create(ResourceManager.PATTERNS, "%{IPORHOST:clientip} %{USER:ident;boolean} %{USER:auth} \\[%{HTTPDATE:timestamp;date;dd/MMM/yyyy:HH:mm:ss Z}\\] \"(?:%{WORD:verb;string} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion;float})?|%{DATA:rawrequest})\" %{NUMBER:response;int} (?:%{NUMBER:bytes;long}|-)");
 
-        BufferedReader br = new BufferedReader(new FileReader(LOG_FILE));
-        String line;
-        System.out.println("Starting test with httpd log");
-        while ((line = br.readLine()) != null) {
-            System.out.println(line);
-            Match gm = g.match(line);
-            gm.captures();
+        System.out.println(line);
+        Match gm = g.match(line);
+        gm.captures();
 
-            assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
+        assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
 
-            Map<String, Object> map = gm.toMap();
-            assertTrue(map.get("timestamp") == null || map.get("timestamp") instanceof Date);
-            assertTrue(map.get("response") == null || map.get("response") instanceof Integer);
-            assertTrue(map.get("ident") == null || map.get("ident") instanceof Boolean);
-            assertTrue(map.get("httpversion") == null || map.get("httpversion") instanceof Float);
-            assertTrue(map.get("bytes") == null || map.get("bytes") instanceof Long);
-            assertTrue(map.get("verb") == null || map.get("verb") instanceof String);
+        Map<String, Object> map = gm.toMap();
+        assertTrue(map.get("timestamp").equals(new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss Z").parse("07/Mar/2004:16:45:56 -0800")));
+        assertTrue(map.get("response").equals(Integer.valueOf(401)));
+        assertTrue(map.get("ident").equals(Boolean.FALSE));
+        assertTrue(map.get("httpversion").equals(Float.valueOf(1.1f)));
+        assertTrue(map.get("bytes").equals(Long.valueOf(12846)));
+        assertTrue(map.get("verb").equals("GET"));
 
-        }
-        br.close();
+    }
+
+    @Test
+    public void test002_httpd_access_colon() throws GrokException, IOException, ParseException {
+        Grok g = Grok.create(ResourceManager.PATTERNS, "%{IPORHOST:clientip} %{USER:ident:boolean} %{USER:auth} \\[%{HTTPDATE:timestamp:date:dd/MMM/yyyy:HH:mm:ss Z}\\] \"(?:%{WORD:verb:string} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion:float})?|%{DATA:rawrequest})\" %{NUMBER:response:int} (?:%{NUMBER:bytes:long}|-)");
+
+        System.out.println(line);
+        Match gm = g.match(line);
+        gm.captures();
+
+        assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
+
+        Map<String, Object> map = gm.toMap();
+        assertTrue(map.get("timestamp").equals(new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss Z").parse("07/Mar/2004:16:45:56 -0800")));
+        assertTrue(map.get("response").equals(Integer.valueOf(401)));
+        assertTrue(map.get("ident").equals(Boolean.FALSE));
+        assertTrue(map.get("httpversion").equals(Float.valueOf(1.1f)));
+        assertTrue(map.get("bytes").equals(Long.valueOf(12846)));
+        assertTrue(map.get("verb").equals("GET"));
+
     }
 
 }
