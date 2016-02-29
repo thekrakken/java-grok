@@ -130,7 +130,7 @@ public class Grok implements Serializable {
     Grok g = new Grok();
     g.addPatternFromFile(grokPatternPath);
     if (StringUtils.isNotBlank(grokExpression)) {
-      g.compile(grokExpression);
+      g.compile(grokExpression, false);
     }
     return g;
   }
@@ -325,6 +325,17 @@ public class Grok implements Serializable {
    * @throws GrokException
    */
   public void compile(String pattern) throws GrokException {
+    compile(pattern, false);
+  }
+
+  /**
+   * Compile the {@code Grok} pattern to named regex pattern.
+   * 
+   * @param pattern : Grok pattern (ex: %{IP})
+   * @param namedOnly : Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})
+   * @throws GrokException
+    */
+  public void compile(String pattern, boolean namedOnly) throws GrokException {
 
     if (StringUtils.isBlank(pattern)) {
       throw new GrokException("{pattern} should not be empty or null");
@@ -360,11 +371,14 @@ public class Grok implements Serializable {
             // Log the exeception
           }
         }
+        String replacement = String.format("(?<name%d>%s)", index, grokPatternDefinition.get(group.get("pattern")));
+        if (namedOnly && group.get("subname") == null) {
+          replacement = grokPatternDefinition.get(group.get("pattern"));
+        }
         namedRegexCollection.put("name" + index,
             (group.get("subname") != null ? group.get("subname") : group.get("name")));
         namedRegex =
-            StringUtils.replace(namedRegex, "%{" + group.get("name") + "}", "(?<name" + index + ">"
-                + grokPatternDefinition.get(group.get("pattern")) + ")");
+            StringUtils.replace(namedRegex, "%{" + group.get("name") + "}", replacement);
         // System.out.println(_expanded_pattern);
         index++;
       }

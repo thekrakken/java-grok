@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 
@@ -90,6 +91,18 @@ public class CaptureTest {
         assertEquals(1, m.toMap().size());
         assertEquals("Hello", m.toMap().get(subname).toString());
         assertEquals("{abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_abc:def=Hello}", m.toMap().toString());
+    }
+
+    @Test
+    public void test006_captureOnlyNamed() throws GrokException {
+        grok.addPattern("abcdef", "[a-zA-Z]+");
+        grok.addPattern("ghijk", "\\d+");
+        grok.compile("%{abcdef:abcdef}%{ghijk}", true);
+        Match m = grok.match("abcdef12345");
+        m.captures();
+        assertEquals(m.toMap().size(), 1);
+        assertNull(m.toMap().get("ghijk"));
+        assertEquals(m.toMap().get("abcdef"), "abcdef");
     }
 
 }
