@@ -83,14 +83,14 @@ public class CaptureTest {
     @Test
     public void test005_captureSubName() throws GrokException {
         String name = "foo";
-        String subname = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_abc:def";
+        String subname = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_abcdef";
         grok.addPattern(name, "\\w+");
         grok.compile("%{" + name + ":" + subname + "}");
         Match m = grok.match("Hello");
         m.captures();
         assertEquals(1, m.toMap().size());
         assertEquals("Hello", m.toMap().get(subname).toString());
-        assertEquals("{abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_abc:def=Hello}", m.toMap().toString());
+        assertEquals("{abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_abcdef=Hello}", m.toMap().toString());
     }
 
     @Test
