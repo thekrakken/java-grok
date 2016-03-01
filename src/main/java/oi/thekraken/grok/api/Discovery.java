@@ -25,12 +25,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import oi.thekraken.grok.api.exception.GrokException;
-
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.code.regexp.Matcher;
 import com.google.code.regexp.Pattern;
+
+import oi.thekraken.grok.api.exception.GrokException;
 
 /**
  * {@code Discovery} try to find the best pattern for the given string.
@@ -45,7 +45,7 @@ public class Discovery {
   /**
    * Create a new {@code Discovery} object.
    *
-   * @param grok
+   * @param grok instance of grok
    */
   public Discovery(Grok grok) {
     this.grok = grok;

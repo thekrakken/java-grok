@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * The Leon the professional of {@code Grok}. <p></p>
+ * The Leon the professional of {@code Grok}.<br>
  * Garbage is use by grok to remove or rename elements before getting the final output
  *
  * @author anthonycorbacho
@@ -78,7 +78,7 @@ public class Garbage {
   /**
    * Set a list of field name to be remove when exporting the final output.
    *
-   * @param lst
+   * @param lst list of elem to remove
    */
   public void addToRemove(List<String> lst) {
     if (lst == null) {
@@ -122,7 +122,7 @@ public class Garbage {
   /**
    * Rename the item from the map.
    *
-   * @param map
+   * @param map elem to rename
    * @return nb of renamed items
    */
   public int rename(Map<String, Object> map) {
