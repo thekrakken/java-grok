@@ -33,6 +33,10 @@ import com.google.gson.GsonBuilder;
  */
 public class Match {
 
+  private static final Gson PRETTY_GSON =
+          new GsonBuilder().setPrettyPrinting().create();
+  private static final Gson GSON = new GsonBuilder().create();
+
   private String subject; // texte
   private Map<String, Object> capture;
   private Garbage garbage;
@@ -227,9 +231,9 @@ public class Match {
     this.cleanMap();
     Gson gs;
     if (pretty) {
-      gs = new GsonBuilder().setPrettyPrinting().create();
+      gs = PRETTY_GSON;
     } else {
-      gs = new Gson();
+      gs = GSON;
     }
     return gs.toJson(/* cleanMap( */capture/* ) */);
   }
