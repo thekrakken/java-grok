@@ -124,7 +124,7 @@ public class Pile {
   public Match match(String line) {
     for (Grok grok : _groks) {
       Match gm = grok.match(line);
-      if (gm != null)
+      if (!gm.isNull())
         return gm;
     }
 
