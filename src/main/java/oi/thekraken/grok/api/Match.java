@@ -16,7 +16,9 @@
 package oi.thekraken.grok.api;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -140,6 +142,7 @@ public class Match {
    * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map.
    *
    */
+  @SuppressWarnings("unchecked")
   public void captures() {
     if (match == null) {
       return;
@@ -183,7 +186,20 @@ public class Match {
         }
       }
 
-      capture.put(key, value);
+      if (capture.containsKey(key)) {
+    	  Object currentValue = capture.get(key);
+    	  if(currentValue instanceof List) {
+    		  ((List<Object>) currentValue).add(value);
+    	  } else {
+    		  List<Object> list = new ArrayList<Object>();
+    		  list.add(currentValue);
+    		  list.add(value);
+    		  capture.put(key, list);
+    	  }
+      } else {
+    	  capture.put(key, value);
+      }
+      
       it.remove(); // avoids a ConcurrentModificationException
     }
   }
