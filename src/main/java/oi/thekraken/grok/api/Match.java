@@ -187,17 +187,17 @@ public class Match {
       }
 
       if (capture.containsKey(key)) {
-    	  Object currentValue = capture.get(key);
-    	  if(currentValue instanceof List) {
-    		  ((List<Object>) currentValue).add(value);
-    	  } else {
-    		  List<Object> list = new ArrayList<Object>();
-    		  list.add(currentValue);
-    		  list.add(value);
-    		  capture.put(key, list);
-    	  }
+    	Object currentValue = capture.get(key);
+    	if(currentValue instanceof List) {
+          ((List<Object>) currentValue).add(value);
+    	} else {
+    	  List<Object> list = new ArrayList<Object>();
+    	  list.add(currentValue);
+    	  list.add(value);
+    	  capture.put(key, list);
+    	}
       } else {
-    	  capture.put(key, value);
+    	capture.put(key, value);
       }
       
       it.remove(); // avoids a ConcurrentModificationException
