@@ -205,7 +205,7 @@ public class Match {
     char[] tmp = value.toCharArray();
     if(tmp.length == 1 && ( tmp[0] == '"' || tmp[0] == '\'')){
       value ="";//empty string 
-    }else if ((tmp[0] == '"' && tmp[value.length() - 1] == '"')
+    } else if ((tmp[0] == '"' && tmp[value.length() - 1] == '"')
         || (tmp[0] == '\'' && tmp[value.length() - 1] == '\'')) {
       value = value.substring(1, value.length() - 1);
     }
