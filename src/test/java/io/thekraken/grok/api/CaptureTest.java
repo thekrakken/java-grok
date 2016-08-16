@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CaptureTest {
@@ -103,6 +104,18 @@ public class CaptureTest {
         assertEquals(m.toMap().size(), 1);
         assertNull(m.toMap().get("ghijk"));
         assertEquals(m.toMap().get("abcdef"), "abcdef");
+    }
+    
+    @SuppressWarnings("unchecked")
+	@Test
+    public void test007_captureDuplicateName() throws GrokException {
+    	grok.compile("%{INT:id} %{INT:id}");
+    	Match m = grok.match("123 456");
+    	m.captures();
+    	assertEquals(m.toMap().size(), 1);
+    	assertEquals(((List<Object>) (m.toMap().get("id"))).size(),2);
+    	assertEquals(((List<Object>) (m.toMap().get("id"))).get(0),"123");
+    	assertEquals(((List<Object>) (m.toMap().get("id"))).get(1),"456");
     }
 
 }
