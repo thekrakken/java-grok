@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
 
-import com.google.code.regexp.Matcher;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -152,7 +152,7 @@ public class Match {
     // _capture.put("LINE", this.line);
     // _capture.put("LENGTH", this.line.length() +"");
 
-    Map<String, String> mappedw = this.match.namedGroups();
+    Map<String, String> mappedw = GrokUtils.namedGroups(this.match,this.subject);
     Iterator<Entry<String, String>> it = mappedw.entrySet().iterator();
     while (it.hasNext()) {
 
