@@ -9,7 +9,7 @@ if (project.hasProperty("signing")) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.5'
+  gradleVersion = '3.1'
 }
 
 repositories {
@@ -17,17 +17,16 @@ repositories {
   mavenCentral()
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_6
+sourceCompatibility = JavaVersion.VERSION_1_7
 group = "oi.thekraken"
 archivesBaseName = "grok"
 version = '0.1.5'
 
 dependencies {
-  compile "com.github.tony19:named-regexp:0.2.3"
-  compile "org.apache.commons:commons-lang3:3.1"
-  compile "com.google.code.gson:gson:2.2.2"
-  compile "org.slf4j:slf4j-api:1.7.5"
+  compile "com.github.tony19:named-regexp:0.2.4"
+  compile "org.apache.commons:commons-lang3:3.4"
+  compile "com.google.code.gson:gson:2.7"
+  compile "org.slf4j:slf4j-api:1.7.21"
 
-  testCompile group: 'junit', name: 'junit', version: '4.11'
+  testCompile group: 'junit', name: 'junit', version: '4.12'
 }
-
