@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package oi.thekraken.grok.api;
+package io.thekraken.grok.api;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,9 +27,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.thekraken.grok.api.exception.GrokException;
 import org.apache.commons.lang3.StringUtils;
-
-import oi.thekraken.grok.api.exception.GrokException;
 
 /**
  * {@code Discovery} try to find the best pattern for the given string.

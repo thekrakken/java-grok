@@ -1,6 +1,5 @@
 package io.thekraken.grok.api;
 
-import oi.thekraken.grok.api.Match;
 import org.junit.Assert;
 import org.junit.Test;
 

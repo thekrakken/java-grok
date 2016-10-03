@@ -1,8 +1,6 @@
 package io.thekraken.grok.api;
 
-import oi.thekraken.grok.api.Grok;
-import oi.thekraken.grok.api.Match;
-import oi.thekraken.grok.api.exception.GrokException;
+import io.thekraken.grok.api.exception.GrokException;
 import org.junit.Test;
 
 import java.io.BufferedReader;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package oi.thekraken.grok.api;
+package io.thekraken.grok.api;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,12 +30,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+import io.thekraken.grok.api.exception.GrokException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-import oi.thekraken.grok.api.exception.GrokException;
 
 
 /**
