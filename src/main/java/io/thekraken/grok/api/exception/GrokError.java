@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package oi.thekraken.grok.api.exception;
+package io.thekraken.grok.api.exception;
 
 /**
  * Not used, too much c style..

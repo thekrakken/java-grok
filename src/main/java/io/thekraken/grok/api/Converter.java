@@ -1,4 +1,4 @@
-package oi.thekraken.grok.api;
+package io.thekraken.grok.api;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

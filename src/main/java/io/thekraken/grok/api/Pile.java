@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package oi.thekraken.grok.api;
+package io.thekraken.grok.api;
 
 import java.io.File;
 import java.util.*;
 
-import oi.thekraken.grok.api.exception.GrokError;
+import io.thekraken.grok.api.exception.GrokError;
 
 /**
  * Set of Groks instance
