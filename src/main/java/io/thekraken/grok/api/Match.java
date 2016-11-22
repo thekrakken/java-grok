@@ -144,6 +144,16 @@ public class Match {
    */
   @SuppressWarnings("unchecked")
   public void captures() {
+      captures(false);
+  }
+
+  /**
+   *  Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map.
+   *  if Integers can be parsed from values without conversion modifiers, they will be
+   * @param convertIntegerStrings
+   */
+  @SuppressWarnings("unchecked")
+  public void captures(boolean convertIntegerStrings){
     if (match == null) {
       return;
     }
@@ -168,7 +178,7 @@ public class Match {
       if (pairs.getValue() != null) {
         value = pairs.getValue().toString();
 
-        KeyValue keyValue = Converter.convert(key, value);
+        KeyValue keyValue = Converter.convert(key, value, convertIntegerStrings);
 
         // get validated key
         key = keyValue.getKey();

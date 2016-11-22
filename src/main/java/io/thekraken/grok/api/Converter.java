@@ -41,9 +41,18 @@ public class Converter {
   }
 
   public static KeyValue convert(String key, Object value) {
+    return convert(key,value,false);
+  }
+
+  public static KeyValue convert(String key, Object value, boolean convertIntegerStrings){
     String[] spec = key.split(";|:",3);
     try {
       if (spec.length == 1) {
+        if(convertIntegerStrings){
+          if (isInteger(value.toString())) {
+            value = Integer.parseInt(value.toString());
+          }
+        }
         return new KeyValue(spec[0], value);
       } else if (spec.length == 2) {
         return new KeyValue(spec[0], getConverter(spec[1]).convert(String.valueOf(value)));
@@ -55,6 +64,20 @@ public class Converter {
     } catch (Exception e) {
       return new KeyValue(spec[0], value, e.toString());
     }
+  }
+  /**
+   * Util fct.
+   *
+   * @param s
+   * @return boolean
+   */
+  private static boolean isInteger(String s) {
+    try {
+      Integer.parseInt(s);
+    } catch (NumberFormatException e) {
+      return false;
+    }
+    return true;
   }
 }
 
