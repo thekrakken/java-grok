@@ -6,11 +6,11 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import java.util.List;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CaptureTest {
@@ -116,4 +116,16 @@ public class CaptureTest {
     	assertEquals(((List<Object>) (m.toMap().get("id"))).get(1),"456");
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void test008_captureIntegerOrString() throws GrokException {
+        grok.compile("%{INT:id}");
+        Match m = grok.match("123");
+        m.captures();
+        assertEquals(m.toMap().size(),1);
+        assertTrue(m.toMap().get("id").getClass() == String.class);
+        m.captures(true);
+        assertEquals(m.toMap().size(),1);
+        assertTrue(m.toMap().get("id").getClass() == Integer.class);
+    }
 }
