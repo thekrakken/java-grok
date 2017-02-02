@@ -522,4 +522,33 @@ public class GrokTest {
         assertEquals(i, 4);
     }
 
+    @Test
+    public void test018_oniguramaNamedCaptures() throws Throwable {
+        g.addPatternFromFile(ResourceManager.PATTERNS);
+        String grokPattern = "(?<onigurama>\\w+)";
+        g.compile(grokPattern, true);
+
+        Match m = g.match("something");
+        m.captures();
+
+        Map<String, Object> map = m.toMap();
+
+        assertEquals(map.get("onigurama"), "something");
+    }
+
+    @Test
+    public void test019_oniguramaNamedCapturesWithHypen() throws Throwable {
+        g.addPatternFromFile(ResourceManager.PATTERNS);
+        String grokPattern = "(?<custom-with-hyphen-grok>%{WORD}) (?<custom-with-hyphen-pattern>\\w+)";
+        g.compile(grokPattern, true);
+
+        Match m = g.match("something else");
+        m.captures();
+
+        Map<String, Object> map = m.toMap();
+
+        assertEquals(map.get("custom-with-hyphen-grok"), "something");
+        assertEquals(map.get("custom-with-hyphen-pattern"), "else");
+    }
+
 }
