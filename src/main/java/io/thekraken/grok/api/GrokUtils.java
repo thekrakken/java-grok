@@ -23,7 +23,7 @@ public class GrokUtils {
       "%\\{" +
       "(?<name>" +
         "(?<pattern>[A-z0-9]+)" +
-          "(?::(?<subname>[A-z0-9_:;\\/\\s\\.]+))?" +
+          "(?::(?<subname>[A-z0-9_:;\\/\\s\\.-]+))?" +
           ")" +
           "(?:=(?<definition>" +
             "(?:" +
@@ -35,6 +35,14 @@ public class GrokUtils {
   
   public static final Pattern NAMED_REGEX = Pattern
       .compile("\\(\\?<([a-zA-Z][a-zA-Z0-9]*)>");
+
+  public static final Pattern CUSTOM_PATTERN = Pattern.compile(
+          "(?<custom>\\(\\?<" +
+            "(?<customname>(?:[a-zA-Z0-9]*-+[a-zA-Z0-9]*)+)>" +
+              "(?:(?<grok>%\\{" +
+                "(?<grokpattern>[A-z0-9]+)\\}" +
+              ")|" +
+              "(?<custompattern>[^{}]+|\\.+))\\))");
 
   private static Set<String> getNameGroups(String regex) {
     Set<String> namedGroups = new LinkedHashSet<String>();

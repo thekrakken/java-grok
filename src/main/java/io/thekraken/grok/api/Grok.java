@@ -347,6 +347,17 @@ public class Grok implements Serializable {
     int iterationLeft = 1000;
     Boolean continueIteration = true;
 
+    Matcher cm = GrokUtils.CUSTOM_PATTERN.matcher(namedRegex);
+
+    while (cm.find()) {
+      Map<String, String> group = GrokUtils.namedGroups(cm, cm.group());
+      String customPattern = group.get("grok") == null ? group.get("custompattern") : grokPatternDefinition.get(group.get("grokpattern"));
+      String replacement = String.format("(?<name%d>%s)", index, customPattern);
+      namedRegexCollection.put("name" + index, group.get("customname"));
+      namedRegex =StringUtils.replace(namedRegex, group.get("custom"), replacement,1);
+      index++;
+    }
+
     // Replace %{foo} with the regex (mostly groupname regex)
     // and then compile the regex
     while (continueIteration) {
