@@ -522,4 +522,18 @@ public class GrokTest {
         assertEquals(i, 4);
     }
 
+    @Test
+    public void test021_postfix_patterns() throws Throwable {
+        final Grok grok = Grok.create("patterns/postfix");
+        grok.compile("%{POSTFIX_SMTPD}", false);
+
+        assertTrue(grok.getPatterns().containsKey("POSTFIX_SMTPD"));
+    }
+    @Test
+    public void test022_postfix_patterns_with_named_captures_only() throws Throwable {
+        final Grok grok = Grok.create("patterns/postfix");
+        grok.compile("%{POSTFIX_SMTPD}", true);
+
+        assertTrue(grok.getPatterns().containsKey("POSTFIX_SMTPD"));
+    }
 }
