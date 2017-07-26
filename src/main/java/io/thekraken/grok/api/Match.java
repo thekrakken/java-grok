@@ -16,7 +16,10 @@
 package io.thekraken.grok.api;
 
 
+import static java.lang.String.format;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,7 @@ import java.util.regex.Matcher;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import io.thekraken.grok.api.exception.GrokException;
 
 /**
  * {@code Match} is a representation in {@code Grok} world of your log.
@@ -141,9 +145,32 @@ public class Match {
   /**
    * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map.
    *
+   * Multiple values for the same key are stored as list.
+   *
    */
-  @SuppressWarnings("unchecked")
   public void captures() {
+    captures(false);
+
+  }
+
+  /**
+   * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map
+   *
+   * Multiple values to the same key are flattened to one value: the sole non-null value will be captured.
+   * Should there be multiple non-null values a RuntimeException is being thrown.
+   *
+   * This can be used in cases like: (foo (.*:message) bar|bar (.*:message) foo) where the regexp guarantees that only
+   * one value will be captured.
+   *
+   * See also {@link #captures} which returns multiple values of the same key as list.
+   *
+   */
+  public void capturesFlattened() {
+    captures(true);
+  }
+
+  @SuppressWarnings("unchecked")
+  private void captures(boolean flattened ) {
     if (match == null) {
       return;
     }
@@ -187,23 +214,51 @@ public class Match {
       }
 
       if (capture.containsKey(key)) {
-    	Object currentValue = capture.get(key);
-    	if(currentValue instanceof List) {
-          ((List<Object>) currentValue).add(value);
-    	} else {
-    	  List<Object> list = new ArrayList<Object>();
-    	  list.add(currentValue);
-    	  list.add(value);
-    	  capture.put(key, list);
-    	}
+         Object currentValue = capture.get(key);
+
+        if (flattened) {
+          if (currentValue == null && value != null) {
+            capture.put(key, value);
+          } if (currentValue != null && value != null) {
+            throw new RuntimeException(
+                    format("key '%s' has multiple non-null values, this is not allowed in flattened mode, values:'%s', '%s'",
+                            key,
+                            currentValue,
+                            value));
+          }
+        } else {
+          if (currentValue instanceof List) {
+            ((List<Object>) currentValue).add(value);
+          } else {
+            List<Object> list = new ArrayList<Object>();
+            list.add(currentValue);
+            list.add(value);
+            capture.put(key, list);
+          }
+        }
       } else {
-    	capture.put(key, value);
+        capture.put(key, value);
       }
       
       it.remove(); // avoids a ConcurrentModificationException
     }
+
+    if (flattened) {
+      flattenCaptures();
+    }
   }
 
+  @SuppressWarnings("SuspiciousMethodCalls")
+  private void flattenCaptures() {
+    for (Entry<String, Object> entry : capture.entrySet()) {
+      if (entry.getValue() instanceof List) {
+        List<?> list = (List<?>) entry.getValue();
+
+        list.removeAll(Collections.singleton(null));
+
+      }
+    }
+  }
 
   /**
    * remove from the string the quote and double quote.
@@ -294,4 +349,5 @@ public class Match {
   public Boolean isNull() {
     return this.match == null;
   }
+
 }
