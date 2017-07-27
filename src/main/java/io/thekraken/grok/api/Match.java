@@ -242,22 +242,6 @@ public class Match {
       
       it.remove(); // avoids a ConcurrentModificationException
     }
-
-    if (flattened) {
-      flattenCaptures();
-    }
-  }
-
-  @SuppressWarnings("SuspiciousMethodCalls")
-  private void flattenCaptures() {
-    for (Entry<String, Object> entry : capture.entrySet()) {
-      if (entry.getValue() instanceof List) {
-        List<?> list = (List<?>) entry.getValue();
-
-        list.removeAll(Collections.singleton(null));
-
-      }
-    }
   }
 
   /**
