@@ -15,6 +15,8 @@
  *******************************************************************************/
 package io.thekraken.grok.api;
 
+import static java.lang.String.format;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -383,14 +385,19 @@ public class Grok implements Serializable {
             addPattern(group.get("pattern"), group.get("definition"));
             group.put("name", group.get("name") + "=" + group.get("definition"));
           } catch (GrokException e) {
-            // Log the exeception
+            throw new RuntimeException(e);
           }
         }
         int count = StringUtils.countMatches(namedRegex, "%{" + group.get("name") + "}");
         for (int i = 0; i < count; i++) {
-          String replacement = String.format("(?<name%d>%s)", index, grokPatternDefinition.get(group.get("pattern")));
+          String definitionOfPattern = grokPatternDefinition.get(group.get("pattern"));
+          if (definitionOfPattern == null) {
+              throw new GrokException(format("No definition for key '%s' found, aborting",
+                  group.get("pattern")));
+          }
+          String replacement = String.format("(?<name%d>%s)", index, definitionOfPattern);
           if (namedOnly && group.get("subname") == null) {
-            replacement = String.format("(?:%s)", grokPatternDefinition.get(group.get("pattern")));
+            replacement = String.format("(?:%s)", definitionOfPattern);
           }
           namedRegexCollection.put("name" + index,
               (group.get("subname") != null ? group.get("subname") : group.get("name")));
