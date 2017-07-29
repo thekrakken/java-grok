@@ -1,16 +1,20 @@
 package io.thekraken.grok.api;
 
-import io.thekraken.grok.api.exception.GrokException;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
+import io.thekraken.grok.api.exception.GrokException;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CaptureTest {
@@ -114,6 +118,30 @@ public class CaptureTest {
     	assertEquals(((List<Object>) (m.toMap().get("id"))).size(),2);
     	assertEquals(((List<Object>) (m.toMap().get("id"))).get(0),"123");
     	assertEquals(((List<Object>) (m.toMap().get("id"))).get(1),"456");
+    }
+
+    @SuppressWarnings("unchecked")
+	@Test
+    public void test008_flattenDuplicateKeys() throws GrokException {
+        grok.compile("(?:foo %{INT:id} bar|bar %{INT:id} foo)");
+        Match m = grok.match("foo 123 bar");
+        m.capturesFlattened();
+        assertEquals(m.toMap().size(), 1);
+        assertEquals(m.toMap().get("id"), "123");
+        Match m2 = grok.match("bar 123 foo");
+        m2.capturesFlattened();
+        assertEquals(m2.toMap().size(), 1);
+        assertEquals(m2.toMap().get("id"), "123");
+
+        grok.compile("%{INT:id} %{INT:id}");
+        Match m3 = grok.match("123 456");
+
+        try {
+            m3.capturesFlattened();
+            fail("should report error due tu ambiguity");
+        } catch (RuntimeException e) {
+            assertThat(e.getMessage(), containsString("has multiple non-null values, this is not allowed in flattened mode"));
+        }
     }
 
 }
