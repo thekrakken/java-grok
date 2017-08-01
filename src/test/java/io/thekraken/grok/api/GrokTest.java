@@ -522,4 +522,17 @@ public class GrokTest {
         assertEquals(i, 4);
     }
 
+    /* see: https://github.com/thekrakken/java-grok/issues/64 */
+    @Test
+    public void testDisablingAutomaticConversion() throws GrokException {
+        String input = "client id: \"foo\" \"bar\"";
+        String pattern = "(?<message>client id): (?<clientid>.*)";
+
+        Grok grok = new Grok();
+        grok.disableAutomaticConversion();
+        grok.compile(pattern, false);
+        Match gm = grok.match(input);
+        gm.captures();
+        assertEquals("\"foo\" \"bar\"", gm.toMap().get("clientid"));
+    }
 }

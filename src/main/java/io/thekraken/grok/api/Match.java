@@ -175,6 +175,8 @@ public class Match {
       return;
     }
     capture.clear();
+    boolean automaticConversionEnabled = grok.isAutomaticConversionEnabled();
+
 
     // _capture.put("LINE", this.line);
     // _capture.put("LENGTH", this.line.length() +"");
@@ -195,21 +197,24 @@ public class Match {
       if (pairs.getValue() != null) {
         value = pairs.getValue().toString();
 
-        KeyValue keyValue = Converter.convert(key, value);
 
-        // get validated key
-        key = keyValue.getKey();
+        if (automaticConversionEnabled) {
+          KeyValue keyValue = Converter.convert(key, value);
 
-        // resolve value
-        if (keyValue.getValue() instanceof String) {
-          value = cleanString((String) keyValue.getValue());
-        } else {
-          value = keyValue.getValue();
-        }
+          // get validated key
+          key = keyValue.getKey();
 
-        // set if grok failure
-        if (keyValue.hasGrokFailure()) {
-          capture.put(key + "_grokfailure", keyValue.getGrokFailure());
+          // resolve value
+          if (keyValue.getValue() instanceof String) {
+            value = cleanString((String) keyValue.getValue());
+          } else {
+            value = keyValue.getValue();
+          }
+
+          // set if grok failure
+          if (keyValue.hasGrokFailure()) {
+            capture.put(key + "_grokfailure", keyValue.getGrokFailure());
+          }
         }
       }
 

@@ -86,6 +86,12 @@ public class Grok implements Serializable {
   /** only use in grok discovery. */
   private String savedPattern;
 
+
+  /**
+   * automatic conversion of values
+   */
+  private boolean automaticConversionEnabled = true;
+
   /**
    * Create Empty {@code Grok}.
    */
@@ -260,7 +266,17 @@ public class Grok implements Serializable {
     } catch (GrokException e) {
       throw new GrokException(e.getMessage());
     }
+  }
 
+  /**
+   * Disable automatic conversion of values
+   */
+  public void disableAutomaticConversion() {
+    this.automaticConversionEnabled = false;
+  }
+
+  public boolean isAutomaticConversionEnabled() {
+    return automaticConversionEnabled;
   }
 
   /**
