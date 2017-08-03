@@ -1,15 +1,24 @@
 package io.thekraken.grok.api;
 
-import io.thekraken.grok.api.exception.GrokException;
+import static java.lang.String.format;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.*;
-
-import static org.junit.Assert.*;
+import io.thekraken.grok.api.exception.GrokException;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -520,6 +529,55 @@ public class GrokTest {
             i++;
         }
         assertEquals(i, 4);
+    }
+
+    @Test
+    public void test018_namedOnlySimpleCase() throws GrokException {
+        Grok grok = Grok.create(ResourceManager.PATTERNS);
+
+        grok.addPattern("WORD", "foo|bar");
+        grok.addPattern("TEXT", "<< %{WORD}+ >>");
+
+        grok.compile("%{TEXT:text}", true);
+
+        String text = "<< barfoobarfoo >>";
+        Match match = grok.match(text);
+        match.captures();
+        assertEquals("unable to parse: " + text,
+                text,
+                match.toMap().get("text"));
+    }
+
+    @Test
+    public void test019_namedOnlyAllCases() throws GrokException {
+        /* like previous test, but systematic all four possible options */
+        testPatternRepetitions(true, "(?:foo|bar)");
+        testPatternRepetitions(true, "foo|bar");
+        testPatternRepetitions(false, "(?:foo|bar)");
+        testPatternRepetitions(false, "foo|bar");
+    }
+
+    private void testPatternRepetitions(boolean namedOnly, String pattern) throws GrokException {
+        String description = format("[readonly:%s pattern:%s] ", namedOnly, pattern);;
+
+        Grok grok = Grok.create(ResourceManager.PATTERNS);
+
+        grok.addPattern("WORD", pattern);
+        grok.addPattern("TEXT", "<< %{WORD}+ >>");
+
+        grok.compile("%{TEXT:text}", namedOnly);
+        assertMatches(description, grok, "<< foo >>");
+        assertMatches(description, grok, "<< foobar >>");
+        assertMatches(description, grok, "<< foofoobarbar >>");
+        assertMatches(description, grok, "<< barfoobarfoo >>");
+    }
+
+    private void assertMatches(String description, Grok grok, String text) {
+        Match match = grok.match(text);
+        match.captures();
+        assertEquals(format("%s: unable to parse '%s'", description, text),
+                text,
+                match.toMap().get("text"));
     }
 
     /* see: https://github.com/thekrakken/java-grok/issues/64 */

@@ -390,7 +390,7 @@ public class Grok implements Serializable {
         for (int i = 0; i < count; i++) {
           String replacement = String.format("(?<name%d>%s)", index, grokPatternDefinition.get(group.get("pattern")));
           if (namedOnly && group.get("subname") == null) {
-            replacement = grokPatternDefinition.get(group.get("pattern"));
+            replacement = String.format("(?:%s)", grokPatternDefinition.get(group.get("pattern")));
           }
           namedRegexCollection.put("name" + index,
               (group.get("subname") != null ? group.get("subname") : group.get("name")));
