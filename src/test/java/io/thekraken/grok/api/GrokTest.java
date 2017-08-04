@@ -18,6 +18,12 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.util.*;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.*;
 import io.thekraken.grok.api.exception.GrokException;
 
 
@@ -592,5 +598,48 @@ public class GrokTest {
         Match gm = grok.match(input);
         gm.captures();
         assertEquals("\"foo\" \"bar\"", gm.toMap().get("clientid"));
+    }
+
+    @Test
+    public void test020_postfix_patterns() throws Throwable {
+        final Grok grok = Grok.create("patterns/postfix");
+        grok.addPatternFromFile("patterns/patterns");
+        grok.compile("%{POSTFIX_SMTPD}", false);
+
+        assertTrue(grok.getPatterns().containsKey("POSTFIX_SMTPD"));
+    }
+
+    @Test
+    public void test021_postfix_patterns_with_named_captures_only() throws Throwable {
+        final Grok grok = Grok.create("patterns/postfix");
+        grok.addPatternFromFile("patterns/patterns");
+        grok.compile("%{POSTFIX_SMTPD}", true);
+
+        assertTrue(grok.getPatterns().containsKey("POSTFIX_SMTPD"));
+    }
+
+    @Test
+    public void test022_named_captures_with_missing_definition() throws Throwable {
+        ensureAbortsWithDefinitionMissing("FOO %{BAR}", "%{FOO}", true);
+    }
+
+    @Test
+    public void test023_captures_with_missing_definition() throws Throwable {
+        ensureAbortsWithDefinitionMissing("FOO %{BAR}", "%{FOO:name}", false);
+    }
+
+    @Test
+    public void test024_captures_with_missing_definition() throws Throwable {
+        ensureAbortsWithDefinitionMissing("FOO %{BAR}", "%{FOO}", false);
+    }
+
+    private void ensureAbortsWithDefinitionMissing(String pattern, String compilePattern, boolean namedOnly) {
+        try {
+            final Grok grok = Grok.create(ResourceManager.PATTERNS, pattern);
+            grok.compile(compilePattern, namedOnly);
+            fail("should abort due to missing definition");
+        } catch (GrokException e) {
+            assertThat(e.getMessage(), containsString("No definition for key"));
+        }
     }
 }
