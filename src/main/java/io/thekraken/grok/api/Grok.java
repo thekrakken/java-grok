@@ -227,8 +227,8 @@ public class Grok implements Serializable {
 
     try (FileReader r = new FileReader(f)) {
       addPatternFromReader(r);
-    } catch (@SuppressWarnings("hiding") IOException e) {
-      throw new GrokException(e.getMessage());
+    } catch (IOException e) {
+      throw new GrokException(e.getMessage(), e);
     }
   }
 
@@ -251,10 +251,8 @@ public class Grok implements Serializable {
         }
       }
       br.close();
-    } catch (IOException e) {
-      throw new GrokException(e.getMessage());
-    } catch (GrokException e) {
-      throw new GrokException(e.getMessage());
+    } catch (IOException | GrokException e) {
+      throw new GrokException(e.getMessage(), e);
     }
   }
 
