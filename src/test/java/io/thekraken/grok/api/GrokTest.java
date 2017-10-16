@@ -602,8 +602,8 @@ public class GrokTest {
 
     @Test
     public void test020_postfix_patterns() throws Throwable {
-        final Grok grok = Grok.create("patterns/postfix");
-        grok.addPatternFromFile("patterns/patterns");
+        final Grok grok = Grok.create("src/main/resources/patterns/postfix");
+        grok.addPatternFromFile("src/main/resources/patterns/patterns");
         grok.compile("%{POSTFIX_SMTPD}", false);
 
         assertTrue(grok.getPatterns().containsKey("POSTFIX_SMTPD"));
@@ -611,8 +611,8 @@ public class GrokTest {
 
     @Test
     public void test021_postfix_patterns_with_named_captures_only() throws Throwable {
-        final Grok grok = Grok.create("patterns/postfix");
-        grok.addPatternFromFile("patterns/patterns");
+        final Grok grok = Grok.create("src/main/resources/patterns/postfix");
+        grok.addPatternFromFile("src/main/resources/patterns/patterns");
         grok.compile("%{POSTFIX_SMTPD}", true);
 
         assertTrue(grok.getPatterns().containsKey("POSTFIX_SMTPD"));
@@ -631,6 +631,19 @@ public class GrokTest {
     @Test
     public void test024_captures_with_missing_definition() throws Throwable {
         ensureAbortsWithDefinitionMissing("FOO %{BAR}", "%{FOO}", false);
+    }
+
+    @Test
+    public void allowClassPathPatternFiles() throws GrokException {
+        final Grok grok = new Grok();
+        grok.addPatternFromClasspath("/patterns/patterns");
+        grok.compile("%{USERNAME}", false);
+    }
+
+    @Test
+    public void createGrokWithDefaultPatterns() throws GrokException {
+        final Grok grok = Grok.create();
+        grok.compile("%{USERNAME}", false);
     }
 
     private void ensureAbortsWithDefinitionMissing(String pattern, String compilePattern, boolean namedOnly) {

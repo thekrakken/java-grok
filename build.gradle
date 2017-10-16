@@ -20,7 +20,7 @@ repositories {
 sourceCompatibility = JavaVersion.VERSION_1_7
 group = "oi.thekraken"
 archivesBaseName = "grok"
-version = '0.1.6'
+version = '0.1.6-SNAPSHOT'
 
 dependencies {
   compile "com.github.tony19:named-regexp:0.2.4"
