@@ -218,29 +218,17 @@ public class Grok implements Serializable {
 
     File f = new File(file);
     if (!f.exists()) {
-      throw new GrokException("Pattern not found");
+      throw new GrokException("Pattern file "+ f.getAbsolutePath() + " not found");
     }
 
     if (!f.canRead()) {
-      throw new GrokException("Pattern cannot be read");
+      throw new GrokException("Pattern file "+ f.getAbsolutePath() + " cannot be read");
     }
 
-    FileReader r = null;
-    try {
-      r = new FileReader(f);
+    try (FileReader r = new FileReader(f)) {
       addPatternFromReader(r);
-    } catch (FileNotFoundException e) {
-      throw new GrokException(e.getMessage());
     } catch (@SuppressWarnings("hiding") IOException e) {
       throw new GrokException(e.getMessage());
-    } finally {
-      try {
-        if (r != null) {
-          r.close();
-        }
-      } catch (IOException io) {
-        // TODO(anthony) : log the error
-      }
     }
   }
 
