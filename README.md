@@ -45,6 +45,9 @@ gm.captures();
 
 /* Get the output */
 System.out.println(gm.toJson());
+
+/* Get the map with matches */
+Map myMap = gm.toMap();
 ```
 
 ### Build Java Grok
