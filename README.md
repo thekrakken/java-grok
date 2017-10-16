@@ -32,7 +32,7 @@ Example of how to use java-grok:
 
 ```java
 /* Create a new grok instance */
-Grok grok = Grok.create("patterns/patterns");
+Grok grok = Grok.create();
 
 /* Grok pattern to compile, here httpd logs */
 grok.compile("%{COMBINEDAPACHELOG}");
