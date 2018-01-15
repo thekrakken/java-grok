@@ -1,5 +1,11 @@
+plugins {
+  id "org.sonarqube" version "2.5"
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: "jacoco"
 
 // Apply code quality checks
 apply from: "$rootProject.projectDir/gradle/codeQuality.gradle"
@@ -17,7 +23,7 @@ repositories {
   mavenCentral()
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_7
+sourceCompatibility = JavaVersion.VERSION_1_8
 group = "oi.thekraken"
 archivesBaseName = "grok"
 version = '0.1.6-SNAPSHOT'
