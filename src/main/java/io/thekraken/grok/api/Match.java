@@ -27,6 +27,9 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.thekraken.grok.api.exception.GrokException;
@@ -174,32 +177,29 @@ public class Match {
     if (match == null) {
       return;
     }
+
     capture.clear();
     boolean automaticConversionEnabled = grok.isAutomaticConversionEnabled();
-
 
     // _capture.put("LINE", this.line);
     // _capture.put("LENGTH", this.line.length() +"");
 
-    Map<String, String> mappedw = GrokUtils.namedGroups(this.match,this.subject);
-    Iterator<Entry<String, String>> it = mappedw.entrySet().iterator();
-    while (it.hasNext()) {
+    Map<String, String> mappedw = GrokUtils.namedGroups(this.match, this.grok.namedGroups);
 
-      @SuppressWarnings("rawtypes")
-      Map.Entry pairs = (Map.Entry) it.next();
-      String key = null;
-      Object value = null;
-      if (this.grok.getNamedRegexCollectionById(pairs.getKey().toString()) == null) {
-        key = pairs.getKey().toString();
-      } else if (!this.grok.getNamedRegexCollectionById(pairs.getKey().toString()).isEmpty()) {
-        key = this.grok.getNamedRegexCollectionById(pairs.getKey().toString());
+    mappedw.forEach((key, valueString) -> {
+      String id = this.grok.getNamedRegexCollectionById(key);
+      if (id != null && !id.isEmpty()) {
+        key = id;
       }
-      if (pairs.getValue() != null) {
-        value = pairs.getValue().toString();
 
+      if ("UNWANTED".equals(key)) {
+        return;
+      }
 
-        if (automaticConversionEnabled) {
-          KeyValue keyValue = Converter.convert(key, value);
+      Object value = valueString;
+      if (valueString != null && automaticConversionEnabled) {
+        if (Converter.DELIMITER.matchesAnyOf(key)) {
+          KeyValue keyValue = Converter.convert(key, valueString);
 
           // get validated key
           key = keyValue.getKey();
@@ -215,21 +215,23 @@ public class Match {
           if (keyValue.hasGrokFailure()) {
             capture.put(key + "_grokfailure", keyValue.getGrokFailure());
           }
+        } else {
+          value = cleanString(valueString);
         }
       }
 
       if (capture.containsKey(key)) {
-         Object currentValue = capture.get(key);
+        Object currentValue = capture.get(key);
 
         if (flattened) {
           if (currentValue == null && value != null) {
             capture.put(key, value);
           } if (currentValue != null && value != null) {
             throw new RuntimeException(
-                    format("key '%s' has multiple non-null values, this is not allowed in flattened mode, values:'%s', '%s'",
-                            key,
-                            currentValue,
-                            value));
+                format("key '%s' has multiple non-null values, this is not allowed in flattened mode, values:'%s', '%s'",
+                    key,
+                    currentValue,
+                    value));
           }
         } else {
           if (currentValue instanceof List) {
@@ -244,9 +246,7 @@ public class Match {
       } else {
         capture.put(key, value);
       }
-      
-      it.remove(); // avoids a ConcurrentModificationException
-    }
+    });
   }
 
   /**
@@ -256,19 +256,21 @@ public class Match {
    * @return unquoted string: my/text
    */
   private String cleanString(String value) {
-    if (value == null) {
-      return null;
-    }
-    if (value.isEmpty()) {
+    if (value == null || value.isEmpty()) {
       return value;
     }
-    char[] tmp = value.toCharArray();
-    if(tmp.length == 1 && ( tmp[0] == '"' || tmp[0] == '\'')){
-      value ="";//empty string 
-    } else if ((tmp[0] == '"' && tmp[value.length() - 1] == '"')
-        || (tmp[0] == '\'' && tmp[value.length() - 1] == '\'')) {
-      value = value.substring(1, value.length() - 1);
+
+    char firstChar = value.charAt(0);
+    char lastChar = value.charAt(value.length() - 1);
+
+    if (firstChar == lastChar && (firstChar == '"' || firstChar == '\'')) {
+      if (value.length() == 1) {
+        return "";
+      } else {
+        return value.substring(1, value.length() - 1);
+      }
     }
+
     return value;
   }
 
@@ -323,7 +325,7 @@ public class Match {
   }
 
   /**
-   * Remove and rename the unwanted elelents in the matched map.
+   * Remove and rename the unwanted elements in the matched map.
    */
   private void cleanMap() {
     garbage.rename(capture);

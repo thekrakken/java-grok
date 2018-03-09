@@ -1,9 +1,6 @@
 package io.thekraken.grok.api;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,8 +33,8 @@ public class GrokUtils {
   public static final Pattern NAMED_REGEX = Pattern
       .compile("\\(\\?<([a-zA-Z][a-zA-Z0-9]*)>");
 
-  private static Set<String> getNameGroups(String regex) {
-    Set<String> namedGroups = new LinkedHashSet<String>();
+  public static Set<String> getNameGroups(String regex) {
+    Set<String> namedGroups = new LinkedHashSet<>();
     Matcher m = NAMED_REGEX.matcher(regex);
     while (m.find()) {
       namedGroups.add(m.group(1));
@@ -45,16 +42,11 @@ public class GrokUtils {
     return namedGroups;
   }
 
-  public static Map<String, String> namedGroups(Matcher matcher,
-      String namedRegex) {
-    Set<String> groupNames = getNameGroups(matcher.pattern().pattern());
-    Matcher localMatcher = matcher.pattern().matcher(namedRegex);
+  public static Map<String, String> namedGroups(Matcher matcher, Set<String> groupNames) {
     Map<String, String> namedGroups = new LinkedHashMap<String, String>();
-    if (localMatcher.find()) {
-      for (String groupName : groupNames) {
-        String groupValue = localMatcher.group(groupName);
-        namedGroups.put(groupName, groupValue);
-      }
+    for (String groupName : groupNames) {
+      String groupValue = matcher.group(groupName);
+      namedGroups.put(groupName, groupValue);
     }
     return namedGroups;
   }

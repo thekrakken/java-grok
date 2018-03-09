@@ -17,21 +17,16 @@ package io.thekraken.grok.api;
 
 import static java.lang.String.format;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
 import io.thekraken.grok.api.exception.GrokException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -56,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * @since 0.0.1
  * @author anthonycorbacho
  */
-public class Grok implements Serializable {
+public class Grok {
 
   private static final Logger LOG = LoggerFactory.getLogger(Grok.class);
   /**
@@ -76,6 +71,8 @@ public class Grok implements Serializable {
    * Pattern of the namedRegex.
    */
   private Pattern compiledNamedRegex;
+
+  public Set<String> namedGroups;
   /**
    * {@code Grok} discovery.
    */
@@ -107,8 +104,8 @@ public class Grok implements Serializable {
     disco = null;
     namedRegex = StringUtils.EMPTY;
     compiledNamedRegex = null;
-    grokPatternDefinition = new TreeMap<String, String>();
-    namedRegexCollection = new TreeMap<String, String>();
+    grokPatternDefinition = new HashMap<>();
+    namedRegexCollection = new HashMap<>();
     savedPattern = StringUtils.EMPTY;
   }
 
@@ -186,7 +183,7 @@ public class Grok implements Serializable {
       throw new GrokException("Invalid Patterns");
     }
     for (Map.Entry<String, String> entry : cpy.entrySet()) {
-      grokPatternDefinition.put(entry.getKey().toString(), entry.getValue().toString());
+      grokPatternDefinition.put(entry.getKey(), entry.getValue());
     }
   }
 
@@ -216,22 +213,16 @@ public class Grok implements Serializable {
    */
   public void addPatternFromFile(String file) throws GrokException {
 
-    File f = new File(file);
-    if (!f.exists()) {
-      throw new GrokException("Pattern not found");
-    }
-
-    if (!f.canRead()) {
-      throw new GrokException("Pattern cannot be read");
-    }
-
-    FileReader r = null;
+    Reader r = null;
     try {
-      r = new FileReader(f);
+      try {
+        URL patternFile = Resources.getResource(file);
+        r = new InputStreamReader(patternFile.openStream(), StandardCharsets.UTF_8);
+      } catch (IllegalArgumentException e) {
+        r = Files.newReader(new File(file), StandardCharsets.UTF_8);
+      }
       addPatternFromReader(r);
-    } catch (FileNotFoundException e) {
-      throw new GrokException(e.getMessage());
-    } catch (@SuppressWarnings("hiding") IOException e) {
+    } catch (IllegalArgumentException|IOException e) {
       throw new GrokException(e.getMessage());
     } finally {
       try {
@@ -374,12 +365,13 @@ public class Grok implements Serializable {
       }
       iterationLeft--;
 
+      Set<String> namedGroups = GrokUtils.getNameGroups(GrokUtils.GROK_PATTERN.pattern());
       Matcher m = GrokUtils.GROK_PATTERN.matcher(namedRegex);
       // Match %{Foo:bar} -> pattern name and subname
       // Match %{Foo=regex} -> add new regex definition 
       if (m.find()) {
         continueIteration = true;
-        Map<String, String> group = GrokUtils.namedGroups(m, m.group());
+        Map<String, String> group = GrokUtils.namedGroups(m, namedGroups);
         if (group.get("definition") != null) {
           try {
             addPattern(group.get("pattern"), group.get("definition"));
@@ -414,6 +406,7 @@ public class Grok implements Serializable {
     }
     // Compile the regex
     compiledNamedRegex = Pattern.compile(namedRegex);
+    namedGroups = GrokUtils.getNameGroups(namedRegex);
   }
 
   /**

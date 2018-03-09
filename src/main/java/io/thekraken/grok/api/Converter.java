@@ -1,59 +1,63 @@
 package io.thekraken.grok.api;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableMap;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Convert String argument to the right type.
- * 
+ *
  * @author anthonyc
  *
  */
 public class Converter {
 
-  public static Map<String, IConverter<?>> converters = new HashMap<String, IConverter<?>>();
   public static Locale locale = Locale.ENGLISH;
 
-  static {
-    converters.put("byte", new ByteConverter());
-    converters.put("boolean", new BooleanConverter());
-    converters.put("short", new ShortConverter());
-    converters.put("int", new IntegerConverter());
-    converters.put("long", new LongConverter());
-    converters.put("float", new FloatConverter());
-    converters.put("double", new DoubleConverter());
-    converters.put("date", new DateConverter());
-    converters.put("datetime", new DateConverter());
-    converters.put("string", new StringConverter());
+  public static final CharMatcher DELIMITER = CharMatcher.anyOf(";:");
 
-  }
+  private static final Splitter SPLITTER = Splitter.on(DELIMITER).limit(3);
+
+  private static Map<String, IConverter<?>> CONVERTERS = ImmutableMap.<String, IConverter<?>>builder()
+      .put("byte", new ByteConverter())
+      .put("boolean", new BooleanConverter())
+      .put("short", new ShortConverter())
+      .put("int", new IntegerConverter())
+      .put("long", new LongConverter())
+      .put("float", new FloatConverter())
+      .put("double", new DoubleConverter())
+      .put("date", new DateConverter())
+      .put("datetime", new DateConverter())
+      .put("string", new StringConverter())
+      .build();
 
   private static IConverter getConverter(String key) throws Exception {
-    IConverter converter = converters.get(key);
+    IConverter converter = CONVERTERS.get(key);
     if (converter == null) {
       throw new Exception("Invalid data type :" + key);
     }
     return converter;
   }
 
-  public static KeyValue convert(String key, Object value) {
-    String[] spec = key.split(";|:",3);
+  public static KeyValue convert(String key, String value) {
+    List<String> spec = SPLITTER.splitToList(key);
     try {
-      if (spec.length == 1) {
-        return new KeyValue(spec[0], value);
-      } else if (spec.length == 2) {
-        return new KeyValue(spec[0], getConverter(spec[1]).convert(String.valueOf(value)));
-      } else if (spec.length == 3) {
-        return new KeyValue(spec[0], getConverter(spec[1]).convert(String.valueOf(value), spec[2]));
-      } else {
-        return new KeyValue(spec[0], value, "Unsupported spec :" + key);
+      switch (spec.size()) {
+        case 1:
+          return new KeyValue(spec.get(0), value);
+        case 2:
+          return new KeyValue(spec.get(0), getConverter(spec.get(1)).convert(value));
+        case 3:
+          return new KeyValue(spec.get(0), getConverter(spec.get(1)).convert(value, spec.get(2)));
+        default:
+          return new KeyValue(spec.get(0), value, "Unsupported spec :" + key);
       }
     } catch (Exception e) {
-      return new KeyValue(spec[0], value, e.toString());
+      return new KeyValue(spec.get(0), value, e.toString());
     }
   }
 }
@@ -65,13 +69,14 @@ public class Converter {
 
 class KeyValue {
 
-  private String key = null;
-  private Object value = null;
-  private String grokFailure = null;
+  private final String key;
+  private final Object value;
+  private final String grokFailure;
 
   public KeyValue(String key, Object value) {
     this.key = key;
     this.value = value;
+    grokFailure = null;
   }
 
   public KeyValue(String key, Object value, String grokFailure) {
@@ -92,16 +97,8 @@ class KeyValue {
     return key;
   }
 
-  public void setKey(String key) {
-    this.key = key;
-  }
-
   public Object getValue() {
     return value;
-  }
-
-  public void setValue(Object value) {
-    this.value = value;
   }
 }
 

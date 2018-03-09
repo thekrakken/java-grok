@@ -15,11 +15,7 @@
  *******************************************************************************/
 package io.thekraken.grok.api;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * The Leon the professional of {@code Grok}.<br>
@@ -30,19 +26,8 @@ import java.util.TreeMap;
  */
 public class Garbage {
 
-  private List<String> toRemove;
-  private Map<String, Object> toRename;
-
-  /**
-   * Create a new {@code Garbage} object.
-   */
-  public Garbage() {
-
-    toRemove = new ArrayList<String>();
-    toRename = new TreeMap<String, Object>();
-    /** this is a default value to remove */
-    toRemove.add("UNWANTED");
-  }
+  private Set<String> toRemove = new HashSet<>();
+  private Map<String, Object> toRename = new HashMap<>();
 
   /**
    * Set a new name to be change when exporting the final output.
@@ -103,17 +88,15 @@ public class Garbage {
       return item;
     }
 
-    if (map.isEmpty()) {
+    if (map.isEmpty() || toRemove.isEmpty()) {
       return item;
     }
 
     for (Iterator<Map.Entry<String, Object>> it = map.entrySet().iterator(); it.hasNext();) {
       Map.Entry<String, Object> entry = it.next();
-      for (int i = 0; i < toRemove.size(); i++) {
-        if (entry.getKey().equals(toRemove.get(i))) {
-          it.remove();
-          item++;
-        }
+      if (toRemove.contains(entry.getKey())) {
+        it.remove();
+        item++;
       }
     }
     return item;
