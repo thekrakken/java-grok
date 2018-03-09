@@ -36,7 +36,7 @@ repositories {
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
-group = "oi.thekraken"
+group = "io.thekraken"
 archivesBaseName = "grok"
 version = '0.1.6-SNAPSHOT'
 
