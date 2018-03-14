@@ -4,9 +4,17 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableMap;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Convert String argument to the right type.
@@ -16,184 +24,86 @@ import java.util.*;
  */
 public class Converter {
 
-  public static Locale locale = Locale.ENGLISH;
-
   public static final CharMatcher DELIMITER = CharMatcher.anyOf(";:");
 
   private static final Splitter SPLITTER = Splitter.on(DELIMITER).limit(3);
 
   private static Map<String, IConverter<?>> CONVERTERS = ImmutableMap.<String, IConverter<?>>builder()
-      .put("byte", new ByteConverter())
-      .put("boolean", new BooleanConverter())
-      .put("short", new ShortConverter())
-      .put("int", new IntegerConverter())
-      .put("long", new LongConverter())
-      .put("float", new FloatConverter())
-      .put("double", new DoubleConverter())
+      .put("byte", Byte::valueOf)
+      .put("boolean", Boolean::valueOf)
+      .put("short", Short::valueOf)
+      .put("int", Integer::valueOf)
+      .put("long", Long::valueOf)
+      .put("float", Float::valueOf)
+      .put("double", Double::valueOf)
       .put("date", new DateConverter())
       .put("datetime", new DateConverter())
-      .put("string", new StringConverter())
+      .put("string", v -> v)
       .build();
 
-  private static IConverter getConverter(String key) throws Exception {
+  private static IConverter getConverter(String key) {
     IConverter converter = CONVERTERS.get(key);
     if (converter == null) {
-      throw new Exception("Invalid data type :" + key);
+      throw new IllegalArgumentException("Invalid data type :" + key);
     }
     return converter;
   }
 
-  public static KeyValue convert(String key, String value) {
-    List<String> spec = SPLITTER.splitToList(key);
-    try {
-      switch (spec.size()) {
-        case 1:
-          return new KeyValue(spec.get(0), value);
-        case 2:
-          return new KeyValue(spec.get(0), getConverter(spec.get(1)).convert(value));
-        case 3:
-          return new KeyValue(spec.get(0), getConverter(spec.get(1)).convert(value, spec.get(2)));
-        default:
-          return new KeyValue(spec.get(0), value, "Unsupported spec :" + key);
-      }
-    } catch (Exception e) {
-      return new KeyValue(spec.get(0), value, e.toString());
-    }
+  public static Map<String, IConverter> getConverters(Collection<String> groupNames) {
+    return groupNames.stream()
+        .filter(group -> Converter.DELIMITER.matchesAnyOf(group))
+        .collect(Collectors.toMap(Function.identity(), key -> {
+          List<String> list = SPLITTER.splitToList(key);
+          IConverter converter = getConverter(list.get(1));
+          if (list.size() == 3) {
+            converter = converter.newConverter(list.get(2));
+          }
+          return converter;
+        }));
+  }
+
+  public static String extractKey(String key) {
+    return SPLITTER.split(key).iterator().next();
   }
 }
-
-
-//
-// KeyValue
-//
-
-class KeyValue {
-
-  private final String key;
-  private final Object value;
-  private final String grokFailure;
-
-  public KeyValue(String key, Object value) {
-    this.key = key;
-    this.value = value;
-    grokFailure = null;
-  }
-
-  public KeyValue(String key, Object value, String grokFailure) {
-    this.key = key;
-    this.value = value;
-    this.grokFailure = grokFailure;
-  }
-
-  public boolean hasGrokFailure() {
-    return grokFailure != null;
-  }
-
-  public String getGrokFailure() {
-    return this.grokFailure;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public Object getValue() {
-    return value;
-  }
-}
-
 
 //
 // Converters
 //
-abstract class IConverter<T> {
+interface IConverter<T> {
+  T convert(String value);
 
-  public T convert(String value, String informat) throws Exception {
-    return null;
-  }
-
-  public abstract T convert(String value) throws Exception;
-}
-
-
-class ByteConverter extends IConverter<Byte> {
-  @Override
-  public Byte convert(String value) throws Exception {
-    return Byte.parseByte(value);
+  default IConverter<T> newConverter(String param) {
+    return this;
   }
 }
 
 
-class BooleanConverter extends IConverter<Boolean> {
-  @Override
-  public Boolean convert(String value) throws Exception {
-    return Boolean.parseBoolean(value);
+class DateConverter implements IConverter<Instant> {
+  private final DateTimeFormatter formatter;
+
+  public DateConverter() {
+    this.formatter = DateTimeFormatter.ISO_DATE_TIME;
   }
-}
 
-
-class ShortConverter extends IConverter<Short> {
-  @Override
-  public Short convert(String value) throws Exception {
-    return Short.parseShort(value);
-  }
-}
-
-
-class IntegerConverter extends IConverter<Integer> {
-  @Override
-  public Integer convert(String value) throws Exception {
-    return Integer.parseInt(value);
-  }
-}
-
-
-class LongConverter extends IConverter<Long> {
-  @Override
-  public Long convert(String value) throws Exception {
-    return Long.parseLong(value);
-  }
-}
-
-
-class FloatConverter extends IConverter<Float> {
-  @Override
-  public Float convert(String value) throws Exception {
-    return Float.parseFloat(value);
-  }
-}
-
-
-class DoubleConverter extends IConverter<Double> {
-  @Override
-  public Double convert(String value) throws Exception {
-    return Double.parseDouble(value);
-  }
-}
-
-
-class StringConverter extends IConverter<String> {
-  @Override
-  public String convert(String value) throws Exception {
-    return value;
-  }
-}
-
-
-class DateConverter extends IConverter<Date> {
-  @Override
-  public Date convert(String value) throws Exception {
-    return DateFormat.getDateTimeInstance(DateFormat.SHORT,
-                                          DateFormat.SHORT,
-                                          Converter.locale).parse(value);
+  private DateConverter(DateTimeFormatter formatter) {
+    this.formatter = formatter;
   }
 
   @Override
-  public Date convert(String value, String informat) throws Exception {
-    SimpleDateFormat formatter = new SimpleDateFormat(informat, Converter.locale);
-    return formatter.parse(value);
+  public Instant convert(String value) {
+    TemporalAccessor dt = formatter.parseBest(value.trim(), ZonedDateTime::from, LocalDateTime::from);
+    if (dt instanceof ZonedDateTime) {
+      return ((ZonedDateTime)dt).toInstant();
+    } else {
+      return ((LocalDateTime) dt).atZone(ZoneOffset.UTC).toInstant();
+    }
   }
 
+  @Override
+  public DateConverter newConverter(String param) {
+    return new DateConverter(DateTimeFormatter.ofPattern(param));
+  }
 }
 
 

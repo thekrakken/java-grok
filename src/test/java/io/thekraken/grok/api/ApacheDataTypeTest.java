@@ -6,6 +6,9 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.Map;
 
@@ -36,7 +39,8 @@ public class ApacheDataTypeTest {
         assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
 
         Map<String, Object> map = gm.toMap();
-        assertTrue(map.get("timestamp").equals(new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss Z").parse("07/Mar/2004:16:45:56 -0800")));
+        Instant ts = ZonedDateTime.of(2004, 03, 07, 16, 45, 56, 0, ZoneOffset.ofHours(-8)).toInstant();
+        assertTrue(map.get("timestamp").equals(ts));
         assertTrue(map.get("response").equals(Integer.valueOf(401)));
         assertTrue(map.get("ident").equals(Boolean.FALSE));
         assertTrue(map.get("httpversion").equals(Float.valueOf(1.1f)));
@@ -55,8 +59,9 @@ public class ApacheDataTypeTest {
 
         assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
 
+        Instant ts = ZonedDateTime.of(2004, 03, 07, 16, 45, 56, 0, ZoneOffset.ofHours(-8)).toInstant();
         Map<String, Object> map = gm.toMap();
-        assertTrue(map.get("timestamp").equals(new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss Z").parse("07/Mar/2004:16:45:56 -0800")));
+        assertTrue(map.get("timestamp").equals(ts));
         assertTrue(map.get("response").equals(Integer.valueOf(401)));
         assertTrue(map.get("ident").equals(Boolean.FALSE));
         assertTrue(map.get("httpversion").equals(Float.valueOf(1.1f)));

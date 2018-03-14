@@ -16,23 +16,16 @@
 package io.thekraken.grok.api;
 
 
-import static java.lang.String.format;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import io.thekraken.grok.api.exception.GrokException;
+import static java.lang.String.format;
 
 /**
  * {@code Match} is a representation in {@code Grok} world of your log.
@@ -198,22 +191,18 @@ public class Match {
 
       Object value = valueString;
       if (valueString != null && automaticConversionEnabled) {
-        if (Converter.DELIMITER.matchesAnyOf(key)) {
-          KeyValue keyValue = Converter.convert(key, valueString);
+        IConverter converter = grok.converters.get(key);
 
-          // get validated key
-          key = keyValue.getKey();
-
-          // resolve value
-          if (keyValue.getValue() instanceof String) {
-            value = cleanString((String) keyValue.getValue());
-          } else {
-            value = keyValue.getValue();
+        if (converter != null) {
+          key = Converter.extractKey(key);
+          try {
+            value = converter.convert(valueString);
+          } catch (Exception e) {
+            capture.put(key + "_grokfailure", e.toString());
           }
 
-          // set if grok failure
-          if (keyValue.hasGrokFailure()) {
-            capture.put(key + "_grokfailure", keyValue.getGrokFailure());
+          if (value instanceof String) {
+            value = cleanString((String) value);
           }
         } else {
           value = cleanString(valueString);

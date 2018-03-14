@@ -15,7 +15,12 @@
  *******************************************************************************/
 package io.thekraken.grok.api;
 
-import static java.lang.String.format;
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
+import io.thekraken.grok.api.exception.GrokException;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URL;
@@ -24,13 +29,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
-import com.google.common.io.Files;
-import com.google.common.io.Resources;
-import io.thekraken.grok.api.exception.GrokException;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.lang.String.format;
 
 
 /**
@@ -90,6 +89,8 @@ public class Grok {
    * automatic conversion of values
    */
   private boolean automaticConversionEnabled = true;
+
+  public Map<String, IConverter> converters;
 
   /**
    * Create Empty {@code Grok}.
@@ -352,11 +353,11 @@ public class Grok {
     namedRegex = pattern;
     originalGrokPattern = pattern;
     int index = 0;
-    /** flag for infinite recurtion */
+    /** flag for infinite recursion */
     int iterationLeft = 1000;
     Boolean continueIteration = true;
 
-    // Replace %{foo} with the regex (mostly groupname regex)
+    // Replace %{foo} with the regex (mostly group name regex)
     // and then compile the regex
     while (continueIteration) {
       continueIteration = false;
@@ -407,6 +408,8 @@ public class Grok {
     // Compile the regex
     compiledNamedRegex = Pattern.compile(namedRegex);
     namedGroups = GrokUtils.getNameGroups(namedRegex);
+
+    converters = Converter.getConverters(namedRegexCollection.values());
   }
 
   /**

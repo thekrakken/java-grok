@@ -12,7 +12,7 @@ public class TestPerformance {
     String input = "98.210.116.51 \"-\" \"-\" [25/Feb/2018:23:10:39 +0000] \"GET /assets/demo-77048f81b565db090ab2f906c9779b5a92629d996e3b77a6680a7136c492a956.png HTTP/1.1\" 304 \"-\"";
 
     Grok grok = Grok.create("patterns/patterns");
-    String pattern = "%{IPORHOST:clientip} \"%{USER:ident}\" \"%{USER:auth}\" \\[%{HTTPDATE:timestamp}\\] \"(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})\" %{NUMBER:response} \"(?:%{NUMBER:bytes}|-)\"";
+    String pattern = "%{IPORHOST:clientip} \"%{USER:ident}\" \"%{USER:auth}\" \\[%{HTTPDATE:timestamp:datetime:dd/MMM/yyyy:HH:mm:ss Z}\\] \"(?:%{WORD:verb} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion})?|%{DATA:rawrequest})\" %{NUMBER:response:int} \"(?:%{NUMBER:bytes}|-)\"";
     grok.compile(pattern);
 
     long start = System.currentTimeMillis();
