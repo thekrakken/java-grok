@@ -27,7 +27,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.thekraken.grok.api.exception.GrokException;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -110,6 +109,8 @@ public class Discovery {
     Map<String, String> gPatterns = grok.getPatterns();
     // Boolean done = false;
     String texte = text;
+    GrokCompiler compiler = GrokCompiler.newInstance();
+    compiler.register(gPatterns);
 
     // Compile the pattern
     Iterator<Entry<String, String>> it = gPatterns.entrySet().iterator();
@@ -117,15 +118,13 @@ public class Discovery {
       @SuppressWarnings("rawtypes")
       Map.Entry pairs = (Map.Entry) it.next();
       String key = pairs.getKey().toString();
-      Grok g = new Grok();
 
       // g.patterns.putAll( gPatterns );
       try {
-        g.copyPatterns(gPatterns);
+        Grok g = compiler.compile("%{" + key + "}");
         g.setSaved_pattern(key);
-        g.compile("%{" + key + "}");
         groks.put(key, g);
-      } catch (GrokException e) {
+      } catch (Exception e) {
         // Add logger
         continue;
       }

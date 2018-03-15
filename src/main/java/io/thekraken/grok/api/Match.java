@@ -16,13 +16,14 @@
 package io.thekraken.grok.api;
 
 
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 
 import static java.lang.String.format;
@@ -39,94 +40,40 @@ public class Match {
           new GsonBuilder().setPrettyPrinting().create();
   private static final Gson GSON = new GsonBuilder().create();
 
-  private String subject; // texte
-  private Map<String, Object> capture;
-  private Garbage garbage;
-  private Grok grok;
-  private Matcher match;
-  private int start;
-  private int end;
+  private final String subject; // texte
+  private final Grok grok;
+  private final Matcher match;
+  private final int start;
+  private final int end;
 
-  /**
-   * For thread safety.
-   */
-  private static ThreadLocal<Match> matchHolder = new ThreadLocal<Match>() {
-    @Override
-    protected Match initialValue() {
-      return new Match();
-    }
-  };
+  private Map<String, Object> capture = Collections.emptyMap();
 
   /**
    * Create a new {@code Match} object.
    */
-  public Match() {
-    subject = "Nothing";
-    grok = null;
-    match = null;
-    capture = new TreeMap<String, Object>();
-    garbage = new Garbage();
-    start = 0;
-    end = 0;
+  public Match(String subject, Grok grok, Matcher match, int start, int end) {
+    this.subject = subject;
+    this.grok = grok;
+    this.match = match;
+    this.start = start;
+    this.end = end;
   }
 
   /**
    * Create Empty grok matcher.
    */
-  public static final Match EMPTY = new Match();
-
-  public void setGrok(Grok grok) {
-    if (grok != null) {
-      this.grok = grok;
-    }
-  }
+  public static final Match EMPTY = new Match("", null, null, 0, 0);
 
   public Matcher getMatch() {
     return match;
-  }
-
-  public void setMatch(Matcher match) {
-    this.match = match;
   }
 
   public int getStart() {
     return start;
   }
 
-  public void setStart(int start) {
-    this.start = start;
-  }
-
   public int getEnd() {
     return end;
-  }
-
-  public void setEnd(int end) {
-    this.end = end;
-  }
-
-  /**
-   * Singleton.
-   *
-   * @return instance of Match
-   */
-  public static Match getInstance() {
-    return matchHolder.get();
-  }
-
-  /**
-   * Set the single line of log to parse.
-   *
-   * @param text : single line of log
-   */
-  public void setSubject(String text) {
-    if (text == null) {
-      return;
-    }
-    if (text.isEmpty()) {
-      return;
-    }
-    subject = text;
   }
 
   /**
@@ -144,9 +91,8 @@ public class Match {
    * Multiple values for the same key are stored as list.
    *
    */
-  public void captures() {
-    captures(false);
-
+  public Map<String, Object> capture() {
+    return capture(false);
   }
 
   /**
@@ -158,21 +104,23 @@ public class Match {
    * This can be used in cases like: (foo (.*:message) bar|bar (.*:message) foo) where the regexp guarantees that only
    * one value will be captured.
    *
-   * See also {@link #captures} which returns multiple values of the same key as list.
+   * See also {@link #capture} which returns multiple values of the same key as list.
    *
    */
-  public void capturesFlattened() {
-    captures(true);
+  public Map<String, Object> captureFlattened() {
+    return capture(true);
   }
 
-  @SuppressWarnings("unchecked")
-  private void captures(boolean flattened ) {
+  private Map<String, Object> capture(boolean flattened ) {
     if (match == null) {
-      return;
+      return Collections.emptyMap();
     }
 
-    capture.clear();
-    boolean automaticConversionEnabled = grok.isAutomaticConversionEnabled();
+    if (!capture.isEmpty()) {
+      return capture;
+    }
+
+    capture = Maps.newHashMap();
 
     // _capture.put("LINE", this.line);
     // _capture.put("LENGTH", this.line.length() +"");
@@ -190,7 +138,7 @@ public class Match {
       }
 
       Object value = valueString;
-      if (valueString != null && automaticConversionEnabled) {
+      if (valueString != null) {
         IConverter converter = grok.converters.get(key);
 
         if (converter != null) {
@@ -236,6 +184,10 @@ public class Match {
         capture.put(key, value);
       }
     });
+
+    capture = Collections.unmodifiableMap(capture);
+
+    return capture;
   }
 
   /**
@@ -273,7 +225,7 @@ public class Match {
    *
    * @return Json of the matched element in the text
    */
-  public String toJson(Boolean pretty) {
+  public String toJson(boolean pretty) {
     if (capture == null) {
       return "{}";
     }
@@ -281,7 +233,6 @@ public class Match {
       return "{}";
     }
 
-    this.cleanMap();
     Gson gs;
     if (pretty) {
       gs = PRETTY_GSON;
@@ -301,24 +252,6 @@ public class Match {
    */
   public String toJson() {
     return toJson(false);
-  }
-
-  /**
-   * Get the map representation of the matched element in the text.
-   *
-   * @return map object from the matched element in the text
-   */
-  public Map<String, Object> toMap() {
-    this.cleanMap();
-    return capture;
-  }
-
-  /**
-   * Remove and rename the unwanted elements in the matched map.
-   */
-  private void cleanMap() {
-    garbage.rename(capture);
-    garbage.remove(capture);
   }
 
   /**
