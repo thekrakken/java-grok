@@ -10,10 +10,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -28,24 +25,25 @@ public class Converter {
     BYTE(Byte::valueOf),
     BOOLEAN(Boolean::valueOf),
     SHORT(Short::valueOf),
-    INT(Integer::valueOf),
+    INT(Integer::valueOf, "integer"),
     LONG(Long::valueOf),
     FLOAT(Float::valueOf),
     DOUBLE(Double::valueOf),
-    DATE(new DateConverter()),
-    DATETIME(new DateConverter()),
+    DATETIME(new DateConverter(), "date"),
     STRING(v -> v),
 
     // Dashbase specific type
-    META(v -> v),
+    META(v -> v, "sorted"),
 
     // Dashbase specific type
-    ID(v -> v);
+    ID(v -> v, "key");
 
     public final IConverter<?> converter;
+    public final List<String> aliases;
 
-    Type(IConverter<?> converter) {
+    Type(IConverter<?> converter, String... aliases) {
       this.converter = converter;
+      this.aliases = Arrays.asList(aliases);
     }
   }
 
@@ -57,8 +55,14 @@ public class Converter {
       Arrays.asList(Type.values()).stream()
           .collect(Collectors.toMap(t -> t.name().toLowerCase(), t -> t));
 
+  private static final Map<String, Type> TYPE_ALIASES =
+      Arrays.asList(Type.values()).stream()
+        .flatMap(type -> type.aliases.stream().map(alias -> new AbstractMap.SimpleEntry<>(alias, type)))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
   private static Type getType(String key) {
-    Type type = TYPES.get(key.toLowerCase());
+    key = key.toLowerCase();
+    Type type = TYPES.getOrDefault(key, TYPE_ALIASES.get(key));
     if (type == null) {
       throw new IllegalArgumentException("Invalid data type :" + key);
     }
@@ -81,10 +85,11 @@ public class Converter {
   public static Map<String, Type> getGroupTypes(Collection<String> groupNames) {
     return groupNames.stream()
         .filter(group -> Converter.DELIMITER.matchesAnyOf(group))
-        .collect(Collectors.toMap(Function.identity(), key -> {
-          List<String> list = SPLITTER.splitToList(key);
-          return getType(list.get(1));
-        }));
+        .map(group -> SPLITTER.splitToList(group))
+        .collect(Collectors.toMap(
+            l -> l.get(0),
+            l -> getType(l.get(1))
+        ));
   }
 
   public static String extractKey(String key) {

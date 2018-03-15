@@ -10,6 +10,7 @@ import org.junit.runners.MethodSorters;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.time.Instant;
 import java.util.*;
 
 import static java.lang.String.format;
@@ -552,5 +553,21 @@ public class GrokTest {
         } catch (Exception e) {
             assertThat(e.getMessage(), containsString("No definition for key"));
         }
+    }
+
+    @Test
+    public void testGroupTypes() throws Exception {
+        Grok grok = compiler.compile("%{HTTPDATE:timestamp;date;dd/MMM/yyyy:HH:mm:ss Z} %{USERNAME:username:meta} %{IPORHOST:host}:%{POSINT:port:integer}", true);
+        assertEquals(Converter.Type.DATETIME, grok.groupTypes.get("timestamp"));
+        assertEquals(Converter.Type.META, grok.groupTypes.get("username"));
+        assertEquals(Converter.Type.INT, grok.groupTypes.get("port"));
+        assertNull(grok.groupTypes.get("host"));
+
+       Match match = grok.match("07/Mar/2004:16:45:56 -0800 test 64.242.88.10:8080");
+       Map<String, Object> result = match.capture();
+       assertEquals("test", result.get("username"));
+       assertEquals("64.242.88.10", result.get("host"));
+       assertEquals(8080, result.get("port"));
+       assertTrue(result.get("timestamp") instanceof Instant);
     }
 }
