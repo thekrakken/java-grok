@@ -10,6 +10,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -23,30 +24,45 @@ import java.util.stream.Collectors;
  *
  */
 public class Converter {
+  public enum Type {
+    BYTE(Byte::valueOf),
+    BOOLEAN(Boolean::valueOf),
+    SHORT(Short::valueOf),
+    INT(Integer::valueOf),
+    LONG(Long::valueOf),
+    FLOAT(Float::valueOf),
+    DOUBLE(Double::valueOf),
+    DATE(new DateConverter()),
+    DATETIME(new DateConverter()),
+    STRING(v -> v),
 
-  public static final CharMatcher DELIMITER = CharMatcher.anyOf(";:");
+    // Dashbase specific type
+    META(v -> v),
+
+    // Dashbase specific type
+    ID(v -> v);
+
+    public final IConverter<?> converter;
+
+    Type(IConverter<?> converter) {
+      this.converter = converter;
+    }
+  }
+
+  private static final CharMatcher DELIMITER = CharMatcher.anyOf(";:");
 
   private static final Splitter SPLITTER = Splitter.on(DELIMITER).limit(3);
 
-  private static Map<String, IConverter<?>> CONVERTERS = ImmutableMap.<String, IConverter<?>>builder()
-      .put("byte", Byte::valueOf)
-      .put("boolean", Boolean::valueOf)
-      .put("short", Short::valueOf)
-      .put("int", Integer::valueOf)
-      .put("long", Long::valueOf)
-      .put("float", Float::valueOf)
-      .put("double", Double::valueOf)
-      .put("date", new DateConverter())
-      .put("datetime", new DateConverter())
-      .put("string", v -> v)
-      .build();
+  private static final Map<String, Type> TYPES =
+      Arrays.asList(Type.values()).stream()
+          .collect(Collectors.toMap(t -> t.name().toLowerCase(), t -> t));
 
-  private static IConverter getConverter(String key) {
-    IConverter converter = CONVERTERS.get(key);
-    if (converter == null) {
+  private static Type getType(String key) {
+    Type type = TYPES.get(key.toLowerCase());
+    if (type == null) {
       throw new IllegalArgumentException("Invalid data type :" + key);
     }
-    return converter;
+    return type;
   }
 
   public static Map<String, IConverter> getConverters(Collection<String> groupNames) {
@@ -54,11 +70,20 @@ public class Converter {
         .filter(group -> Converter.DELIMITER.matchesAnyOf(group))
         .collect(Collectors.toMap(Function.identity(), key -> {
           List<String> list = SPLITTER.splitToList(key);
-          IConverter converter = getConverter(list.get(1));
+          IConverter converter = getType(list.get(1)).converter;
           if (list.size() == 3) {
             converter = converter.newConverter(list.get(2));
           }
           return converter;
+        }));
+  }
+
+  public static Map<String, Type> getGroupTypes(Collection<String> groupNames) {
+    return groupNames.stream()
+        .filter(group -> Converter.DELIMITER.matchesAnyOf(group))
+        .collect(Collectors.toMap(Function.identity(), key -> {
+          List<String> list = SPLITTER.splitToList(key);
+          return getType(list.get(1));
         }));
   }
 

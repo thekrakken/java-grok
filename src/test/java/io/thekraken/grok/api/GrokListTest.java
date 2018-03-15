@@ -39,7 +39,7 @@ public class GrokListTest {
 
 
         Grok grok = compiler.compile("%{IP}");
-        List<String> json = grok.captures(logs);
+        List<String> json = grok.capture(logs);
         assertNotNull(json);
         int i = 0;
         for (String elem : json) {
@@ -67,7 +67,7 @@ public class GrokListTest {
 
 
         Grok grok = compiler.compile("%{IP}");
-        List<String> json = grok.captures(logs);
+        List<String> json = grok.capture(logs);
         assertNotNull(json);
         int i = 0;
         for (String elem : json) {

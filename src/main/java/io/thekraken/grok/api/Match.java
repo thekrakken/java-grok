@@ -40,7 +40,7 @@ public class Match {
           new GsonBuilder().setPrettyPrinting().create();
   private static final Gson GSON = new GsonBuilder().create();
 
-  private final String subject; // texte
+  private final CharSequence subject; // texte
   private final Grok grok;
   private final Matcher match;
   private final int start;
@@ -51,7 +51,7 @@ public class Match {
   /**
    * Create a new {@code Match} object.
    */
-  public Match(String subject, Grok grok, Matcher match, int start, int end) {
+  public Match(CharSequence subject, Grok grok, Matcher match, int start, int end) {
     this.subject = subject;
     this.grok = grok;
     this.match = match;
@@ -81,7 +81,7 @@ public class Match {
    *
    * @return the single line of log
    */
-  public String getSubject() {
+  public CharSequence getSubject() {
     return subject;
   }
 

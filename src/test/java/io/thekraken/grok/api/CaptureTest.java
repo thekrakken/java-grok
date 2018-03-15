@@ -145,5 +145,4 @@ public class CaptureTest {
             assertThat(e.getMessage(), containsString("has multiple non-null values, this is not allowed in flattened mode"));
         }
     }
-
 }

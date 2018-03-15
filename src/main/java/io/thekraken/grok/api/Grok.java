@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
  *  Grok grok = Grok.create("patterns/patterns");
  *  grok.compile("%{USER}");
  *  Match gm = grok.match("root");
- *  gm.captures();
+ *  gm.capture();
  * </pre>
  *
  * @since 0.0.1
@@ -69,6 +69,8 @@ public class Grok {
 
   public final Set<String> namedGroups;
 
+  public final Map<String, Converter.Type> groupTypes;
+
   public final Map<String, IConverter> converters;
 
   /**
@@ -81,17 +83,15 @@ public class Grok {
 
   public Grok(String pattern,
               String namedRegex,
-              Pattern compiledNamedRegex,
               Map<String, String> namedRegexCollection,
-              Set<String> namedGroups,
-              Map<String, IConverter> converters,
               Map<String, String> patternDefinitions) {
     this.originalGrokPattern = pattern;
     this.namedRegex = namedRegex;
-    this.compiledNamedRegex = compiledNamedRegex;
+    this.compiledNamedRegex = Pattern.compile(namedRegex);
     this.namedRegexCollection = namedRegexCollection;
-    this.namedGroups = namedGroups;
-    this.converters = converters;
+    this.namedGroups = GrokUtils.getNameGroups(namedRegex);
+    this.groupTypes = Converter.getGroupTypes(namedRegexCollection.values());
+    this.converters = Converter.getConverters(namedRegexCollection.values());
     this.grokPatternDefinition = patternDefinitions;
   }
 
@@ -168,7 +168,7 @@ public class Grok {
    * @param logs : list of log
    * @return list of json representation of the log
    */
-  public List<String> captures(List<String> logs){
+  public List<String> capture(List<String> logs){
     List<String> matched = new ArrayList<String>();
     for (String log : logs) {
       Match match = match(log);
@@ -185,7 +185,7 @@ public class Grok {
    * @param text : Single line of log
    * @return Grok Match
    */
-  public Match match(String text) {
+  public Match match(CharSequence text) {
     if (compiledNamedRegex == null || StringUtils.isBlank(text)) {
       return Match.EMPTY;
     }
