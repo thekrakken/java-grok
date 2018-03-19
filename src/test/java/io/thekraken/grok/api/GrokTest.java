@@ -11,6 +11,10 @@ import org.junit.runners.MethodSorters;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static java.lang.String.format;
@@ -569,5 +573,28 @@ public class GrokTest {
        assertEquals("64.242.88.10", result.get("host"));
        assertEquals(8080, result.get("port"));
        assertTrue(result.get("timestamp") instanceof Instant);
+    }
+
+    @Test
+    public void testTimeZone() throws Exception {
+        // no timezone. default to UTC
+        String date = "03/19/2018 14:11:00";
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss");
+        Grok grok = compiler.compile("%{DATESTAMP:timestamp;date;MM/dd/yyyy HH:mm:ss}", true);
+        Instant instant = (Instant) grok.match(date).capture().get("timestamp");
+        assertEquals(ZonedDateTime.parse(date, dtf.withZone(ZoneOffset.UTC)).toInstant(), instant);
+
+        // set default timezone to PST
+        ZoneId PST = ZoneId.of("PST", ZoneId.SHORT_IDS);
+        grok = compiler.compile("%{DATESTAMP:timestamp;date;MM/dd/yyyy HH:mm:ss}", PST, true);
+        instant = (Instant) grok.match(date).capture().get("timestamp");
+        assertEquals(ZonedDateTime.parse(date, dtf.withZone(PST)).toInstant(), instant);
+
+        // when timestamp has timezone, use it instead of the default.
+        String dateWithTimeZone = "07/Mar/2004:16:45:56 +0800";
+        dtf = DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss Z");
+        grok = compiler.compile("%{HTTPDATE:timestamp;date;dd/MMM/yyyy:HH:mm:ss Z}", PST, true);
+        instant = (Instant) grok.match(dateWithTimeZone).capture().get("timestamp");
+        assertEquals(ZonedDateTime.parse(dateWithTimeZone, dtf.withZone(ZoneOffset.ofHours(8))).toInstant(), instant);
     }
 }

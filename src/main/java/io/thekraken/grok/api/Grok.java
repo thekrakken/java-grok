@@ -17,6 +17,8 @@ package io.thekraken.grok.api;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -84,14 +86,15 @@ public class Grok {
   public Grok(String pattern,
               String namedRegex,
               Map<String, String> namedRegexCollection,
-              Map<String, String> patternDefinitions) {
+              Map<String, String> patternDefinitions,
+              ZoneId defaultTimeZone) {
     this.originalGrokPattern = pattern;
     this.namedRegex = namedRegex;
     this.compiledNamedRegex = Pattern.compile(namedRegex);
     this.namedRegexCollection = namedRegexCollection;
     this.namedGroups = GrokUtils.getNameGroups(namedRegex);
     this.groupTypes = Converter.getGroupTypes(namedRegexCollection.values());
-    this.converters = Converter.getConverters(namedRegexCollection.values());
+    this.converters = Converter.getConverters(namedRegexCollection.values(), defaultTimeZone);
     this.grokPatternDefinition = patternDefinitions;
   }
 

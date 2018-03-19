@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -82,13 +84,18 @@ public class GrokCompiler {
     return compile(pattern, false);
   }
 
+  public Grok compile(final String pattern, boolean namedOnly) {
+    return compile(pattern, ZoneOffset.UTC, namedOnly);
+  }
+
   /**
    * Compiles a given Grok pattern and returns a Grok object which can parse the pattern.
    *
    * @param pattern : Grok pattern (ex: %{IP})
+   * @param defaultTimeZone: time zone used to parse a timestamp when it doesn't contain the time zone
    * @param namedOnly : Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})
    */
-  public Grok compile(final String pattern, boolean namedOnly) {
+  public Grok compile(final String pattern, ZoneId defaultTimeZone, boolean namedOnly) {
 
     if (StringUtils.isBlank(pattern)) {
       throw new IllegalArgumentException("{pattern} should not be empty or null");
@@ -153,7 +160,8 @@ public class GrokCompiler {
         pattern,
         namedRegex,
         namedRegexCollection,
-        patternDefinitions
+        patternDefinitions,
+        defaultTimeZone
     );
   }
 }
