@@ -27,7 +27,11 @@ repositories {
 group = "de.wellnerbou"
 sourceCompatibility = JavaVersion.VERSION_1_8
 archivesBaseName = "java-grok"
-version = '0.1.6-SNAPSHOT'
+
+jar {
+    baseName = project.name
+    version = project.version
+}
 
 dependencies {
   compile "com.github.tony19:named-regexp:0.2.4"
