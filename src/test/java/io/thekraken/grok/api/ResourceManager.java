@@ -7,7 +7,7 @@ package io.thekraken.grok.api;
  */
 public final class ResourceManager {
 
-    public static final String PATTERNS = "patterns/patterns";
+    public static final String PATTERNS = "src/main/resources/patterns/patterns";
 
     public static final String MESSAGES = "src/test/resources/message/messages";
 

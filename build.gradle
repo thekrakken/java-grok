@@ -1,5 +1,6 @@
 plugins {
     id "com.jfrog.bintray" version "1.8.0"
+    id 'net.researchgate.release' version '2.6.0'
 }
 
 apply plugin: 'java'
@@ -23,10 +24,10 @@ repositories {
   mavenCentral()
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_7
 group = "de.wellnerbou"
-archivesBaseName = "grok"
-version = '0.1.5'
+sourceCompatibility = JavaVersion.VERSION_1_8
+archivesBaseName = "java-grok"
+version = '0.1.6-SNAPSHOT'
 
 dependencies {
   compile "com.github.tony19:named-regexp:0.2.4"

@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -143,6 +145,16 @@ public class Grok implements Serializable {
   }
 
   /**
+   * Create a {@code Grok} instance with included default patterns.
+   * @return {@code Grok} instance
+   */
+  public static Grok create() throws GrokException {
+	  Grok g = new Grok();
+	  g.addPatternFromClasspath("/patterns/patterns");
+	  return g;
+  }
+
+  /**
    * Create a {@code Grok} instance with the given grok patterns file.
    *
    * @param  grokPatternPath : Path to the pattern file
@@ -218,29 +230,26 @@ public class Grok implements Serializable {
 
     File f = new File(file);
     if (!f.exists()) {
-      throw new GrokException("Pattern not found");
+      throw new GrokException("Pattern file "+ f.getAbsolutePath() + " not found");
     }
 
     if (!f.canRead()) {
-      throw new GrokException("Pattern cannot be read");
+      throw new GrokException("Pattern file "+ f.getAbsolutePath() + " cannot be read");
     }
 
-    FileReader r = null;
-    try {
-      r = new FileReader(f);
+    try (FileReader r = new FileReader(f)) {
       addPatternFromReader(r);
-    } catch (FileNotFoundException e) {
-      throw new GrokException(e.getMessage());
-    } catch (@SuppressWarnings("hiding") IOException e) {
-      throw new GrokException(e.getMessage());
-    } finally {
-      try {
-        if (r != null) {
-          r.close();
-        }
-      } catch (IOException io) {
-        // TODO(anthony) : log the error
-      }
+    } catch (IOException e) {
+      throw new GrokException(e.getMessage(), e);
+    }
+  }
+
+  public void addPatternFromClasspath(String path) throws GrokException {
+    final InputStream inputStream = this.getClass().getResourceAsStream(path);
+    try (Reader r = new InputStreamReader(inputStream)) {
+      addPatternFromReader(r);
+    } catch (IOException e) {
+      throw new GrokException(e.getMessage(), e);
     }
   }
 
@@ -263,10 +272,8 @@ public class Grok implements Serializable {
         }
       }
       br.close();
-    } catch (IOException e) {
-      throw new GrokException(e.getMessage());
-    } catch (GrokException e) {
-      throw new GrokException(e.getMessage());
+    } catch (IOException | GrokException e) {
+      throw new GrokException(e.getMessage(), e);
     }
   }
 
@@ -347,7 +354,7 @@ public class Grok implements Serializable {
 
   /**
    * Compile the {@code Grok} pattern to named regex pattern.
-   * 
+   *
    * @param pattern : Grok pattern (ex: %{IP})
    * @param namedOnly : Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})
    * @throws GrokException runtime expt
@@ -376,7 +383,7 @@ public class Grok implements Serializable {
 
       Matcher m = GrokUtils.GROK_PATTERN.matcher(namedRegex);
       // Match %{Foo:bar} -> pattern name and subname
-      // Match %{Foo=regex} -> add new regex definition 
+      // Match %{Foo=regex} -> add new regex definition
       if (m.find()) {
         continueIteration = true;
         Map<String, String> group = GrokUtils.namedGroups(m, m.group());
