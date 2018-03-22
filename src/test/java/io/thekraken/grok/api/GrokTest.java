@@ -561,9 +561,9 @@ public class GrokTest {
 
     @Test
     public void testGroupTypes() throws Exception {
-        Grok grok = compiler.compile("%{HTTPDATE:timestamp;date;dd/MMM/yyyy:HH:mm:ss Z} %{USERNAME:username:meta} %{IPORHOST:host}:%{POSINT:port:integer}", true);
+        Grok grok = compiler.compile("%{HTTPDATE:timestamp;date;dd/MMM/yyyy:HH:mm:ss Z} %{USERNAME:username:text} %{IPORHOST:host}:%{POSINT:port:integer}", true);
         assertEquals(Converter.Type.DATETIME, grok.groupTypes.get("timestamp"));
-        assertEquals(Converter.Type.META, grok.groupTypes.get("username"));
+        assertEquals(Converter.Type.STRING, grok.groupTypes.get("username"));
         assertEquals(Converter.Type.INT, grok.groupTypes.get("port"));
         assertNull(grok.groupTypes.get("host"));
 

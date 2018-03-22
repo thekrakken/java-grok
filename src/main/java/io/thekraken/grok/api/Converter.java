@@ -28,13 +28,7 @@ public class Converter {
     FLOAT(Float::valueOf),
     DOUBLE(Double::valueOf),
     DATETIME(new DateConverter(), "date"),
-    STRING(v -> v, "text"),
-
-    // Dashbase specific type
-    META(v -> v, "sorted"),
-
-    // Dashbase specific type
-    ID(v -> v, "key");
+    STRING(v -> v, "text");
 
     public final IConverter<?> converter;
     public final List<String> aliases;
