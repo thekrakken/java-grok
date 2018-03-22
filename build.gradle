@@ -75,7 +75,7 @@ bintray {
     pkg {
         repo = 'maven'
         name = 'java-grok'
-        licenses = ['Apache 2.0']
+        licenses = ['Apache-2.0']
         vcsUrl = 'https://gitlab.com/paulwellnerbou/java-grok.git'
     }
 }
