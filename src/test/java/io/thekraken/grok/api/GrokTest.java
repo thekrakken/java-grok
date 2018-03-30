@@ -337,7 +337,7 @@ public class GrokTest {
     public void test013_IpSet() throws Throwable {
         Grok grok = compiler.compile("%{IP}");
 
-        BufferedReader br = new BufferedReader(new FileReader(ResourceManager.IP));
+        BufferedReader br = new BufferedReader(new FileReader(Resources.getResource(ResourceManager.IP).getFile()));
         String line;
         System.out.println("Starting test with ip");
         while ((line = br.readLine()) != null) {
@@ -547,6 +547,19 @@ public class GrokTest {
     @Test
     public void test024_captures_with_missing_definition() throws Throwable {
         ensureAbortsWithDefinitionMissing("FOO %{BAR}", "%{FOO}", false);
+    }
+
+    @Test
+    public void allowClassPathPatternFiles() throws Exception {
+        GrokCompiler compiler = GrokCompiler.newInstance();
+        compiler.register(Resources.getResource("patterns/patterns").openStream());
+        compiler.compile("%{USERNAME}", false);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void createGrokWithDefaultPatterns() throws GrokException {
+        GrokCompiler compiler = GrokCompiler.newInstance();
+        compiler.compile("%{USERNAME}", false);
     }
 
     private void ensureAbortsWithDefinitionMissing(String pattern, String compilePattern, boolean namedOnly) {

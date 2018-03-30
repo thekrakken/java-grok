@@ -1,16 +1,13 @@
-buildscript {
-  repositories {
-    jcenter()
-  }
+plugins {
+    id "com.jfrog.bintray" version "1.8.0"
+    id 'net.researchgate.release' version '2.6.0'
 }
 
-plugins {
-  id 'java'
-  id 'maven'
-  id 'maven-publish'
-  id 'eclipse'
-  id 'idea'
-}
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 // Apply code quality checks
 apply from: "$rootProject.projectDir/gradle/codeQuality.gradle"
@@ -28,10 +25,14 @@ repositories {
   mavenCentral()
 }
 
+group = "de.wellnerbou"
 sourceCompatibility = JavaVersion.VERSION_1_8
-group = "io.thekraken"
-archivesBaseName = "grok"
-version = '0.1.6-SNAPSHOT'
+archivesBaseName = "java-grok"
+
+jar {
+    baseName = project.name
+    version = project.version
+}
 
 dependencies {
   compile "org.apache.commons:commons-lang3:3.7"
@@ -40,4 +41,46 @@ dependencies {
   compile "org.slf4j:slf4j-api:1.7.21"
 
   testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+
+// user and key configuration for bintray deployment:
+// ./gradlew bintrayUpload -PpublishUser=<USER> -PpublishKey=<KEY>
+if (!project.hasProperty("publishUser")) {
+    ext.publishUser = ""
+}
+if (!project.hasProperty("publishKey")) {
+    ext.publishKey = ""
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifactId 'java-grok'
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
+
+bintray {
+    user = "$publishUser"
+    key = "$publishKey"
+    publications = ['mavenJava']
+
+    dryRun = false
+    publish = true
+
+    pkg {
+        repo = 'maven'
+        name = 'java-grok'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://gitlab.com/paulwellnerbou/java-grok.git'
+    }
 }

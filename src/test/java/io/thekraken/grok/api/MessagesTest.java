@@ -15,8 +15,6 @@ import static org.junit.Assert.assertNotNull;
 
 public class MessagesTest {
 
-    public final static String LOG_FILE = ResourceManager.MESSAGES;
-
     @Test
     public void test001_linux_messages() throws GrokException, IOException {
         GrokCompiler compiler = GrokCompiler.newInstance();
@@ -24,7 +22,7 @@ public class MessagesTest {
 
         Grok g = compiler.compile("%{MESSAGESLOG}");
 
-        BufferedReader br = new BufferedReader(new FileReader(LOG_FILE));
+        BufferedReader br = new BufferedReader(new FileReader(Resources.getResource(ResourceManager.MESSAGES).getFile()));
         String line;
         System.out.println("Starting test with linux messages log -- may take a while");
         while ((line = br.readLine()) != null) {
