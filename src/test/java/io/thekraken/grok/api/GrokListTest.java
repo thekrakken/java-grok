@@ -1,6 +1,8 @@
 package io.thekraken.grok.api;
 
+import com.google.common.io.Resources;
 import io.thekraken.grok.api.exception.GrokException;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -13,6 +15,13 @@ import static org.junit.Assert.assertNotNull;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GrokListTest {
+    GrokCompiler compiler;
+
+    @Before
+    public void setUp() throws Exception {
+        compiler = GrokCompiler.newInstance();
+        compiler.register(Resources.getResource(ResourceManager.PATTERNS).openStream());
+    }
 
     @Test
     public void test_001() throws GrokException {
@@ -29,8 +38,8 @@ public class GrokListTest {
         logs.add("124.2.84.36");
 
 
-        Grok grok = Grok.create(ResourceManager.PATTERNS, "%{IP}");
-        List<String> json = grok.captures(logs);
+        Grok grok = compiler.compile("%{IP}");
+        List<String> json = grok.capture(logs);
         assertNotNull(json);
         int i = 0;
         for (String elem : json) {
@@ -57,8 +66,8 @@ public class GrokListTest {
         logs.add("124.2.84.36");
 
 
-        Grok grok = Grok.create(ResourceManager.PATTERNS, "%{IP}");
-        List<String> json = grok.captures(logs);
+        Grok grok = compiler.compile("%{IP}");
+        List<String> json = grok.capture(logs);
         assertNotNull(json);
         int i = 0;
         for (String elem : json) {
