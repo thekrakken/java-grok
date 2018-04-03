@@ -31,15 +31,7 @@ import java.util.regex.Pattern;
  *
  * {@code Grok} is simple API that allows you to easily parse logs
  * and other files (single line). With {@code Grok},
- * you can turn unstructured log and event data into structured data (JSON).
- *<br>
- * example:<br>
- * <pre>
- *  Grok grok = Grok.create("patterns/patterns");
- *  grok.compile("%{USER}");
- *  Match gm = grok.match("root");
- *  gm.capture();
- * </pre>
+ * you can turn unstructured log and event data into structured data.
  *
  * @since 0.0.1
  * @author anthonycorbacho
@@ -155,12 +147,11 @@ public class Grok {
    * And return the json representation of the matched element
    *
    * @param log : log to match
-   * @return json representation og the log
+   * @return map containing matches
    */
-  public String capture(String log){
+  public Map<String, Object> capture(String log){
     Match match = match(log);
-    match.capture();
-    return match.toJson();
+    return match.capture();
   }
 
   /**
@@ -168,14 +159,12 @@ public class Grok {
    * and return the list of json representation of the matched elements.
    *
    * @param logs : list of log
-   * @return list of json representation of the log
+   * @return list of maps containing matches
    */
-  public List<String> capture(List<String> logs){
-    List<String> matched = new ArrayList<String>();
+  public ArrayList<Map<String, Object>> capture(List<String> logs){
+    final ArrayList<Map<String, Object>> matched = new ArrayList<>();
     for (String log : logs) {
-      Match match = match(log);
-      match.capture();
-      matched.add(match.toJson());
+      matched.add(capture(log));
     }
     return matched;
   }

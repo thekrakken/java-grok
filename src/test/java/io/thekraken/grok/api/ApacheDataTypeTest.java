@@ -2,6 +2,7 @@ package io.thekraken.grok.api;
 
 import com.google.common.io.Resources;
 import io.thekraken.grok.api.exception.GrokException;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -38,7 +39,7 @@ public class ApacheDataTypeTest {
         Match gm = g.match(line);
         Map<String, Object> map = gm.capture();
 
-        assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
+        Assertions.assertThat(map).doesNotContainKey("Error");
         Instant ts = ZonedDateTime.of(2004, 03, 07, 16, 45, 56, 0, ZoneOffset.ofHours(-8)).toInstant();
         assertTrue(map.get("timestamp").equals(ts));
         assertTrue(map.get("response").equals(Integer.valueOf(401)));
@@ -56,7 +57,7 @@ public class ApacheDataTypeTest {
         Match gm = g.match(line);
         Map<String, Object> map = gm.capture();
 
-        assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
+        Assertions.assertThat(map).doesNotContainKey("Error");
 
         Instant ts = ZonedDateTime.of(2004, 03, 07, 16, 45, 56, 0, ZoneOffset.ofHours(-8)).toInstant();
         assertTrue(map.get("timestamp").equals(ts));

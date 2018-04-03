@@ -2,6 +2,7 @@ package io.thekraken.grok.api;
 
 import com.google.common.io.Resources;
 import io.thekraken.grok.api.exception.GrokException;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -11,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Map;
 
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -38,11 +40,9 @@ public class ApacheTest {
         String line;
         System.out.println("Starting test with httpd log");
         while ((line = br.readLine()) != null) {
-            //System.out.println(line);
             Match gm = g.match(line);
-            gm.capture();
-            assertNotNull(gm.toJson());
-            assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
+            final Map<String, Object> capture = gm.capture();
+            Assertions.assertThat(capture).doesNotContainKey("Error");
         }
         br.close();
     }
@@ -57,11 +57,9 @@ public class ApacheTest {
         for (File child : dir.listFiles()) {
             br = new BufferedReader(new FileReader(LOG_DIR_NASA + child.getName()));
             while ((line = br.readLine()) != null) {
-                //System.out.println(child.getName() + " " +line);
                 Match gm = g.match(line);
-                gm.capture();
-                assertNotNull(gm.toJson());
-                assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
+                final Map<String, Object> capture = gm.capture();
+                Assertions.assertThat(capture).doesNotContainKey("Error");
             }
             br.close();
         }

@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -57,6 +58,19 @@ public class GrokCompiler {
   public void register(Map<String, String> patternDefinitions) {
     Preconditions.checkNotNull(patternDefinitions);
     patternDefinitions.forEach((name, pattern) -> register(name, pattern));
+  }
+
+  public void registerDefaultPatterns() {
+    registerPatternFromClasspath("/patterns/patterns");
+  }
+
+  public void registerPatternFromClasspath(String path) throws GrokException {
+    final InputStream inputStream = this.getClass().getResourceAsStream(path);
+    try (Reader r = new InputStreamReader(inputStream)) {
+      register(inputStream);
+    } catch (IOException e) {
+      throw new GrokException(e.getMessage(), e);
+    }
   }
 
   /**

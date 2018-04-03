@@ -3,6 +3,7 @@ package io.thekraken.grok.api;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import io.thekraken.grok.api.exception.GrokException;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -15,11 +16,21 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -45,30 +56,19 @@ public class GrokTest {
         assertTrue(thrown);
     }
 
-    @Test
-    public void test000_dummy() throws Throwable {
-        boolean thrown = false;
-        /** This check if grok throw */
-        try {
+    @Test(expected = Exception.class)
+    public void test_throwExceptionIfPatternIsNull() throws Throwable {
             compiler.compile(null);
-        } catch (Exception e) {
-            thrown = true;
-        }
-        assertTrue(thrown);
-        thrown = false;
-        try {
-            compiler.compile("");
-        } catch (Exception e) {
-            thrown = true;
-        }
-        assertTrue(thrown);
-        thrown = false;
-        try {
-            compiler.compile("      ");
-        } catch (Exception e) {
-            thrown = true;
-        }
-        assertTrue(thrown);
+    }
+
+    @Test(expected = Exception.class)
+    public void test_throwExceptionIfPatternIsEmptyString() throws Throwable {
+        compiler.compile("");
+    }
+
+    @Test(expected = Exception.class)
+    public void test_throwExceptionIfPatternContainsOnlyBlanks() throws Throwable {
+        compiler.compile("      ");
     }
 
     @Test
@@ -244,7 +244,6 @@ public class GrokTest {
         Match gm =
                 g.match("112.169.19.192 - - [06/Mar/2013:01:36:30 +0900] \"GET / HTTP/1.1\" 200 44346 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22\"");
         Map<String, Object> map = gm.capture();
-        assertNotNull(gm.toJson());
         assertEquals(
                 map.get("agent").toString(),
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22");
@@ -256,8 +255,6 @@ public class GrokTest {
         gm =
                 g.match("112.169.19.192 - - [06/Mar/2013:01:36:30 +0900] \"GET /wp-content/plugins/easy-table/themes/default/style.css?ver=1.0 HTTP/1.1\" 304 - \"http://www.nflabs.com/\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22\"");
         map = gm.capture();
-        assertNotNull(gm.toJson());
-        // System.out.println(gm.toJson());
         assertEquals(
                 map.get("agent").toString(),
                 "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22");
@@ -266,10 +263,6 @@ public class GrokTest {
         assertEquals(map.get("request").toString(),
                 "/wp-content/plugins/easy-table/themes/default/style.css?ver=1.0");
         assertEquals(map.get("TIME").toString(), "01:36:30");
-
-        // assertEquals("{HOSTPORT=www.google.fr:80, IPORHOST=www.google.fr, PORT=80}",
-        // map.toString());
-
     }
 
     /**
@@ -316,9 +309,8 @@ public class GrokTest {
         System.out.println("Starting test with ip");
         while ((line = br.readLine()) != null) {
             Match gm = grok.match(line);
-            Map<String, Object> map = gm.capture();
-            assertNotNull(gm.toJson());
-            assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
+            final Map<String, Object> map = gm.capture();
+            Assertions.assertThat(map).doesNotContainKey("Error");
             assertEquals(map.get("IP"), line);
         }
     }

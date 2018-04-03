@@ -23,7 +23,7 @@ package io.thekraken.grok.api.exception;
  * @author anthonycorbacho
  * @since 0.0.4
  */
-public class GrokException extends Exception {
+public class GrokException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
 

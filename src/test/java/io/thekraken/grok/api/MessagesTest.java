@@ -2,6 +2,7 @@ package io.thekraken.grok.api;
 
 import com.google.common.io.Resources;
 import io.thekraken.grok.api.exception.GrokException;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -28,8 +29,8 @@ public class MessagesTest {
         while ((line = br.readLine()) != null) {
             Match gm = g.match(line);
             Map<String, Object> map = gm.capture();
-            assertNotNull(gm.toJson());
-            assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
+            assertNotNull(map);
+            Assertions.assertThat(map).doesNotContainKey("Error");
         }
         br.close();
     }
