@@ -215,45 +215,6 @@ public class Match {
     return value;
   }
 
-
-  /**
-   * Get the json representation of the matched element.
-   * <p>
-   * example: map [ {IP: 127.0.0.1}, {status:200}] will return {"IP":"127.0.0.1", "status":200}
-   * </p>
-   * If pretty is set to true, json will return prettyprint json string.
-   *
-   * @return Json of the matched element in the text
-   */
-  public String toJson(boolean pretty) {
-    if (capture == null) {
-      return "{}";
-    }
-    if (capture.isEmpty()) {
-      return "{}";
-    }
-
-    Gson gs;
-    if (pretty) {
-      gs = PRETTY_GSON;
-    } else {
-      gs = GSON;
-    }
-    return gs.toJson(/* cleanMap( */capture/* ) */);
-  }
-
-  /**
-   * Get the json representation of the matched element.
-   * <p>
-   * example: map [ {IP: 127.0.0.1}, {status:200}] will return {"IP":"127.0.0.1", "status":200}
-   * </p>
-   *
-   * @return Json of the matched element in the text
-   */
-  public String toJson() {
-    return toJson(false);
-  }
-
   /**
    * Util fct.
    *

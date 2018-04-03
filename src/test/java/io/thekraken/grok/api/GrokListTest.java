@@ -9,6 +9,7 @@ import org.junit.runners.MethodSorters;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -39,16 +40,14 @@ public class GrokListTest {
 
 
         Grok grok = compiler.compile("%{IP}");
-        List<String> json = grok.capture(logs);
-        assertNotNull(json);
+        ArrayList<Map<String, Object>> capture = grok.capture(logs);
+        assertNotNull(capture);
         int i = 0;
-        for (String elem : json) {
+        for (Map<String, Object> elem : capture) {
             assertNotNull(elem);
             assertEquals(elem, grok.capture(logs.get(i)));
             i++;
-            //assert
         }
-
     }
 
     @Test
@@ -65,18 +64,14 @@ public class GrokListTest {
         logs.add("170.36.40.12");
         logs.add("124.2.84.36");
 
-
         Grok grok = compiler.compile("%{IP}");
-        List<String> json = grok.capture(logs);
-        assertNotNull(json);
+        ArrayList<Map<String, Object>> capture = grok.capture(logs);
+        assertNotNull(capture);
         int i = 0;
-        for (String elem : json) {
-            System.out.println(elem);
+        for (Map<String, Object> elem : capture) {
             assertNotNull(elem);
             assertEquals(elem, grok.capture(logs.get(i)));
             i++;
-            //assert
         }
-
     }
 }
