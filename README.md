@@ -16,8 +16,8 @@ Grok is inspired by the logstash inteceptor or filter available [here](http://lo
 
 ```maven
 <dependency>
-  <groupId>io.thekraken</groupId>
-  <artifactId>grok</artifactId>
+  <groupId>de.wellnerbou</groupId>
+  <artifactId>java-grok</artifactId>
   <version>0.1.7</version>
 </dependency>
 ```
@@ -25,7 +25,7 @@ Grok is inspired by the logstash inteceptor or filter available [here](http://lo
 Or with gradle
 
 ```gradle
-compile "io.thekraken:grok:0.1.7"
+compile "de.wellnerbou:java-grok:0.1.7"
 ```
 
 ### Usage ([Grok java documentation](http://grok.nflabs.com/javadoc))
@@ -53,15 +53,15 @@ Map myMap = gm.toMap();
 
 ### Build Java Grok
 
-Java Grok support Gradle: ``./gradlew build``
+Java Grok support Gradle: `./gradlew assemble`
  
 ### Getting help
-Maintainer: [@anthonycorbacho](https://github.com/anthonycorbacho)
+Former maintainer: [@anthonycorbacho](https://github.com/anthonycorbacho)
 
 ### Thankx to
+ * [@anthonycorbacho](https://github.com/anthonycorbacho)
  * [@nokk](https://github.com/nokk)
  * [@wouterdb](https://github.com/wouterdb)
  * [@Leemoonsoo](https://github.com/Leemoonsoo)
 
 **Any contributions are warmly welcome**
-
