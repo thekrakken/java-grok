@@ -9,13 +9,6 @@ apply plugin: 'idea'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
-// Apply code quality checks
-apply from: "$rootProject.projectDir/gradle/codeQuality.gradle"
-// Publish artifact to Maven repositiory
-if (project.hasProperty("signing")) {
-  apply from: "$rootProject.projectDir/gradle/publishArtifact.gradle"
-}
-
 task wrapper(type: Wrapper) {
   gradleVersion = '3.1'
 }
