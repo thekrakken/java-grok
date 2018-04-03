@@ -1,11 +1,12 @@
 # Grok
-[![Build Status](https://secure.travis-ci.org/thekrakken/java-grok.png?branch=master)](https://travis-ci.org/thekrakken/java-grok)
 
 Java Grok is simple API that allows you to easily parse logs and other files (single line). With Java Grok, you can turn unstructured log and event data into structured data (JSON).
+Grok is inspired by the logstash inteceptor or filter available [here](http://logstash.net/docs/1.4.1/filters/grok)
 
 -----------------------
 
 ### What can I use Grok for?
+
 * reporting errors and other patterns from logs and processes
 * parsing complex text output and converting it to json for external processing
 * apply 'write-once use-everywhere' to regular expressions
@@ -17,14 +18,14 @@ Java Grok is simple API that allows you to easily parse logs and other files (si
 <dependency>
   <groupId>io.thekraken</groupId>
   <artifactId>grok</artifactId>
-  <version>0.1.5</version>
+  <version>0.1.7</version>
 </dependency>
 ```
 
 Or with gradle
 
 ```gradle
-compile "io.thekraken:grok:0.1.5"
+compile "io.thekraken:grok:0.1.7"
 ```
 
 ### Usage ([Grok java documentation](http://grok.nflabs.com/javadoc))
@@ -64,4 +65,3 @@ Maintainer: [@anthonycorbacho](https://github.com/anthonycorbacho)
 
 **Any contributions are warmly welcome**
 
-Grok is inspired by the logstash inteceptor or filter available [here](http://logstash.net/docs/1.4.1/filters/grok)

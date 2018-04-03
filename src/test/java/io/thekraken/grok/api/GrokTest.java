@@ -96,32 +96,6 @@ public class GrokTest {
         assertEquals("{USERNAME=john}", map.toString());
     }
 
-
-    @Test
-    public void test001_username() throws Throwable {
-        Grok g = compiler.compile("%{USERNAME}");
-
-        Match gm = g.match("root");
-        Map<String, Object> map = gm.capture();
-        assertEquals("{USERNAME=root}", map.toString());
-
-        gm = g.match("r00t");
-        map = gm.capture();
-        assertEquals("{USERNAME=r00t}", map.toString());
-
-        gm = g.match("guest");
-        map = gm.capture();
-        assertEquals("{USERNAME=guest}", map.toString());
-
-        gm = g.match("guest1234");
-        map = gm.capture();
-        assertEquals("{USERNAME=guest1234}", map.toString());
-
-        gm = g.match("john doe");
-        map = gm.capture();
-        assertEquals("{USERNAME=john}", map.toString());
-    }
-
     @Test
     public void test001_username2() throws Throwable {
         Grok g = compiler.compile("%{USER}");
