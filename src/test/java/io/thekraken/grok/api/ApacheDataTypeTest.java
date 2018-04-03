@@ -8,14 +8,11 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -32,7 +29,7 @@ public class ApacheDataTypeTest {
     }
 
     @Test
-    public void test002_httpd_access_semi() throws GrokException, IOException, ParseException {
+    public void test002_httpd_access_semi() throws GrokException {
         Grok g = compiler.compile( "%{IPORHOST:clientip} %{USER:ident;boolean} %{USER:auth} \\[%{HTTPDATE:timestamp;date;dd/MMM/yyyy:HH:mm:ss Z}\\] \"(?:%{WORD:verb;string} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion;float})?|%{DATA:rawrequest})\" %{NUMBER:response;int} (?:%{NUMBER:bytes;long}|-)");
 
         System.out.println(line);
@@ -51,7 +48,7 @@ public class ApacheDataTypeTest {
     }
 
     @Test
-    public void test002_httpd_access_colon() throws GrokException, IOException, ParseException {
+    public void test002_httpd_access_colon() throws GrokException {
         Grok g = compiler.compile("%{IPORHOST:clientip} %{USER:ident:boolean} %{USER:auth} \\[%{HTTPDATE:timestamp:date:dd/MMM/yyyy:HH:mm:ss Z}\\] \"(?:%{WORD:verb:string} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion:float})?|%{DATA:rawrequest})\" %{NUMBER:response:int} (?:%{NUMBER:bytes:long}|-)");
 
         Match gm = g.match(line);

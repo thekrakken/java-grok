@@ -25,7 +25,6 @@ import java.util.Map;
 import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -57,22 +56,22 @@ public class GrokTest {
     }
 
     @Test(expected = Exception.class)
-    public void test_throwExceptionIfPatternIsNull() throws Throwable {
+    public void test_throwExceptionIfPatternIsNull() {
             compiler.compile(null);
     }
 
     @Test(expected = Exception.class)
-    public void test_throwExceptionIfPatternIsEmptyString() throws Throwable {
+    public void test_throwExceptionIfPatternIsEmptyString() {
         compiler.compile("");
     }
 
     @Test(expected = Exception.class)
-    public void test_throwExceptionIfPatternContainsOnlyBlanks() throws Throwable {
+    public void test_throwExceptionIfPatternContainsOnlyBlanks() {
         compiler.compile("      ");
     }
 
     @Test
-    public void test001_static_metod_factory() throws Throwable {
+    public void test001_static_metod_factory() {
 
         Grok staticGrok = compiler.compile("%{USERNAME}");
         Match gm = staticGrok.match("root");
@@ -97,7 +96,7 @@ public class GrokTest {
     }
 
     @Test
-    public void test001_username2() throws Throwable {
+    public void test001_username2() {
         Grok g = compiler.compile("%{USER}");
 
         Match gm = g.match("root");
@@ -122,7 +121,7 @@ public class GrokTest {
     }
 
     @Test
-    public void test002_numbers() throws Throwable {
+    public void test002_numbers() {
         Grok g = compiler.compile("%{NUMBER}");
 
         Match gm = g.match("-42");
@@ -132,7 +131,7 @@ public class GrokTest {
     }
 
     @Test
-    public void test003_word() throws Throwable {
+    public void test003_word() {
         Grok g = compiler.compile("%{WORD}");
 
         Match gm = g.match("a");
@@ -146,7 +145,7 @@ public class GrokTest {
     }
 
     @Test
-    public void test004_SPACE() throws Throwable {
+    public void test004_SPACE() {
         Grok g = compiler.compile("%{SPACE}");
 
         Match gm = g.match("abc dc");
@@ -156,7 +155,7 @@ public class GrokTest {
     }
 
     @Test
-    public void test004_number() throws Throwable {
+    public void test004_number() {
         Grok g = compiler.compile("%{NUMBER}");
 
         Match gm = g.match("Something costs $55.4!");
@@ -166,7 +165,7 @@ public class GrokTest {
     }
 
     @Test
-    public void test005_NOTSPACE() throws Throwable {
+    public void test005_NOTSPACE() {
         Grok g = compiler.compile("%{NOTSPACE}");
 
         Match gm = g.match("abc dc");
@@ -176,7 +175,7 @@ public class GrokTest {
     }
 
     @Test
-    public void test006_QUOTEDSTRING() throws Throwable {
+    public void test006_QUOTEDSTRING() {
         Grok g = compiler.compile("%{QUOTEDSTRING:text}");
 
         Match gm = g.match("\"abc dc\"");
@@ -185,7 +184,7 @@ public class GrokTest {
     }
 
     @Test
-    public void test007_UUID() throws Throwable {
+    public void test007_UUID() {
         Grok g = compiler.compile("%{UUID}");
 
         Match gm = g.match("61243740-4786-11e3-86a7-0002a5d5c51b");
@@ -203,7 +202,7 @@ public class GrokTest {
     }
 
     @Test
-    public void test008_MAC() throws Throwable {
+    public void test008_MAC() {
         Grok g = compiler.compile("%{MAC}");
 
         Match gm = g.match("5E:FF:56:A2:AF:15");
@@ -213,7 +212,7 @@ public class GrokTest {
     }
 
     @Test
-    public void test009_IPORHOST() throws Throwable {
+    public void test009_IPORHOST() {
         Grok g = compiler.compile("%{IPORHOST}");
 
         Match gm = g.match("www.google.fr");
@@ -226,7 +225,7 @@ public class GrokTest {
     }
 
     @Test
-    public void test010_HOSTPORT() throws Throwable {
+    public void test010_HOSTPORT() {
         Grok g = compiler.compile("%{HOSTPORT}");
 
         Match gm = g.match("www.google.fr:80");
@@ -238,7 +237,7 @@ public class GrokTest {
     }
 
     @Test
-    public void test011_COMBINEDAPACHELOG() throws Throwable {
+    public void test011_COMBINEDAPACHELOG() {
         Grok g = compiler.compile("%{COMBINEDAPACHELOG}");
 
         Match gm =
@@ -270,7 +269,7 @@ public class GrokTest {
      */
 
     @Test
-    public void test012_day() throws Throwable {
+    public void test012_day() {
 
         Grok grok = compiler.compile("%{DAY}");
 
@@ -316,7 +315,7 @@ public class GrokTest {
     }
 
     @Test
-    public void test014_month() throws Throwable {
+    public void test014_month() {
 
         Grok grok = compiler.compile("%{MONTH}");
 
@@ -460,7 +459,7 @@ public class GrokTest {
     }
 
     private void testPatternRepetitions(boolean namedOnly, String pattern) throws GrokException {
-        String description = format("[readonly:%s pattern:%s] ", namedOnly, pattern);;
+        String description = format("[readonly:%s pattern:%s] ", namedOnly, pattern);
 
         compiler.register("WORD", pattern);
         compiler.register("TEXT", "<< %{WORD}+ >>");
@@ -501,17 +500,17 @@ public class GrokTest {
     }
 
     @Test
-    public void test022_named_captures_with_missing_definition() throws Throwable {
+    public void test022_named_captures_with_missing_definition() {
         ensureAbortsWithDefinitionMissing("FOO %{BAR}", "%{FOO}", true);
     }
 
     @Test
-    public void test023_captures_with_missing_definition() throws Throwable {
+    public void test023_captures_with_missing_definition() {
         ensureAbortsWithDefinitionMissing("FOO %{BAR}", "%{FOO:name}", false);
     }
 
     @Test
-    public void test024_captures_with_missing_definition() throws Throwable {
+    public void test024_captures_with_missing_definition() {
         ensureAbortsWithDefinitionMissing("FOO %{BAR}", "%{FOO}", false);
     }
 
@@ -539,7 +538,7 @@ public class GrokTest {
     }
 
     @Test
-    public void testGroupTypes() throws Exception {
+    public void testGroupTypes() {
         Grok grok = compiler.compile("%{HTTPDATE:timestamp;date;dd/MMM/yyyy:HH:mm:ss Z} %{USERNAME:username:text} %{IPORHOST:host}:%{POSINT:port:integer}", true);
         assertEquals(Converter.Type.DATETIME, grok.groupTypes.get("timestamp"));
         assertEquals(Converter.Type.STRING, grok.groupTypes.get("username"));
@@ -555,7 +554,7 @@ public class GrokTest {
     }
 
     @Test
-    public void testTimeZone() throws Exception {
+    public void testTimeZone() {
         // no timezone. default to UTC
         String date = "03/19/2018 14:11:00";
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss");

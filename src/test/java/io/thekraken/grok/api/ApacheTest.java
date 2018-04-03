@@ -14,9 +14,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Map;
 
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ApacheTest {
