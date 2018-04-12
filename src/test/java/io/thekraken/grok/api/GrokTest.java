@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static java.lang.String.format;
@@ -34,6 +35,10 @@ import static org.junit.Assert.fail;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GrokTest {
+    static {
+        Locale.setDefault(Locale.ROOT);
+    }
+    
     GrokCompiler compiler;
 
     @Before

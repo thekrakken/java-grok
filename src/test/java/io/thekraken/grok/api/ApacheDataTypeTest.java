@@ -11,6 +11,7 @@ import org.junit.runners.MethodSorters;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
@@ -18,6 +19,10 @@ import static org.junit.Assert.assertTrue;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ApacheDataTypeTest {
+    static {
+        Locale.setDefault(Locale.ROOT);
+    }
+
     private final String line = "64.242.88.10 - - [07/Mar/2004:16:45:56 -0800] \"GET /twiki/bin/attach/Main/PostfixCommands HTTP/1.1\" 401 12846";
 
     private GrokCompiler compiler;
