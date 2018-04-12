@@ -515,6 +515,40 @@ public class GrokTest {
     }
 
     @Test
+    public void test025_datetime_pattern_with_slashes() throws Throwable {
+        final ZonedDateTime expectedDate = ZonedDateTime.of(2015, 7, 31, 0, 0, 0, 0, ZoneOffset.UTC);
+
+        final Grok grok = compiler.compile("Foo %{DATA:result;date;yyyy/MM/dd} Bar");
+
+        final Match gm = grok.match("Foo 2015/07/31 Bar");
+
+        assertEquals(1, gm.getMatch().groupCount());
+        assertEquals(expectedDate.toInstant(), gm.capture().get("result"));
+    }
+
+    @Test
+    public void test026_datetime_pattern_with_with_dots() throws Throwable {
+        final ZonedDateTime expectedDate = ZonedDateTime.of(2015, 7, 31, 0, 0, 0, 0, ZoneOffset.UTC);
+
+        final Grok grok = compiler.compile("Foo %{DATA:result;date;yyyy.MM.dd} Bar");
+        final Match gm = grok.match("Foo 2015.07.31 Bar");
+
+        assertEquals(1, gm.getMatch().groupCount());
+        assertEquals(expectedDate.toInstant(), gm.capture().get("result"));
+    }
+
+    @Test
+    public void test027_datetime_pattern_with_with_hyphens() throws Throwable {
+        final ZonedDateTime expectedDate = ZonedDateTime.of(2015, 7, 31, 0, 0, 0, 0, ZoneOffset.UTC);
+
+        final Grok grok = compiler.compile("Foo %{DATA:result;date;yyyy-MM-dd} Bar");
+        final Match gm = grok.match("Foo 2015-07-31 Bar");
+
+        assertEquals(1, gm.getMatch().groupCount());
+        assertEquals(expectedDate.toInstant(), gm.capture().get("result"));
+    }
+
+    @Test
     public void allowClassPathPatternFiles() throws Exception {
         GrokCompiler compiler = GrokCompiler.newInstance();
         compiler.register(Resources.getResource("patterns/patterns").openStream());
