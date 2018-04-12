@@ -19,7 +19,6 @@ package io.thekraken.grok.api;
 import static java.lang.String.format;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,6 @@ import java.util.regex.Matcher;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import io.thekraken.grok.api.exception.GrokException;
 
 /**
  * {@code Match} is a representation in {@code Grok} world of your log.
@@ -216,6 +214,9 @@ public class Match {
             capture.put(key + "_grokfailure", keyValue.getGrokFailure());
           }
         }
+      } else if (!grok.isKeepEmptyCaptures()) {
+        it.remove();
+        continue;
       }
 
       if (capture.containsKey(key)) {

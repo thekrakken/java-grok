@@ -88,6 +88,10 @@ public class Grok implements Serializable {
   /** only use in grok discovery. */
   private String savedPattern;
 
+  /**
+   * ignore empty captures
+   */
+  private boolean keepEmptyCaptures = true;
 
   /**
    * automatic conversion of values
@@ -268,6 +272,17 @@ public class Grok implements Serializable {
     } catch (GrokException e) {
       throw new GrokException(e.getMessage());
     }
+  }
+
+  /**
+   * Ignore empty captures
+   */
+  public void setKeepEmptyCaptures(boolean ignore) {
+    this.keepEmptyCaptures = ignore;
+  }
+
+  public boolean isKeepEmptyCaptures() {
+    return this.keepEmptyCaptures;
   }
 
   /**

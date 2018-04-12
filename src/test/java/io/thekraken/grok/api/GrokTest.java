@@ -18,10 +18,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.*;
-
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.*;
 import io.thekraken.grok.api.exception.GrokException;
@@ -205,6 +201,8 @@ public class GrokTest {
         assertEquals("{NUMBER=-42}", gm.toMap().toString());
 
     }
+
+
 
     @Test
     public void test003_word() throws Throwable {
@@ -631,6 +629,19 @@ public class GrokTest {
     @Test
     public void test024_captures_with_missing_definition() throws Throwable {
         ensureAbortsWithDefinitionMissing("FOO %{BAR}", "%{FOO}", false);
+    }
+
+    @Test
+    public void test035_keep_empty_captures() throws Throwable {
+        g.addPatternFromFile(ResourceManager.PATTERNS);
+        g.compile("%{POSINT:pos}|%{INT:int}");
+        Match gm = g.match("-42");
+        g.setKeepEmptyCaptures(false);
+        gm.captures();
+        assertEquals("{int=-42}",gm.toMap().toString());
+        g.setKeepEmptyCaptures(true);
+        gm.captures();
+        assertEquals("{int=-42, pos=null}",gm.toMap().toString());
     }
 
     private void ensureAbortsWithDefinitionMissing(String pattern, String compilePattern, boolean namedOnly) {
