@@ -43,7 +43,7 @@ public class GrokUtils {
   }
 
   public static Map<String, String> namedGroups(Matcher matcher, Set<String> groupNames) {
-    Map<String, String> namedGroups = new LinkedHashMap<String, String>();
+    Map<String, String> namedGroups = new LinkedHashMap<>();
     for (String groupName : groupNames) {
       String groupValue = matcher.group(groupName);
       namedGroups.put(groupName, groupValue);

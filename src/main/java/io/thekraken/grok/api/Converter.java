@@ -3,7 +3,6 @@ package io.thekraken.grok.api;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableMap;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -44,11 +43,11 @@ public class Converter {
   private static final Splitter SPLITTER = Splitter.on(DELIMITER).limit(3);
 
   private static final Map<String, Type> TYPES =
-      Arrays.asList(Type.values()).stream()
+      Arrays.stream(Type.values())
           .collect(Collectors.toMap(t -> t.name().toLowerCase(), t -> t));
 
   private static final Map<String, Type> TYPE_ALIASES =
-      Arrays.asList(Type.values()).stream()
+      Arrays.stream(Type.values())
         .flatMap(type -> type.aliases.stream().map(alias -> new AbstractMap.SimpleEntry<>(alias, type)))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 

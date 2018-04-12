@@ -16,9 +16,7 @@
 package io.thekraken.grok.api;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,11 +56,10 @@ public class Discovery {
 
     List<Grok> groky = new ArrayList<Grok>(groks.values());
     Map<String, Grok> mGrok = new LinkedHashMap<String, Grok>();
-    Collections.sort(groky, new Comparator<Grok>() {
+    groky.sort(new Comparator<Grok>() {
 
       public int compare(Grok g1, Grok g2) {
-        return (this.complexity(g1.getNamedRegex()) < this.complexity(g2.getNamedRegex())) ? 1
-            : 0;
+        return (this.complexity(g1.getNamedRegex()) < this.complexity(g2.getNamedRegex())) ? 1 : 0;
       }
 
       private int complexity(String expandedPattern) {
@@ -113,10 +110,9 @@ public class Discovery {
     compiler.register(gPatterns);
 
     // Compile the pattern
-    Iterator<Entry<String, String>> it = gPatterns.entrySet().iterator();
-    while (it.hasNext()) {
+    for (Entry<String, String> stringStringEntry : gPatterns.entrySet()) {
       @SuppressWarnings("rawtypes")
-      Map.Entry pairs = (Map.Entry) it.next();
+      Entry pairs = (Entry) stringStringEntry;
       String key = pairs.getKey().toString();
 
       // g.patterns.putAll( gPatterns );
@@ -126,7 +122,6 @@ public class Discovery {
         groks.put(key, g);
       } catch (Exception e) {
         // Add logger
-        continue;
       }
 
     }
@@ -136,12 +131,9 @@ public class Discovery {
 
     // while (!done){
     // done = true;
-    Iterator<Entry<String, Grok>> pit = patterns.entrySet().iterator();
-    while (pit.hasNext()) {
-      @SuppressWarnings("rawtypes")
-      Map.Entry pairs = (Map.Entry) pit.next();
-      String key = pairs.getKey().toString();
-      Grok value = (Grok) pairs.getValue();
+    for (Entry<String, Grok> pairs : patterns.entrySet()) {
+      String key = pairs.getKey();
+      Grok value = pairs.getValue();
 
       // We want to search with more complex pattern
       // We avoid word, small number, space....

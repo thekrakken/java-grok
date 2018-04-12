@@ -17,7 +17,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -273,7 +272,7 @@ public class GrokTest {
 
         Grok grok = compiler.compile("%{DAY}");
 
-        List<String> days = new ArrayList<String>();
+        List<String> days = new ArrayList<>();
         days.add("Mon");
         days.add("Monday");
         days.add("Tue");
@@ -319,16 +318,15 @@ public class GrokTest {
 
         Grok grok = compiler.compile("%{MONTH}");
 
-        String[] array = {"Jan", "January", "Feb", "February", "Mar", "March", "Apr", "April", "May", "Jun", "June",
+        String[] months = {"Jan", "January", "Feb", "February", "Mar", "March", "Apr", "April", "May", "Jun", "June",
                 "Jul", "July", "Aug", "August", "Sep", "September", "Oct", "October", "Nov",
                 "November", "Dec", "December"};
-        List<String> months = new ArrayList<String>(Arrays.asList(array));
         int i = 0;
         for (String month : months) {
             Match m = grok.match(month);
             Map<String, Object> map = m.capture();
             assertNotNull(map);
-            assertEquals(map.get("MONTH"), months.get(i));
+            assertEquals(map.get("MONTH"), months[i]);
             i++;
         }
     }
@@ -337,7 +335,7 @@ public class GrokTest {
     public void test015_iso8601() throws GrokException {
         Grok grok = compiler.compile("%{TIMESTAMP_ISO8601}");
 
-        String[] array =
+        String[] times =
                 {"2001-01-01T00:00:00",
                         "1974-03-02T04:09:09",
                         "2010-05-03T08:18:18+00:00",
@@ -353,13 +351,12 @@ public class GrokTest {
                         "2001-11-06T20:45:45.123456-0000",
                         "2001-12-07T23:54:54.123456Z"};
 
-        List<String> times = new ArrayList<String>(Arrays.asList(array));
         int i = 0;
         for (String time : times) {
             Match m = grok.match(time);
             Map<String, Object> map = m.capture();
             assertNotNull(map);
-            assertEquals(map.get("TIMESTAMP_ISO8601"), times.get(i));
+            assertEquals(map.get("TIMESTAMP_ISO8601"), times[i]);
             i++;
         }
     }
@@ -368,7 +365,7 @@ public class GrokTest {
     public void test016_uri() throws GrokException {
         Grok grok = compiler.compile("%{URI}");
 
-        String[] array =
+        String[] uris =
                 {
                         "http://www.google.com",
                         "telnet://helloworld",
@@ -397,13 +394,12 @@ public class GrokTest {
                         "http://www.google.com/search?q=CAPTCHA+ssh&start=0&ie=utf-8&oe=utf-8&client=firefox-a&rls=org.mozilla:en-US:official",
                         "svn+ssh://somehost:12345/testing"};
 
-        List<String> uris = new ArrayList<String>(Arrays.asList(array));
         int i = 0;
         for (String uri : uris) {
             Match m = grok.match(uri);
             Map<String, Object> map = m.capture();
             assertNotNull(map);
-            assertEquals(map.get("URI"), uris.get(i));
+            assertEquals(map.get("URI"), uris[i]);
             assertNotNull(map.get("URIPROTO"));
             i++;
         }
@@ -413,14 +409,13 @@ public class GrokTest {
     public void test017_nonMachingList() throws GrokException {
         Grok grok = compiler.compile("%{URI}");
 
-        String[] array =
+        String[] uris =
                 {
                         "http://www.google.com",
                         "telnet://helloworld",
                         "",
                         "svn+ssh://somehost:12345/testing"
                 };
-        List<String> uris = new ArrayList<String>(Arrays.asList(array));
         int i = 0;
         for (String uri : uris) {
             Match m = grok.match(uri);
