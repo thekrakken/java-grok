@@ -16,12 +16,12 @@
 package io.thekraken.grok.api;
 
 
-import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -120,7 +120,7 @@ public class Match {
       return capture;
     }
 
-    capture = Maps.newHashMap();
+    capture = new HashMap<>();
 
     // _capture.put("LINE", this.line);
     // _capture.put("LENGTH", this.line.length() +"");

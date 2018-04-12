@@ -1,7 +1,5 @@
 package io.thekraken.grok.api;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 import io.thekraken.grok.api.exception.GrokException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,7 +11,9 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +24,7 @@ public class GrokCompiler {
   /**
    * {@code Grok} patterns definitions.
    */
-  private final Map<String, String> grokPatternDefinitions = Maps.newHashMap();
+  private final Map<String, String> grokPatternDefinitions = new HashMap<>();
 
   private GrokCompiler() {}
 
@@ -44,8 +44,8 @@ public class GrokCompiler {
    * @throws GrokException runtime expt
    **/
   public void register(String name, String pattern) {
-    name = Preconditions.checkNotNull(name).trim();
-    pattern = Preconditions.checkNotNull(pattern).trim();
+    name = Objects.requireNonNull(name).trim();
+    pattern = Objects.requireNonNull(pattern).trim();
 
     if (!name.isEmpty() && !pattern.isEmpty()) {
       grokPatternDefinitions.put(name, pattern);
@@ -56,7 +56,7 @@ public class GrokCompiler {
    * Registers multiple pattern definitions
    */
   public void register(Map<String, String> patternDefinitions) {
-    Preconditions.checkNotNull(patternDefinitions);
+    Objects.requireNonNull(patternDefinitions);
     patternDefinitions.forEach((name, pattern) -> register(name, pattern));
   }
 
@@ -120,10 +120,10 @@ public class GrokCompiler {
     /** flag for infinite recursion */
     int iterationLeft = 1000;
     Boolean continueIteration = true;
-    Map<String, String> patternDefinitions = Maps.newHashMap(grokPatternDefinitions);
+    Map<String, String> patternDefinitions = new HashMap<>(grokPatternDefinitions);
 
     // output
-    Map<String, String> namedRegexCollection = Maps.newHashMap();
+    Map<String, String> namedRegexCollection = new HashMap<>();
 
     // Replace %{foo} with the regex (mostly group name regex)
     // and then compile the regex

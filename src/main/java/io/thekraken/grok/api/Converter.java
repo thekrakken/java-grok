@@ -1,15 +1,11 @@
 package io.thekraken.grok.api;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableMap;
-
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
 import java.util.*;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -39,9 +35,7 @@ public class Converter {
     }
   }
 
-  private static final CharMatcher DELIMITER = CharMatcher.anyOf(";:");
-
-  private static final Splitter SPLITTER = Splitter.on(DELIMITER).limit(3);
+  private static final Pattern SPLITTER = Pattern.compile("[:;]");
 
   private static final Map<String, Type> TYPES =
       Arrays.asList(Type.values()).stream()
@@ -63,12 +57,12 @@ public class Converter {
 
   public static Map<String, IConverter> getConverters(Collection<String> groupNames, Object... params) {
     return groupNames.stream()
-        .filter(group -> Converter.DELIMITER.matchesAnyOf(group))
+        .filter(Converter::containsDelimiter)
         .collect(Collectors.toMap(Function.identity(), key -> {
-          List<String> list = SPLITTER.splitToList(key);
-          IConverter converter = getType(list.get(1)).converter;
-          if (list.size() == 3) {
-            converter = converter.newConverter(list.get(2), params);
+          String[] list = splitGrokPattern(key);
+          IConverter converter = getType(list[1]).converter;
+          if (list.length == 3) {
+            converter = converter.newConverter(list[2], params);
           }
           return converter;
         }));
@@ -76,16 +70,24 @@ public class Converter {
 
   public static Map<String, Type> getGroupTypes(Collection<String> groupNames) {
     return groupNames.stream()
-        .filter(group -> Converter.DELIMITER.matchesAnyOf(group))
-        .map(group -> SPLITTER.splitToList(group))
+        .filter(Converter::containsDelimiter)
+        .map(Converter::splitGrokPattern)
         .collect(Collectors.toMap(
-            l -> l.get(0),
-            l -> getType(l.get(1))
+            l -> l[0],
+            l -> getType(l[1])
         ));
   }
 
   public static String extractKey(String key) {
-    return SPLITTER.split(key).iterator().next();
+    return splitGrokPattern(key)[0];
+  }
+
+  private static boolean containsDelimiter(String s) {
+    return s.indexOf(':') >= 0 || s.indexOf(';') >= 0;
+  }
+
+  private static String[] splitGrokPattern(String s) {
+    return SPLITTER.split(s, 3);
   }
 }
 
@@ -127,7 +129,9 @@ class DateConverter implements IConverter<Instant> {
 
   @Override
   public DateConverter newConverter(String param, Object... params) {
-    Preconditions.checkArgument(params.length == 1 && params[0] instanceof ZoneId);
+    if (!(params.length == 1 && params[0] instanceof ZoneId)) {
+      throw new IllegalArgumentException("Invalid parameters");
+    }
     return new DateConverter(DateTimeFormatter.ofPattern(param), (ZoneId) params[0]);
   }
 }
