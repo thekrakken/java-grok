@@ -28,7 +28,7 @@ public class BasicTest {
 
     @Test
     public void test001_compileFailOnInvalidExpression() throws GrokException {
-        List<String> badRegxp = new ArrayList<String>();
+        List<String> badRegxp = new ArrayList<>();
         badRegxp.add("[");
         badRegxp.add("[foo");
         badRegxp.add("?");
@@ -51,7 +51,7 @@ public class BasicTest {
 
     @Test
     public void test002_compileSuccessValidExpression() throws GrokException {
-        List<String> regxp = new ArrayList<String>();
+        List<String> regxp = new ArrayList<>();
         regxp.add("[hello]");
         regxp.add("(test)");
         regxp.add("(?:hello)");
@@ -79,7 +79,6 @@ public class BasicTest {
     @Test
     public void test005_testLoadPatternFromFile() throws IOException, GrokException {
         File temp = File.createTempFile("grok-tmp-pattern", ".tmp");
-        getClass();
         BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
         bw.write("TEST \\d+");
         bw.close();

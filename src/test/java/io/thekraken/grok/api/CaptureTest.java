@@ -30,7 +30,7 @@ public class CaptureTest {
     }
 
     @Test
-    public void test001_captureMathod() throws Exception {
+    public void test001_captureMathod() {
         compiler.register("foo", ".*");
         Grok grok = compiler.compile("%{foo}");
         Match m = grok.match("Hello World");

@@ -13,6 +13,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -37,13 +38,13 @@ public class ApacheDataTypeTest {
         Map<String, Object> map = gm.capture();
 
         Assertions.assertThat(map).doesNotContainKey("Error");
-        Instant ts = ZonedDateTime.of(2004, 03, 07, 16, 45, 56, 0, ZoneOffset.ofHours(-8)).toInstant();
-        assertTrue(map.get("timestamp").equals(ts));
-        assertTrue(map.get("response").equals(Integer.valueOf(401)));
-        assertTrue(map.get("ident").equals(Boolean.FALSE));
-        assertTrue(map.get("httpversion").equals(Float.valueOf(1.1f)));
-        assertTrue(map.get("bytes").equals(Long.valueOf(12846)));
-        assertTrue(map.get("verb").equals("GET"));
+        Instant ts = ZonedDateTime.of(2004, 3, 7, 16, 45, 56, 0, ZoneOffset.ofHours(-8)).toInstant();
+        assertEquals(map.get("timestamp"), ts);
+        assertEquals(map.get("response"), 401);
+        assertEquals(map.get("ident"), Boolean.FALSE);
+        assertEquals(map.get("httpversion"), 1.1f);
+        assertEquals(map.get("bytes"), 12846L);
+        assertEquals("GET", map.get("verb"));
 
     }
 
@@ -56,13 +57,13 @@ public class ApacheDataTypeTest {
 
         Assertions.assertThat(map).doesNotContainKey("Error");
 
-        Instant ts = ZonedDateTime.of(2004, 03, 07, 16, 45, 56, 0, ZoneOffset.ofHours(-8)).toInstant();
-        assertTrue(map.get("timestamp").equals(ts));
-        assertTrue(map.get("response").equals(Integer.valueOf(401)));
-        assertTrue(map.get("ident").equals(Boolean.FALSE));
-        assertTrue(map.get("httpversion").equals(Float.valueOf(1.1f)));
-        assertTrue(map.get("bytes").equals(Long.valueOf(12846)));
-        assertTrue(map.get("verb").equals("GET"));
+        Instant ts = ZonedDateTime.of(2004, 3, 7, 16, 45, 56, 0, ZoneOffset.ofHours(-8)).toInstant();
+        assertEquals(map.get("timestamp"), ts);
+        assertEquals(map.get("response"), 401);
+        assertEquals(map.get("ident"), Boolean.FALSE);
+        assertEquals(map.get("httpversion"), 1.1f);
+        assertEquals(map.get("bytes"), 12846L);
+        assertEquals("GET", map.get("verb"));
 
     }
 
