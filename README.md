@@ -18,14 +18,14 @@ Grok is inspired by the logstash inteceptor or filter available [here](http://lo
 <dependency>
   <groupId>de.wellnerbou</groupId>
   <artifactId>java-grok</artifactId>
-  <version>0.1.7</version>
+  <version>0.1.8</version>
 </dependency>
 ```
 
 Or with gradle
 
 ```gradle
-compile "de.wellnerbou:java-grok:0.1.7"
+compile "de.wellnerbou:java-grok:0.1.8"
 ```
 
 ### Usage ([Grok java documentation](http://grok.nflabs.com/javadoc))
