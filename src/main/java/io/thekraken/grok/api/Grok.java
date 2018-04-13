@@ -1,3 +1,4 @@
+package io.thekraken.grok.api;
 /*******************************************************************************
  * Copyright 2014 Anthony Corbacho and contributors.
  *
@@ -13,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package io.thekraken.grok.api;
 
 import static java.lang.String.format;
 
@@ -40,8 +40,8 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * {@code Grok} parse arbitrary text and structure it.<br>
- *
+ * {@code Grok} parse arbitrary text and structure it.
+ * <br>
  * {@code Grok} is simple API that allows you to easily parse logs
  * and other files (single line). With {@code Grok},
  * you can turn unstructured log and event data into structured data (JSON).
@@ -93,7 +93,7 @@ public class Grok implements Serializable {
 
 
   /**
-   * automatic conversion of values
+   * automatic conversion of values.
    */
   private boolean automaticConversionEnabled = true;
 
@@ -137,12 +137,12 @@ public class Grok implements Serializable {
     if (StringUtils.isBlank(grokPatternPath)) {
       throw new GrokException("{grokPatternPath} should not be empty or null");
     }
-    Grok g = new Grok();
-    g.addPatternFromFile(grokPatternPath);
+    Grok grok = new Grok();
+    grok.addPatternFromFile(grokPatternPath);
     if (StringUtils.isNotBlank(grokExpression)) {
-      g.compile(grokExpression, false);
+      grok.compile(grokExpression, false);
     }
-    return g;
+    return grok;
   }
 
   /**
@@ -151,9 +151,9 @@ public class Grok implements Serializable {
    * @return {@code Grok} instance
    */
   public static Grok create() throws GrokException {
-    Grok g = new Grok();
-    g.addPatternFromClasspath("/patterns/patterns");
-    return g;
+    Grok grok = new Grok();
+    grok.addPatternFromClasspath("/patterns/patterns");
+    return grok;
   }
 
   /**
@@ -226,21 +226,21 @@ public class Grok implements Serializable {
   /**
    * Add patterns to {@code Grok} from the given file.
    *
-   * @param file : Path of the grok pattern
+   * @param path : Path of the grok pattern
    * @throws GrokException runtime expt
    */
-  public void addPatternFromFile(String file) throws GrokException {
+  public void addPatternFromFile(String path) throws GrokException {
 
-    File f = new File(file);
-    if (!f.exists()) {
-      throw new GrokException("Pattern file " + f.getAbsolutePath() + " not found");
+    File file = new File(path);
+    if (!file.exists()) {
+      throw new GrokException("Pattern file " + file.getAbsolutePath() + " not found");
     }
 
-    if (!f.canRead()) {
-      throw new GrokException("Pattern file " + f.getAbsolutePath() + " cannot be read");
+    if (!file.canRead()) {
+      throw new GrokException("Pattern file " + file.getAbsolutePath() + " cannot be read");
     }
 
-    try (FileReader r = new FileReader(f)) {
+    try (FileReader r = new FileReader(file)) {
       addPatternFromReader(r);
     } catch (IOException e) {
       throw new GrokException(e.getMessage(), e);
@@ -259,19 +259,19 @@ public class Grok implements Serializable {
   /**
    * Add patterns to {@code Grok} from a Reader.
    *
-   * @param r : Reader with {@code Grok} patterns
+   * @param reader : Reader with {@code Grok} patterns
    * @throws GrokException runtime expt
    */
-  public void addPatternFromReader(Reader r) throws GrokException {
-    BufferedReader br = new BufferedReader(r);
+  public void addPatternFromReader(Reader reader) throws GrokException {
+    BufferedReader br = new BufferedReader(reader);
     String line;
     // We dont want \n and commented line
     Pattern pattern = Pattern.compile("^([A-z0-9_]+)\\s+(.*)$");
     try {
       while ((line = br.readLine()) != null) {
-        Matcher m = pattern.matcher(line);
-        if (m.matches()) {
-          this.addPattern(m.group(1), m.group(2));
+        Matcher matcher = pattern.matcher(line);
+        if (matcher.matches()) {
+          this.addPattern(matcher.group(1), matcher.group(2));
         }
       }
       br.close();
@@ -281,7 +281,7 @@ public class Grok implements Serializable {
   }
 
   /**
-   * Disable automatic conversion of values
+   * Disable automatic conversion of values.
    */
   public void disableAutomaticConversion() {
     this.automaticConversionEnabled = false;
@@ -333,14 +333,14 @@ public class Grok implements Serializable {
       return Match.EMPTY;
     }
 
-    Matcher m = compiledNamedRegex.matcher(text);
+    Matcher matcher = compiledNamedRegex.matcher(text);
     Match match = new Match();
-    if (m.find()) {
+    if (matcher.find()) {
       match.setSubject(text);
       match.setGrok(this);
-      match.setMatch(m);
-      match.setStart(m.start(0));
-      match.setEnd(m.end(0));
+      match.setMatch(matcher);
+      match.setStart(matcher.start(0));
+      match.setEnd(matcher.end(0));
     }
     return match;
   }
@@ -371,7 +371,7 @@ public class Grok implements Serializable {
     namedRegex = pattern;
     originalGrokPattern = pattern;
     int index = 0;
-    /** flag for infinite recurtion */
+    /** flag for infinite recursion. */
     int iterationLeft = 1000;
     Boolean continueIteration = true;
 
@@ -384,12 +384,12 @@ public class Grok implements Serializable {
       }
       iterationLeft--;
 
-      Matcher m = GrokUtils.GROK_PATTERN.matcher(namedRegex);
+      Matcher matcher = GrokUtils.GROK_PATTERN.matcher(namedRegex);
       // Match %{Foo:bar} -> pattern name and subname
       // Match %{Foo=regex} -> add new regex definition
-      if (m.find()) {
+      if (matcher.find()) {
         continueIteration = true;
-        Map<String, String> group = GrokUtils.namedGroups(m, m.group());
+        Map<String, String> group = GrokUtils.namedGroups(matcher, matcher.group());
         if (group.get("definition") != null) {
           try {
             addPattern(group.get("pattern"), group.get("definition"));
