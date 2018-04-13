@@ -29,7 +29,6 @@ jar {
 
 dependencies {
   compile "org.apache.commons:commons-lang3:3.7"
-  compile "com.google.code.gson:gson:2.8.2"
   compile "com.google.guava:guava:24.0-jre"
   compile "org.slf4j:slf4j-api:1.7.21"
 
