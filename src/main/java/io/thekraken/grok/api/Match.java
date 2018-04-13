@@ -15,10 +15,6 @@
  *******************************************************************************/
 package io.thekraken.grok.api;
 
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,11 +31,6 @@ import static java.lang.String.format;
  * @since 0.0.1
  */
 public class Match {
-
-  private static final Gson PRETTY_GSON =
-          new GsonBuilder().setPrettyPrinting().create();
-  private static final Gson GSON = new GsonBuilder().create();
-
   private final CharSequence subject; // texte
   private final Grok grok;
   private final Matcher match;

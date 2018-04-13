@@ -26,7 +26,7 @@ public class GrokListTest {
 
     @Test
     public void test_001() throws GrokException {
-        List<String> logs = new ArrayList<String>();
+        List<String> logs = new ArrayList<>();
 
         logs.add("178.21.82.201");
         logs.add("11.178.94.216");
@@ -52,7 +52,7 @@ public class GrokListTest {
 
     @Test
     public void test_002() throws GrokException {
-        List<String> logs = new ArrayList<String>();
+        List<String> logs = new ArrayList<>();
 
         logs.add("178.21.82.201");
         logs.add("11.178.94.216");

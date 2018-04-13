@@ -57,7 +57,7 @@ public class GrokCompiler {
    */
   public void register(Map<String, String> patternDefinitions) {
     Objects.requireNonNull(patternDefinitions);
-    patternDefinitions.forEach((name, pattern) -> register(name, pattern));
+    patternDefinitions.forEach(this::register);
   }
 
   public void registerDefaultPatterns() {
@@ -85,7 +85,7 @@ public class GrokCompiler {
             new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))
     ) {
       in.lines()
-        .map(l -> pattern.matcher(l))
+        .map(pattern::matcher)
         .filter(Matcher::matches)
         .forEach(m -> register(m.group(1), m.group(2)));
     }
