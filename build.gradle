@@ -1,13 +1,9 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'maven'
-apply plugin: "jacoco"
-
-// Apply code quality checks
-apply from: "$rootProject.projectDir/gradle/codeQuality.gradle"
-// Publish artifact to Maven repositiory
-if (project.hasProperty("signing")) {
-  apply from: "$rootProject.projectDir/gradle/publishArtifact.gradle"
+apply {
+    plugin "base"
+    plugin "java"
+    plugin "maven-publish"
+    plugin "checkstyle"
+    plugin "jacoco"
 }
 
 task wrapper(type: Wrapper) {
@@ -15,8 +11,8 @@ task wrapper(type: Wrapper) {
 }
 
 repositories {
-  mavenLocal()
-  mavenCentral()
+    mavenLocal()
+    mavenCentral()
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -24,11 +20,46 @@ group = "oi.thekraken"
 archivesBaseName = "grok"
 version = '0.1.6-SNAPSHOT'
 
-dependencies {
-  compile "com.github.tony19:named-regexp:0.2.4"
-  compile "org.apache.commons:commons-lang3:3.4"
-  compile "com.google.code.gson:gson:2.7"
-  compile "org.slf4j:slf4j-api:1.7.21"
+ext {
+    checkStyleToolVersion = "6.19"
+    jacocoToolVersion = "0.7.9"
 
-  testCompile group: 'junit', name: 'junit', version: '4.12'
+    namedRegexpVersion = "0.2.4"
+    commonsLang3Version = "3.7"
+    gsonVersion = "2.7"
+    log4jVersion = "1.7.21"
+
+    junitVersion = "4.12"
+}
+
+dependencies {
+    compile "com.github.tony19:named-regexp:$namedRegexpVersion"
+    compile "org.apache.commons:commons-lang3:$commonsLang3Version"
+    compile "com.google.code.gson:gson:$gsonVersion"
+    compile "org.slf4j:slf4j-api:$log4jVersion"
+
+    testCompile "junit:junit:$junitVersion"
+}
+
+checkstyle {
+    configFile = file("${project.projectDir}/extra/checkstyle/checkstyle.xml")
+    toolVersion = "$checkStyleToolVersion"
+}
+
+checkstyleMain {
+    source = 'src/main/java'
+    doLast {
+        project.ext.checkType = "main"
+    }
+}
+
+jacoco {
+    toolVersion = "$jacocoToolVersion"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+    }
 }

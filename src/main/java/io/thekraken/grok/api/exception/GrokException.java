@@ -1,3 +1,4 @@
+package io.thekraken.grok.api.exception;
 /*******************************************************************************
  * Copyright 2014 Anthony Corbacho and contributors.
  *
@@ -13,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package io.thekraken.grok.api.exception;
 
 /**
  * Signals that an {@code Grok} exception of some sort has occurred.
  * This class is the general class of
  * exceptions produced by failed or interrupted Grok operations.
  *
- * @author anthonycorbacho
  * @since 0.0.4
  */
 public class GrokException extends Exception {
@@ -38,7 +37,7 @@ public class GrokException extends Exception {
    * Constructs a new GrokException.
    *
    * @param message the reason for the exception
-   * @param cause   the underlying Throwable that caused this exception to be thrown.
+   * @param cause the underlying Throwable that caused this exception to be thrown.
    */
   public GrokException(String message, Throwable cause) {
     super(message, cause);

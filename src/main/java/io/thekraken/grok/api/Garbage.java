@@ -1,3 +1,4 @@
+package io.thekraken.grok.api;
 /*******************************************************************************
  * Copyright 2014 Anthony Corbacho and contributors.
  *
@@ -13,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package io.thekraken.grok.api;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,7 +25,6 @@ import java.util.TreeMap;
  * The Leon the professional of {@code Grok}.<br>
  * Garbage is use by grok to remove or rename elements before getting the final output
  *
- * @author anthonycorbacho
  * @since 0.0.2
  */
 public class Garbage {
@@ -107,7 +106,7 @@ public class Garbage {
       return item;
     }
 
-    for (Iterator<Map.Entry<String, Object>> it = map.entrySet().iterator(); it.hasNext();) {
+    for (Iterator<Map.Entry<String, Object>> it = map.entrySet().iterator(); it.hasNext(); ) {
       Map.Entry<String, Object> entry = it.next();
       for (int i = 0; i < toRemove.size(); i++) {
         if (entry.getKey().equals(toRemove.get(i))) {
@@ -136,7 +135,7 @@ public class Garbage {
       return item;
     }
 
-    for (Iterator<Map.Entry<String, Object>> it = toRename.entrySet().iterator(); it.hasNext();) {
+    for (Iterator<Map.Entry<String, Object>> it = toRename.entrySet().iterator(); it.hasNext(); ) {
       Map.Entry<String, Object> entry = it.next();
       if (map.containsKey(entry.getKey())) {
         Object obj = map.remove(entry.getKey());
