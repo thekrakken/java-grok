@@ -53,9 +53,12 @@ Example of how to use java-grok:
 Java Grok support Gradle: `./gradlew assemble`
  
 ### Getting help
+
 Former maintainer: [@anthonycorbacho](https://github.com/anthonycorbacho)
 
-### Thankx to
+### Thanks to
+ * [@joschi](https://github.com/joschi)
+ * [@keitaf](https://github.com/keitaf)
  * [@anthonycorbacho](https://github.com/anthonycorbacho)
  * [@nokk](https://github.com/nokk)
  * [@wouterdb](https://github.com/wouterdb)
