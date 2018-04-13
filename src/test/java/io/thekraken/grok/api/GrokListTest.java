@@ -32,11 +32,11 @@ public class GrokListTest {
     Grok grok = Grok.create(ResourceManager.PATTERNS, "%{IP}");
     List<String> json = grok.captures(logs);
     assertNotNull(json);
-    int i = 0;
+    int counter = 0;
     for (String elem : json) {
       assertNotNull(elem);
-      assertEquals(elem, grok.capture(logs.get(i)));
-      i++;
+      assertEquals(elem, grok.capture(logs.get(counter)));
+      counter++;
       //assert
     }
 
@@ -59,12 +59,12 @@ public class GrokListTest {
     Grok grok = Grok.create(ResourceManager.PATTERNS, "%{IP}");
     List<String> json = grok.captures(logs);
     assertNotNull(json);
-    int i = 0;
+    int counter = 0;
     for (String elem : json) {
       System.out.println(elem);
       assertNotNull(elem);
-      assertEquals(elem, grok.capture(logs.get(i)));
-      i++;
+      assertEquals(elem, grok.capture(logs.get(counter)));
+      counter++;
       //assert
     }
 

@@ -14,19 +14,19 @@ import org.junit.Test;
 
 public class MessagesTest {
 
-  public final static String LOG_FILE = ResourceManager.MESSAGES;
+  public static  final String LOG_FILE = ResourceManager.MESSAGES;
 
   @Test
   public void test001_linux_messages() throws GrokException, IOException {
-    Grok g = new Grok();
-    g.addPatternFromFile(ResourceManager.PATTERNS);
-    g.compile("%{MESSAGESLOG}");
+    Grok grok = new Grok();
+    grok.addPatternFromFile(ResourceManager.PATTERNS);
+    grok.compile("%{MESSAGESLOG}");
 
     BufferedReader br = new BufferedReader(new FileReader(LOG_FILE));
     String line;
     System.out.println("Starting test with linux messages log -- may take a while");
     while ((line = br.readLine()) != null) {
-      Match gm = g.match(line);
+      Match gm = grok.match(line);
       gm.captures();
       assertNotNull(gm.toJson());
       assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());

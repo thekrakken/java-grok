@@ -18,8 +18,8 @@ import org.junit.Test;
 public class ConcurrencyTest {
 
   /**
-   * We will test this by setting up two threads, asserting on the hash values
-   * the instances generate for each thread
+   * We will test this by setting up two threads.
+   * asserting on the hash values the instances generate for each thread
    */
   @Test
   public void test_001_concurrent_match() throws InterruptedException, ExecutionException {

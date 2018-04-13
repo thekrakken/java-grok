@@ -24,7 +24,7 @@ public class BasicTest {
   @Test
   public void test001_compileFailOnInvalidExpression() throws GrokException {
 
-    Grok g = Grok.create(ResourceManager.PATTERNS, null);
+    Grok grok = Grok.create(ResourceManager.PATTERNS, null);
 
     List<String> badRegxp = new ArrayList<String>();
     badRegxp.add("[");
@@ -35,10 +35,10 @@ public class BasicTest {
 
     boolean thrown = false;
 
-    /** This should always throw */
+    /** This should always throw. */
     for (String regx : badRegxp) {
       try {
-        g.compile(regx);
+        grok.compile(regx);
       } catch (PatternSyntaxException e) {
         thrown = true;
       }
@@ -50,7 +50,7 @@ public class BasicTest {
   @Test
   public void test002_compileSuccessValidExpression() throws GrokException {
 
-    Grok g = Grok.create(ResourceManager.PATTERNS);
+    Grok grok = Grok.create(ResourceManager.PATTERNS);
 
     List<String> regxp = new ArrayList<String>();
     regxp.add("[hello]");
@@ -59,26 +59,26 @@ public class BasicTest {
     regxp.add("(?=testing)");
 
     for (String regx : regxp) {
-      g.compile(regx);
+      grok.compile(regx);
     }
   }
 
   @Test
   public void test003_samePattern() throws GrokException {
-    Grok g = Grok.create(ResourceManager.PATTERNS);
+    Grok grok = Grok.create(ResourceManager.PATTERNS);
 
     String pattern = "Hello World";
-    g.compile(pattern);
-    assertEquals(pattern, g.getOriginalGrokPattern());
+    grok.compile(pattern);
+    assertEquals(pattern, grok.getOriginalGrokPattern());
   }
 
   @Test
   public void test004_sameExpantedPatern() throws GrokException {
-    Grok g = Grok.create(ResourceManager.PATTERNS);
+    Grok grok = Grok.create(ResourceManager.PATTERNS);
 
-    g.addPattern("test", "hello world");
-    g.compile("%{test}");
-    assertEquals("(?<name0>hello world)", g.getNamedRegex());
+    grok.addPattern("test", "hello world");
+    grok.compile("%{test}");
+    assertEquals("(?<name0>hello world)", grok.getNamedRegex());
   }
 
   @Test

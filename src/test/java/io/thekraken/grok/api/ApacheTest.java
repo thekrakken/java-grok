@@ -23,14 +23,14 @@ public class ApacheTest {
 
   @Test
   public void test001_httpd_access() throws GrokException, IOException {
-    Grok g = Grok.create(ResourceManager.PATTERNS, "%{COMMONAPACHELOG}");
+    Grok grok = Grok.create(ResourceManager.PATTERNS, "%{COMMONAPACHELOG}");
 
     BufferedReader br = new BufferedReader(new FileReader(LOG_FILE));
     String line;
     System.out.println("Starting test with httpd log");
     while ((line = br.readLine()) != null) {
       //System.out.println(line);
-      Match gm = g.match(line);
+      Match gm = grok.match(line);
       gm.captures();
       assertNotNull(gm.toJson());
       assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
@@ -40,7 +40,7 @@ public class ApacheTest {
 
   @Test
   public void test002_nasa_httpd_access() throws GrokException, IOException {
-    Grok g = Grok.create(ResourceManager.PATTERNS, "%{COMMONAPACHELOG}");
+    Grok grok = Grok.create(ResourceManager.PATTERNS, "%{COMMONAPACHELOG}");
     System.out.println("Starting test with nasa log -- may take a while");
     BufferedReader br;
     String line;
@@ -49,7 +49,7 @@ public class ApacheTest {
       br = new BufferedReader(new FileReader(LOG_DIR_NASA + child.getName()));
       while ((line = br.readLine()) != null) {
         //System.out.println(child.getName() + " " +line);
-        Match gm = g.match(line);
+        Match gm = grok.match(line);
         gm.captures();
         assertNotNull(gm.toJson());
         assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());

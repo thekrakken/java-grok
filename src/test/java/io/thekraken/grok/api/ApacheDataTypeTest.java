@@ -19,7 +19,8 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ApacheDataTypeTest {
 
-  private final String line = "64.242.88.10 - - [07/Mar/2004:16:45:56 -0800] \"GET /twiki/bin/attach/Main/PostfixCommands HTTP/1.1\" 401 12846";
+  private final String line = "64.242.88.10 - - [07/Mar/2004:16:45:56 -0800] \"GET /twiki/bin/attach/Main/"
+      + "PostfixCommands HTTP/1.1\" 401 12846";
 
   static {
     Locale.setDefault(Locale.ENGLISH);
@@ -27,11 +28,13 @@ public class ApacheDataTypeTest {
 
   @Test
   public void test002_httpd_access_semi() throws GrokException, IOException, ParseException {
-    Grok g = Grok.create(ResourceManager.PATTERNS,
-        "%{IPORHOST:clientip} %{USER:ident;boolean} %{USER:auth} \\[%{HTTPDATE:timestamp;date;dd/MMM/yyyy:HH:mm:ss Z}\\] \"(?:%{WORD:verb;string} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion;float})?|%{DATA:rawrequest})\" %{NUMBER:response;int} (?:%{NUMBER:bytes;long}|-)");
+    Grok grok = Grok.create(ResourceManager.PATTERNS,
+        "%{IPORHOST:clientip} %{USER:ident;boolean} %{USER:auth} \\[%{HTTPDATE:timestamp;date;dd/MMM"
+            + "/yyyy:HH:mm:ss Z}\\] \"(?:%{WORD:verb;string} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion;float})?"
+            + "|%{DATA:rawrequest})\" %{NUMBER:response;int} (?:%{NUMBER:bytes;long}|-)");
 
     System.out.println(line);
-    Match gm = g.match(line);
+    Match gm = grok.match(line);
     gm.captures();
 
     assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
@@ -49,11 +52,13 @@ public class ApacheDataTypeTest {
 
   @Test
   public void test002_httpd_access_colon() throws GrokException, IOException, ParseException {
-    Grok g = Grok.create(ResourceManager.PATTERNS,
-        "%{IPORHOST:clientip} %{USER:ident:boolean} %{USER:auth} \\[%{HTTPDATE:timestamp:date:dd/MMM/yyyy:HH:mm:ss Z}\\] \"(?:%{WORD:verb:string} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion:float})?|%{DATA:rawrequest})\" %{NUMBER:response:int} (?:%{NUMBER:bytes:long}|-)");
+    Grok grok = Grok.create(ResourceManager.PATTERNS,
+        "%{IPORHOST:clientip} %{USER:ident:boolean} %{USER:auth} \\[%{HTTPDATE:timestamp:date:dd/MMM/yyyy:"
+            + "HH:mm:ss Z}\\] \"(?:%{WORD:verb:string} %{NOTSPACE:request}(?: HTTP/%{NUMBER:httpversion:float})?|"
+            + "%{DATA:rawrequest})\" %{NUMBER:response:int} (?:%{NUMBER:bytes:long}|-)");
 
     System.out.println(line);
-    Match gm = g.match(line);
+    Match gm = grok.match(line);
     gm.captures();
 
     assertNotEquals("{\"Error\":\"Error\"}", gm.toJson());
