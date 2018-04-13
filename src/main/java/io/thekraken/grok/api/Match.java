@@ -25,6 +25,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 
+import io.thekraken.grok.api.Converter.KeyValue;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
