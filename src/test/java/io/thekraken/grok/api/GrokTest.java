@@ -1,10 +1,13 @@
 package io.thekraken.grok.api;
 
 import static java.lang.String.format;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -14,17 +17,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import io.thekraken.grok.api.exception.GrokException;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.*;
-
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.*;
-import io.thekraken.grok.api.exception.GrokException;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

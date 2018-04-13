@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * Convert String argument to the right type.
- * 
+ *
  * @author anthonyc
  *
  */

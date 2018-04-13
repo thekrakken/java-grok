@@ -9,11 +9,11 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Map;
 
+import io.thekraken.grok.api.exception.GrokException;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-
-import io.thekraken.grok.api.exception.GrokException;
 
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

@@ -9,12 +9,12 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import io.thekraken.grok.api.exception.GrokException;
+
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-
-import io.thekraken.grok.api.exception.GrokException;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CaptureTest {
@@ -107,7 +107,7 @@ public class CaptureTest {
         assertNull(m.toMap().get("ghijk"));
         assertEquals(m.toMap().get("abcdef"), "abcdef");
     }
-    
+
     @SuppressWarnings("unchecked")
 	@Test
     public void test007_captureDuplicateName() throws GrokException {
