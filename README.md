@@ -51,7 +51,15 @@ Example of how to use java-grok:
 ### Build Java Grok
 
 Java Grok support Gradle: `./gradlew assemble`
- 
+
+### Build a release
+
+```
+./gradlew release -Prelease.useAutomaticVersion=true
+git checkout <version>
+./gradlew clean build bintrayUpload -PpublishUser=<user> -PpublishKey=<key>
+```
+
 ### Getting help
 
 Former maintainer: [@anthonycorbacho](https://github.com/anthonycorbacho)
