@@ -1,3 +1,4 @@
+package io.thekraken.grok.api;
 /*******************************************************************************
  * Copyright 2014 Anthony Corbacho and contributors.
  *
@@ -13,8 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package io.thekraken.grok.api;
-
 
 import static java.lang.String.format;
 
@@ -26,22 +25,25 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 
+import io.thekraken.grok.api.Converter.KeyValue;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 /**
  * {@code Match} is a representation in {@code Grok} world of your log.
  *
- * @author anthonycorbacho
  * @since 0.0.1
  */
 public class Match {
 
-  private static final Gson PRETTY_GSON =
-          new GsonBuilder().setPrettyPrinting().create();
+  // Create Empty grok matcher.
+  public static final Match EMPTY = new Match();
+
+  private static final Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().create();
   private static final Gson GSON = new GsonBuilder().create();
 
-  private String subject; // texte
+  private String subject;
   private Map<String, Object> capture;
   private Garbage garbage;
   private Grok grok;
@@ -52,12 +54,7 @@ public class Match {
   /**
    * For thread safety.
    */
-  private static ThreadLocal<Match> matchHolder = new ThreadLocal<Match>() {
-    @Override
-    protected Match initialValue() {
-      return new Match();
-    }
-  };
+  private static ThreadLocal<Match> matchHolder = ThreadLocal.withInitial(() -> new Match());
 
   /**
    * Create a new {@code Match} object.
@@ -71,11 +68,6 @@ public class Match {
     start = 0;
     end = 0;
   }
-
-  /**
-   * Create Empty grok matcher.
-   */
-  public static final Match EMPTY = new Match();
 
   public void setGrok(Grok grok) {
     if (grok != null) {
@@ -144,15 +136,14 @@ public class Match {
    * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map.
    *
    * Multiple values for the same key are stored as list.
-   *
    */
   public void captures() {
-    captures(false);
+    capture(false);
 
   }
 
   /**
-   * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map
+   * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map.
    *
    * Multiple values to the same key are flattened to one value: the sole non-null value will be captured.
    * Should there be multiple non-null values a RuntimeException is being thrown.
@@ -161,25 +152,23 @@ public class Match {
    * one value will be captured.
    *
    * See also {@link #captures} which returns multiple values of the same key as list.
-   *
    */
   public void capturesFlattened() {
-    captures(true);
+    capture(true);
   }
 
   @SuppressWarnings("unchecked")
-  private void captures(boolean flattened ) {
+  private void capture(boolean flattened) {
     if (match == null) {
       return;
     }
     capture.clear();
     boolean automaticConversionEnabled = grok.isAutomaticConversionEnabled();
 
-
     // _capture.put("LINE", this.line);
     // _capture.put("LENGTH", this.line.length() +"");
 
-    Map<String, String> mappedw = GrokUtils.namedGroups(this.match,this.subject);
+    Map<String, String> mappedw = GrokUtils.namedGroups(this.match, this.subject);
     Iterator<Entry<String, String>> it = mappedw.entrySet().iterator();
     while (it.hasNext()) {
 
@@ -194,7 +183,6 @@ public class Match {
       }
       if (pairs.getValue() != null) {
         value = pairs.getValue().toString();
-
 
         if (automaticConversionEnabled) {
           KeyValue keyValue = Converter.convert(key, value);
@@ -220,17 +208,19 @@ public class Match {
       }
 
       if (capture.containsKey(key)) {
-         Object currentValue = capture.get(key);
+        Object currentValue = capture.get(key);
 
         if (flattened) {
           if (currentValue == null && value != null) {
             capture.put(key, value);
-          } if (currentValue != null && value != null) {
+          }
+          if (currentValue != null && value != null) {
             throw new RuntimeException(
-                    format("key '%s' has multiple non-null values, this is not allowed in flattened mode, values:'%s', '%s'",
-                            key,
-                            currentValue,
-                            value));
+                format(
+                    "key '%s' has multiple non-null values, this is not allowed in flattened mode, values:'%s', '%s'",
+                    key,
+                    currentValue,
+                    value));
           }
         } else {
           if (currentValue instanceof List) {
@@ -245,7 +235,7 @@ public class Match {
       } else {
         capture.put(key, value);
       }
-      
+
       it.remove(); // avoids a ConcurrentModificationException
     }
   }
@@ -264,8 +254,8 @@ public class Match {
       return value;
     }
     char[] tmp = value.toCharArray();
-    if(tmp.length == 1 && ( tmp[0] == '"' || tmp[0] == '\'')){
-      value ="";//empty string 
+    if (tmp.length == 1 && (tmp[0] == '"' || tmp[0] == '\'')) {
+      value = "";//empty string
     } else if ((tmp[0] == '"' && tmp[value.length() - 1] == '"')
         || (tmp[0] == '\'' && tmp[value.length() - 1] == '\'')) {
       value = value.substring(1, value.length() - 1);

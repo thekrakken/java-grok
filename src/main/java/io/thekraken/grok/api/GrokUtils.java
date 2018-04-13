@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 /**
  * {@code GrokUtils} contain set of useful tools or methods.
  *
- * @author anthonycorbacho
  * @since 0.0.6
  */
 public class GrokUtils {
@@ -20,27 +19,26 @@ public class GrokUtils {
    * Extract Grok patter like %{FOO} to FOO, Also Grok pattern with semantic.
    */
   public static final Pattern GROK_PATTERN = Pattern.compile(
-      "%\\{" +
-      "(?<name>" +
-        "(?<pattern>[A-z0-9]+)" +
-          "(?::(?<subname>[A-z0-9_:;\\/\\s\\.]+))?" +
-          ")" +
-          "(?:=(?<definition>" +
-            "(?:" +
-            "(?:[^{}]+|\\.+)+" +
-            ")+" +
-            ")" +
-      ")?" +
-      "\\}");
-  
-  public static final Pattern NAMED_REGEX = Pattern
-      .compile("\\(\\?<([a-zA-Z][a-zA-Z0-9]*)>");
+      "%\\{"
+          + "(?<name>"
+          + "(?<pattern>[A-z0-9]+)"
+          + "(?::(?<subname>[A-z0-9_:;\\/\\s\\.]+))?"
+          + ")"
+          + "(?:=(?<definition>"
+          + "(?:"
+          + "(?:[^{}]+|\\.+)+"
+          + ")+"
+          + ")"
+          + ")?"
+          + "\\}");
+
+  public static final Pattern NAMED_REGEX = Pattern.compile("\\(\\?<([a-zA-Z][a-zA-Z0-9]*)>");
 
   private static Set<String> getNameGroups(String regex) {
     Set<String> namedGroups = new LinkedHashSet<String>();
-    Matcher m = NAMED_REGEX.matcher(regex);
-    while (m.find()) {
-      namedGroups.add(m.group(1));
+    Matcher match = NAMED_REGEX.matcher(regex);
+    while (match.find()) {
+      namedGroups.add(match.group(1));
     }
     return namedGroups;
   }

@@ -9,8 +9,6 @@ import java.util.Map;
 
 /**
  * Convert String argument to the right type.
- * 
- * @author anthonyc
  *
  */
 public class Converter {
@@ -41,7 +39,7 @@ public class Converter {
   }
 
   public static KeyValue convert(String key, Object value) {
-    String[] spec = key.split(";|:",3);
+    String[] spec = key.split(";|:", 3);
     try {
       if (spec.length == 1) {
         return new KeyValue(spec[0], value);
@@ -56,147 +54,148 @@ public class Converter {
       return new KeyValue(spec[0], value, e.toString());
     }
   }
+
+  static class KeyValue {
+
+    private String key = null;
+    private Object value = null;
+    private String grokFailure = null;
+
+    public KeyValue(String key, Object value) {
+      this.key = key;
+      this.value = value;
+    }
+
+    public KeyValue(String key, Object value, String grokFailure) {
+      this.key = key;
+      this.value = value;
+      this.grokFailure = grokFailure;
+    }
+
+    public boolean hasGrokFailure() {
+      return grokFailure != null;
+    }
+
+    public String getGrokFailure() {
+      return this.grokFailure;
+    }
+
+    public String getKey() {
+      return key;
+    }
+
+    public void setKey(String key) {
+      this.key = key;
+    }
+
+    public Object getValue() {
+      return value;
+    }
+
+    public void setValue(Object value) {
+      this.value = value;
+    }
+  }
+
+
+  abstract static class IConverter<T> {
+
+    public T convert(String value, String informat) throws Exception {
+      return null;
+    }
+
+    public abstract T convert(String value) throws Exception;
+  }
+
+
+  static class ByteConverter extends IConverter<Byte> {
+
+    @Override
+    public Byte convert(String value) throws Exception {
+      return Byte.parseByte(value);
+    }
+  }
+
+
+  static class BooleanConverter extends IConverter<Boolean> {
+
+    @Override
+    public Boolean convert(String value) throws Exception {
+      return Boolean.parseBoolean(value);
+    }
+  }
+
+
+  static class ShortConverter extends IConverter<Short> {
+
+    @Override
+    public Short convert(String value) throws Exception {
+      return Short.parseShort(value);
+    }
+  }
+
+
+  static class IntegerConverter extends IConverter<Integer> {
+
+    @Override
+    public Integer convert(String value) throws Exception {
+      return Integer.parseInt(value);
+    }
+  }
+
+
+  static class LongConverter extends IConverter<Long> {
+
+    @Override
+    public Long convert(String value) throws Exception {
+      return Long.parseLong(value);
+    }
+  }
+
+
+  static class FloatConverter extends IConverter<Float> {
+
+    @Override
+    public Float convert(String value) throws Exception {
+      return Float.parseFloat(value);
+    }
+  }
+
+
+  static class DoubleConverter extends IConverter<Double> {
+
+    @Override
+    public Double convert(String value) throws Exception {
+      return Double.parseDouble(value);
+    }
+  }
+
+
+  static class StringConverter extends IConverter<String> {
+
+    @Override
+    public String convert(String value) throws Exception {
+      return value;
+    }
+  }
+
+
+  static class DateConverter extends IConverter<Date> {
+
+    @Override
+    public Date convert(String value) throws Exception {
+      return DateFormat.getDateTimeInstance(DateFormat.SHORT,
+          DateFormat.SHORT,
+          Converter.locale).parse(value);
+    }
+
+    @Override
+    public Date convert(String value, String informat) throws Exception {
+      SimpleDateFormat formatter = new SimpleDateFormat(informat, Converter.locale);
+      return formatter.parse(value);
+    }
+
+  }
+
 }
-
-
-//
-// KeyValue
-//
-
-class KeyValue {
-
-  private String key = null;
-  private Object value = null;
-  private String grokFailure = null;
-
-  public KeyValue(String key, Object value) {
-    this.key = key;
-    this.value = value;
-  }
-
-  public KeyValue(String key, Object value, String grokFailure) {
-    this.key = key;
-    this.value = value;
-    this.grokFailure = grokFailure;
-  }
-
-  public boolean hasGrokFailure() {
-    return grokFailure != null;
-  }
-
-  public String getGrokFailure() {
-    return this.grokFailure;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public void setKey(String key) {
-    this.key = key;
-  }
-
-  public Object getValue() {
-    return value;
-  }
-
-  public void setValue(Object value) {
-    this.value = value;
-  }
-}
-
-
-//
-// Converters
-//
-abstract class IConverter<T> {
-
-  public T convert(String value, String informat) throws Exception {
-    return null;
-  }
-
-  public abstract T convert(String value) throws Exception;
-}
-
-
-class ByteConverter extends IConverter<Byte> {
-  @Override
-  public Byte convert(String value) throws Exception {
-    return Byte.parseByte(value);
-  }
-}
-
-
-class BooleanConverter extends IConverter<Boolean> {
-  @Override
-  public Boolean convert(String value) throws Exception {
-    return Boolean.parseBoolean(value);
-  }
-}
-
-
-class ShortConverter extends IConverter<Short> {
-  @Override
-  public Short convert(String value) throws Exception {
-    return Short.parseShort(value);
-  }
-}
-
-
-class IntegerConverter extends IConverter<Integer> {
-  @Override
-  public Integer convert(String value) throws Exception {
-    return Integer.parseInt(value);
-  }
-}
-
-
-class LongConverter extends IConverter<Long> {
-  @Override
-  public Long convert(String value) throws Exception {
-    return Long.parseLong(value);
-  }
-}
-
-
-class FloatConverter extends IConverter<Float> {
-  @Override
-  public Float convert(String value) throws Exception {
-    return Float.parseFloat(value);
-  }
-}
-
-
-class DoubleConverter extends IConverter<Double> {
-  @Override
-  public Double convert(String value) throws Exception {
-    return Double.parseDouble(value);
-  }
-}
-
-
-class StringConverter extends IConverter<String> {
-  @Override
-  public String convert(String value) throws Exception {
-    return value;
-  }
-}
-
-
-class DateConverter extends IConverter<Date> {
-  @Override
-  public Date convert(String value) throws Exception {
-    return DateFormat.getDateTimeInstance(DateFormat.SHORT,
-                                          DateFormat.SHORT,
-                                          Converter.locale).parse(value);
-  }
-
-  @Override
-  public Date convert(String value, String informat) throws Exception {
-    SimpleDateFormat formatter = new SimpleDateFormat(informat, Converter.locale);
-    return formatter.parse(value);
-  }
-
-}
-
 
