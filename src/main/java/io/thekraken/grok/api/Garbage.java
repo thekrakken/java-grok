@@ -1,3 +1,4 @@
+package io.thekraken.grok.api;
 /*******************************************************************************
  * Copyright 2014 Anthony Corbacho and contributors.
  *
@@ -13,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package io.thekraken.grok.api;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,7 +25,6 @@ import java.util.TreeMap;
  * The Leon the professional of {@code Grok}.<br>
  * Garbage is use by grok to remove or rename elements before getting the final output
  *
- * @author anthonycorbacho
  * @since 0.0.2
  */
 public class Garbage {

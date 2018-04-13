@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 /**
  * {@code GrokUtils} contain set of useful tools or methods.
  *
- * @author anthonycorbacho
  * @since 0.0.6
  */
 public class GrokUtils {
