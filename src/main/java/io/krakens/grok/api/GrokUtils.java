@@ -1,4 +1,4 @@
-package io.thekraken.grok.api;
+package io.krakens.grok.api;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

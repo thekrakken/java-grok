@@ -1,4 +1,4 @@
-package io.thekraken.grok.api;
+package io.krakens.grok.api;
 /*******************************************************************************
  * Copyright 2014 Anthony Corbacho and contributors.
  *
@@ -25,7 +25,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 
-import io.thekraken.grok.api.Converter.KeyValue;
+import io.krakens.grok.api.Converter.KeyValue;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
