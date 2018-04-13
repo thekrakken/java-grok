@@ -1,3 +1,4 @@
+package io.thekraken.grok.api.exception;
 /*******************************************************************************
  * Copyright 2014 Anthony Corbacho and contributors.
  *
@@ -13,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package io.thekraken.grok.api.exception;
 
 /**
  * Signals that an {@code Grok} exception of some sort has occurred.
  * This class is the general class of
  * exceptions produced by failed or interrupted Grok operations.
  *
- * @author anthonycorbacho
  * @since 0.0.4
  */
 public class GrokException extends Exception {
