@@ -55,7 +55,7 @@ Map myMap = gm.toMap();
 Java Grok support Gradle: ``./gradlew build``
  
 ### Getting help
-Maintainer: [@anthonycorbacho](https://github.com/anthonycorbacho)
+[Mailling List](https://groups.google.com/forum/#!forum/java-grok)
 
 ### Thankx to
  * [@nokk](https://github.com/nokk)
