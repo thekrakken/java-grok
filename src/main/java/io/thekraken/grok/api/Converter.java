@@ -116,11 +116,19 @@ class DateConverter implements IConverter<Instant> {
 
   @Override
   public Instant convert(String value) {
-    TemporalAccessor dt = formatter.parseBest(value.trim(), ZonedDateTime::from, LocalDateTime::from);
+    TemporalAccessor dt = formatter.parseBest(value.trim(), ZonedDateTime::from, LocalDateTime::from, OffsetDateTime::from, Instant::from, LocalDate::from);
     if (dt instanceof ZonedDateTime) {
       return ((ZonedDateTime)dt).toInstant();
-    } else {
+    } else if (dt instanceof LocalDateTime) {
       return ((LocalDateTime) dt).atZone(timeZone).toInstant();
+    } else if (dt instanceof OffsetDateTime) {
+      return ((OffsetDateTime) dt).atZoneSameInstant(timeZone).toInstant();
+    } else if (dt instanceof Instant) {
+      return ((Instant) dt);
+    } else if (dt instanceof LocalDate) {
+      return ((LocalDate) dt).atStartOfDay(timeZone).toInstant();
+    } else {
+      return null;
     }
   }
 
