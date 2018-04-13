@@ -1,3 +1,4 @@
+package io.thekraken.grok.api.exception;
 /*******************************************************************************
  * Copyright 2014 Anthony Corbacho and contributors.
  *
@@ -13,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package io.thekraken.grok.api.exception;
 
 /**
  * Not used, too much c style..
  *
- * @author anthonycorbacho
  */
 @Deprecated
 public class GrokError {
