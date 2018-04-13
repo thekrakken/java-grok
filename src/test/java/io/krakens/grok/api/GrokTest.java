@@ -625,6 +625,20 @@ public class GrokTest {
   }
 
   @Test
+  public void test025_keep_empty_captures() throws Throwable {
+    grok.addPatternFromFile(ResourceManager.PATTERNS);
+    grok.compile("%{POSINT:pos}|%{INT:int}");
+    Match gm = grok.match("-42");
+    grok.setKeepEmptyCaptures(false);
+    gm.captures();
+    assertEquals("{int=-42}", gm.toMap().toString());
+    grok.setKeepEmptyCaptures(true);
+    gm.captures();
+    assertEquals("{int=-42, pos=null}", gm.toMap().toString());
+  }
+
+
+  @Test
   public void createGrokWithDefaultPatterns() throws GrokException {
     final Grok grok = Grok.create();
     grok.compile("%{USERNAME}", false);

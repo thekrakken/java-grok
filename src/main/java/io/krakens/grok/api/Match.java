@@ -202,6 +202,9 @@ public class Match {
             capture.put(key + "_grokfailure", keyValue.getGrokFailure());
           }
         }
+      } else if (!grok.isKeepEmptyCaptures()) {
+        it.remove();
+        continue;
       }
 
       if (capture.containsKey(key)) {
