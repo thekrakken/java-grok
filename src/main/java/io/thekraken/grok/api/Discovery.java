@@ -83,7 +83,6 @@ public class Discovery {
   }
 
   /**
-   *
    * @param expandedPattern regex string
    * @return the complexity of the regex
    */

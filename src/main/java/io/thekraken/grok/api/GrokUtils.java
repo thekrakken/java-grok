@@ -21,18 +21,18 @@ public class GrokUtils {
    */
   public static final Pattern GROK_PATTERN = Pattern.compile(
       "%\\{" +
-      "(?<name>" +
-        "(?<pattern>[A-z0-9]+)" +
+          "(?<name>" +
+          "(?<pattern>[A-z0-9]+)" +
           "(?::(?<subname>[A-z0-9_:;\\/\\s\\.]+))?" +
           ")" +
           "(?:=(?<definition>" +
-            "(?:" +
-            "(?:[^{}]+|\\.+)+" +
-            ")+" +
-            ")" +
-      ")?" +
-      "\\}");
-  
+          "(?:" +
+          "(?:[^{}]+|\\.+)+" +
+          ")+" +
+          ")" +
+          ")?" +
+          "\\}");
+
   public static final Pattern NAMED_REGEX = Pattern
       .compile("\\(\\?<([a-zA-Z][a-zA-Z0-9]*)>");
 

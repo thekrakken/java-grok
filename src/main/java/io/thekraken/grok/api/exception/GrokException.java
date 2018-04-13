@@ -38,7 +38,7 @@ public class GrokException extends Exception {
    * Constructs a new GrokException.
    *
    * @param message the reason for the exception
-   * @param cause   the underlying Throwable that caused this exception to be thrown.
+   * @param cause the underlying Throwable that caused this exception to be thrown.
    */
   public GrokException(String message, Throwable cause) {
     super(message, cause);

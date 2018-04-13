@@ -19,7 +19,6 @@ package io.thekraken.grok.api.exception;
  * Not used, too much c style..
  *
  * @author anthonycorbacho
- *
  */
 @Deprecated
 public class GrokError {

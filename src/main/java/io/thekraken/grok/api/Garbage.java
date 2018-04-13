@@ -107,7 +107,7 @@ public class Garbage {
       return item;
     }
 
-    for (Iterator<Map.Entry<String, Object>> it = map.entrySet().iterator(); it.hasNext();) {
+    for (Iterator<Map.Entry<String, Object>> it = map.entrySet().iterator(); it.hasNext(); ) {
       Map.Entry<String, Object> entry = it.next();
       for (int i = 0; i < toRemove.size(); i++) {
         if (entry.getKey().equals(toRemove.get(i))) {
@@ -136,7 +136,7 @@ public class Garbage {
       return item;
     }
 
-    for (Iterator<Map.Entry<String, Object>> it = toRename.entrySet().iterator(); it.hasNext();) {
+    for (Iterator<Map.Entry<String, Object>> it = toRename.entrySet().iterator(); it.hasNext(); ) {
       Map.Entry<String, Object> entry = it.next();
       if (map.containsKey(entry.getKey())) {
         Object obj = map.remove(entry.getKey());

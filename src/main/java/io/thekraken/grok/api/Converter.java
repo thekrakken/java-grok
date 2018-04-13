@@ -11,7 +11,6 @@ import java.util.Map;
  * Convert String argument to the right type.
  *
  * @author anthonyc
- *
  */
 public class Converter {
 
@@ -41,7 +40,7 @@ public class Converter {
   }
 
   public static KeyValue convert(String key, Object value) {
-    String[] spec = key.split(";|:",3);
+    String[] spec = key.split(";|:", 3);
     try {
       if (spec.length == 1) {
         return new KeyValue(spec[0], value);
@@ -57,7 +56,6 @@ public class Converter {
     }
   }
 }
-
 
 //
 // KeyValue
@@ -120,6 +118,7 @@ abstract class IConverter<T> {
 
 
 class ByteConverter extends IConverter<Byte> {
+
   @Override
   public Byte convert(String value) throws Exception {
     return Byte.parseByte(value);
@@ -128,6 +127,7 @@ class ByteConverter extends IConverter<Byte> {
 
 
 class BooleanConverter extends IConverter<Boolean> {
+
   @Override
   public Boolean convert(String value) throws Exception {
     return Boolean.parseBoolean(value);
@@ -136,6 +136,7 @@ class BooleanConverter extends IConverter<Boolean> {
 
 
 class ShortConverter extends IConverter<Short> {
+
   @Override
   public Short convert(String value) throws Exception {
     return Short.parseShort(value);
@@ -144,6 +145,7 @@ class ShortConverter extends IConverter<Short> {
 
 
 class IntegerConverter extends IConverter<Integer> {
+
   @Override
   public Integer convert(String value) throws Exception {
     return Integer.parseInt(value);
@@ -152,6 +154,7 @@ class IntegerConverter extends IConverter<Integer> {
 
 
 class LongConverter extends IConverter<Long> {
+
   @Override
   public Long convert(String value) throws Exception {
     return Long.parseLong(value);
@@ -160,6 +163,7 @@ class LongConverter extends IConverter<Long> {
 
 
 class FloatConverter extends IConverter<Float> {
+
   @Override
   public Float convert(String value) throws Exception {
     return Float.parseFloat(value);
@@ -168,6 +172,7 @@ class FloatConverter extends IConverter<Float> {
 
 
 class DoubleConverter extends IConverter<Double> {
+
   @Override
   public Double convert(String value) throws Exception {
     return Double.parseDouble(value);
@@ -176,6 +181,7 @@ class DoubleConverter extends IConverter<Double> {
 
 
 class StringConverter extends IConverter<String> {
+
   @Override
   public String convert(String value) throws Exception {
     return value;
@@ -184,11 +190,12 @@ class StringConverter extends IConverter<String> {
 
 
 class DateConverter extends IConverter<Date> {
+
   @Override
   public Date convert(String value) throws Exception {
     return DateFormat.getDateTimeInstance(DateFormat.SHORT,
-                                          DateFormat.SHORT,
-                                          Converter.locale).parse(value);
+        DateFormat.SHORT,
+        Converter.locale).parse(value);
   }
 
   @Override

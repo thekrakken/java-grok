@@ -38,7 +38,7 @@ import com.google.gson.GsonBuilder;
 public class Match {
 
   private static final Gson PRETTY_GSON =
-          new GsonBuilder().setPrettyPrinting().create();
+      new GsonBuilder().setPrettyPrinting().create();
   private static final Gson GSON = new GsonBuilder().create();
 
   private String subject; // texte
@@ -144,7 +144,6 @@ public class Match {
    * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map.
    *
    * Multiple values for the same key are stored as list.
-   *
    */
   public void captures() {
     captures(false);
@@ -161,25 +160,23 @@ public class Match {
    * one value will be captured.
    *
    * See also {@link #captures} which returns multiple values of the same key as list.
-   *
    */
   public void capturesFlattened() {
     captures(true);
   }
 
   @SuppressWarnings("unchecked")
-  private void captures(boolean flattened ) {
+  private void captures(boolean flattened) {
     if (match == null) {
       return;
     }
     capture.clear();
     boolean automaticConversionEnabled = grok.isAutomaticConversionEnabled();
 
-
     // _capture.put("LINE", this.line);
     // _capture.put("LENGTH", this.line.length() +"");
 
-    Map<String, String> mappedw = GrokUtils.namedGroups(this.match,this.subject);
+    Map<String, String> mappedw = GrokUtils.namedGroups(this.match, this.subject);
     Iterator<Entry<String, String>> it = mappedw.entrySet().iterator();
     while (it.hasNext()) {
 
@@ -194,7 +191,6 @@ public class Match {
       }
       if (pairs.getValue() != null) {
         value = pairs.getValue().toString();
-
 
         if (automaticConversionEnabled) {
           KeyValue keyValue = Converter.convert(key, value);
@@ -217,17 +213,19 @@ public class Match {
       }
 
       if (capture.containsKey(key)) {
-         Object currentValue = capture.get(key);
+        Object currentValue = capture.get(key);
 
         if (flattened) {
           if (currentValue == null && value != null) {
             capture.put(key, value);
-          } if (currentValue != null && value != null) {
+          }
+          if (currentValue != null && value != null) {
             throw new RuntimeException(
-                    format("key '%s' has multiple non-null values, this is not allowed in flattened mode, values:'%s', '%s'",
-                            key,
-                            currentValue,
-                            value));
+                format(
+                    "key '%s' has multiple non-null values, this is not allowed in flattened mode, values:'%s', '%s'",
+                    key,
+                    currentValue,
+                    value));
           }
         } else {
           if (currentValue instanceof List) {
@@ -261,8 +259,8 @@ public class Match {
       return value;
     }
     char[] tmp = value.toCharArray();
-    if(tmp.length == 1 && ( tmp[0] == '"' || tmp[0] == '\'')){
-      value ="";//empty string
+    if (tmp.length == 1 && (tmp[0] == '"' || tmp[0] == '\'')) {
+      value = "";//empty string
     } else if ((tmp[0] == '"' && tmp[value.length() - 1] == '"')
         || (tmp[0] == '\'' && tmp[value.length() - 1] == '\'')) {
       value = value.substring(1, value.length() - 1);
