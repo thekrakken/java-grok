@@ -1,4 +1,4 @@
-package io.thekraken.grok.api;
+package io.krakens.grok.api;
 /*******************************************************************************
  * Copyright 2014 Anthony Corbacho and contributors.
  *

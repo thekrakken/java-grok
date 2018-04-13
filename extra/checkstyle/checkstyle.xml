@@ -162,7 +162,7 @@
       <property name="allowedDistance" value="10"/>
     </module>
     <module name="CustomImportOrder">
-      <property name="specialImportsRegExp" value="io.thekraken"/>
+      <property name="specialImportsRegExp" value="io.krakens"/>
       <property name="sortImportsInGroupAlphabetically" value="true"/>
       <property name="customImportOrderRules"
         value="STATIC###STANDARD_JAVA_PACKAGE###SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE"/>

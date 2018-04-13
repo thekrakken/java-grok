@@ -24,7 +24,7 @@
       <package name="java" static="false" withSubpackages="true"/>
       <package name="javax" static="false" withSubpackages="true"/>
       <emptyLine/>
-      <package name="io.thekraken" static="false" withSubpackages="true"/>
+      <package name="io.krakens" static="false" withSubpackages="true"/>
       <emptyLine/>
       <package name="" static="false" withSubpackages="true"/>
     </value>
