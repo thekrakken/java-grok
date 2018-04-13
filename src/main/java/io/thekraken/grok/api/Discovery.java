@@ -1,3 +1,4 @@
+package io.thekraken.grok.api;
 /*******************************************************************************
  * Copyright 2014 Anthony Corbacho and contributors.
  *
@@ -13,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package io.thekraken.grok.api;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +34,6 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * {@code Discovery} try to find the best pattern for the given string.
  *
- * @author anthonycorbacho
  * @since 0.0.2
  */
 public class Discovery {
@@ -59,7 +58,7 @@ public class Discovery {
   private Map<String, Grok> sort(Map<String, Grok> groks) {
 
     List<Grok> groky = new ArrayList<Grok>(groks.values());
-    Map<String, Grok> mGrok = new LinkedHashMap<String, Grok>();
+    Map<String, Grok> grokMap = new LinkedHashMap<String, Grok>();
     Collections.sort(groky, new Comparator<Grok>() {
 
       public int compare(Grok g1, Grok g2) {
@@ -76,13 +75,15 @@ public class Discovery {
     });
 
     for (Grok g : groky) {
-      mGrok.put(g.getSaved_pattern(), g);
+      grokMap.put(g.getSaved_pattern(), g);
     }
-    return mGrok;
+    return grokMap;
 
   }
 
   /**
+   * Determinate the complexity of the pattern.
+   *
    * @param expandedPattern regex string
    * @return the complexity of the regex
    */
@@ -107,24 +108,24 @@ public class Discovery {
     }
 
     Map<String, Grok> groks = new TreeMap<String, Grok>();
-    Map<String, String> gPatterns = grok.getPatterns();
+    Map<String, String> grokPatterns = grok.getPatterns();
     // Boolean done = false;
     String texte = text;
 
     // Compile the pattern
-    Iterator<Entry<String, String>> it = gPatterns.entrySet().iterator();
+    Iterator<Entry<String, String>> it = grokPatterns.entrySet().iterator();
     while (it.hasNext()) {
       @SuppressWarnings("rawtypes")
       Map.Entry pairs = (Map.Entry) it.next();
       String key = pairs.getKey().toString();
-      Grok g = new Grok();
+      Grok grok = new Grok();
 
       // g.patterns.putAll( gPatterns );
       try {
-        g.copyPatterns(gPatterns);
-        g.setSaved_pattern(key);
-        g.compile("%{" + key + "}");
-        groks.put(key, g);
+        grok.copyPatterns(grokPatterns);
+        grok.setSaved_pattern(key);
+        grok.compile("%{" + key + "}");
+        groks.put(key, grok);
       } catch (GrokException e) {
         // Add logger
         continue;
@@ -150,12 +151,12 @@ public class Discovery {
         continue;
       }
 
-      Match m = value.match(text);
-      if (m.isNull()) {
+      Match match = value.match(text);
+      if (match.isNull()) {
         continue;
       }
       // get the part of the matched text
-      String part = getPart(m, text);
+      String part = getPart(match, text);
 
       // we skip boundary word
       Pattern pattern = Pattern.compile(".\\b.");
@@ -181,16 +182,16 @@ public class Discovery {
   /**
    * Get the substring that match with the text.
    *
-   * @param m Grok Match
+   * @param matcher Grok Match
    * @param text text
    * @return string
    */
-  private String getPart(Match m, String text) {
+  private String getPart(Match matcher, String text) {
 
-    if (m == null || text == null) {
+    if (matcher == null || text == null) {
       return "";
     }
 
-    return text.substring(m.getStart(), m.getEnd());
+    return text.substring(matcher.getStart(), matcher.getEnd());
   }
 }
