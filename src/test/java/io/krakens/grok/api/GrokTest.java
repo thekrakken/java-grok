@@ -1,4 +1,4 @@
-package io.thekraken.grok.api;
+package io.krakens.grok.api;
 
 import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import io.thekraken.grok.api.exception.GrokException;
+import io.krakens.grok.api.exception.GrokException;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;

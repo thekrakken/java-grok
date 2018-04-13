@@ -1,4 +1,4 @@
-package io.thekraken.grok.api;
+package io.krakens.grok.api;
 
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -7,7 +7,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import io.thekraken.grok.api.exception.GrokException;
+import io.krakens.grok.api.exception.GrokException;
 
 import org.junit.Test;
 

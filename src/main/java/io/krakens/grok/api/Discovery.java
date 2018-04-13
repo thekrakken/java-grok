@@ -1,4 +1,4 @@
-package io.thekraken.grok.api;
+package io.krakens.grok.api;
 /*******************************************************************************
  * Copyright 2014 Anthony Corbacho and contributors.
  *
@@ -27,7 +27,7 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.thekraken.grok.api.exception.GrokException;
+import io.krakens.grok.api.exception.GrokException;
 
 import org.apache.commons.lang3.StringUtils;
 

@@ -1,4 +1,4 @@
-package io.thekraken.grok.api;
+package io.krakens.grok.api;
 
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Map;
 
-import io.thekraken.grok.api.exception.GrokException;
+import io.krakens.grok.api.exception.GrokException;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;

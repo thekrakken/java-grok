@@ -1,4 +1,4 @@
-package io.thekraken.grok.api.exception;
+package io.krakens.grok.api.exception;
 /*******************************************************************************
  * Copyright 2014 Anthony Corbacho and contributors.
  *
