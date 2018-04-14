@@ -55,8 +55,9 @@ artifacts {
     archives javadocJar, sourcesJar
 }
 
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
 signing {
-    required { gradle.taskGraph.hasTask("uploadArchives") }
+    required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
     sign configurations.archives
 }
 
@@ -70,7 +71,7 @@ uploadArchives {
             }
 
             snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
+                authentication(userName: "anthony-corbacho", password: "lm:8pQ6{")
             }
 
             pom.project {
