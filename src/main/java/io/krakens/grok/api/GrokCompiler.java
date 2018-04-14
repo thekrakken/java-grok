@@ -116,11 +116,11 @@ public class GrokCompiler {
   /**
    * Compiles a given Grok pattern and returns a Grok object which can parse the pattern.
    */
-  public Grok compile(String pattern) {
+  public Grok compile(String pattern) throws IllegalArgumentException {
     return compile(pattern, false);
   }
 
-  public Grok compile(final String pattern, boolean namedOnly) {
+  public Grok compile(final String pattern, boolean namedOnly) throws IllegalArgumentException {
     return compile(pattern, ZoneOffset.systemDefault(), namedOnly);
   }
 
@@ -130,8 +130,10 @@ public class GrokCompiler {
    * @param pattern : Grok pattern (ex: %{IP})
    * @param defaultTimeZone : time zone used to parse a timestamp when it doesn't contain the time zone
    * @param namedOnly : Whether to capture named expressions only or not (i.e. %{IP:ip} but not ${IP})
+   * @return a compiled pattern
+   * @throws IllegalArgumentException when pattern definition is invalid
    */
-  public Grok compile(final String pattern, ZoneId defaultTimeZone, boolean namedOnly) {
+  public Grok compile(final String pattern, ZoneId defaultTimeZone, boolean namedOnly) throws IllegalArgumentException {
 
     if (StringUtils.isBlank(pattern)) {
       throw new IllegalArgumentException("{pattern} should not be empty or null");
@@ -198,6 +200,6 @@ public class GrokCompiler {
         namedRegexCollection,
         patternDefinitions,
         defaultTimeZone
-        );
+    );
   }
 }
