@@ -27,7 +27,6 @@ ext {
     jacocoToolVersion = "0.7.9"
 
     commonsLang3Version = "3.7"
-    log4jVersion = "1.7.21"
 
     junitVersion = "4.12"
     assertjVersion = "3.9.1"
@@ -36,7 +35,6 @@ ext {
 
 dependencies {
     compile "org.apache.commons:commons-lang3:$commonsLang3Version"
-    compile "org.slf4j:slf4j-api:$log4jVersion"
 
     testCompile "junit:junit:$junitVersion"
     testCompile "org.assertj:assertj-core:$assertjVersion"
