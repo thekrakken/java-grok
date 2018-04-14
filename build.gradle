@@ -1,7 +1,8 @@
 apply {
     plugin "base"
     plugin "java"
-    plugin "maven-publish"
+    plugin "maven"
+    plugin "signing"
     plugin "checkstyle"
     plugin "jacoco"
     plugin "idea"
@@ -20,7 +21,6 @@ repositories {
 sourceCompatibility = JavaVersion.VERSION_1_8
 group = "oi.krakens"
 archivesBaseName = "java-grok"
-version = '0.1.9-SNAPSHOT'
 
 ext {
     checkStyleToolVersion = "6.19"
@@ -39,6 +39,69 @@ dependencies {
     testCompile "junit:junit:$junitVersion"
     testCompile "org.assertj:assertj-core:$assertjVersion"
     testCompile "com.google.guava:guava:$guavaVersion"
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Java Grok'
+                packaging 'jar'
+                description 'Java Grok is simple API that allows you to easily parse logs and other files (single line). With Java Grok, you can turn unstructured log and event data into structured data (JSON).'
+                url 'https://github.com/thekrakken/java-grok'
+
+                scm {
+                    connection 'scm:git:git@github.com:thekrakken/java-grok.git'
+                    developerConnection 'scm:git:git@github.com:thekrakken/java-grok.git'
+                    url 'scm:git:git@github.com:thekrakken/java-grok.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'anthony-corbacho'
+                        name 'Anthony Corbacho'
+                        email 'manfred@sonatype.com'
+                    }
+                }
+            }
+        }
+    }
 }
 
 checkstyle {

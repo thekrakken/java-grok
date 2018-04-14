@@ -94,7 +94,7 @@ public class Match {
 
   /**
    * Private implementation of captureFlattened and capture.
-   * @param will it flatten values.
+   * @param flattened will it flatten values.
    * @return the matched elements.
    * @throws GrokException if a keys has multiple non-null values, but only if flattened is set to true.
    */
