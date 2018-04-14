@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -22,6 +23,10 @@ import io.krakens.grok.api.exception.GrokException;
 import org.apache.commons.lang3.StringUtils;
 
 public class GrokCompiler {
+
+  // We don't want \n and commented line
+  private static final Pattern patternLinePattern = Pattern.compile("^([A-z0-9_]+)\\s+(.*)$");
+
   /**
    * {@code Grok} patterns definitions.
    */
@@ -66,28 +71,46 @@ public class GrokCompiler {
   }
 
   public void registerPatternFromClasspath(String path) throws GrokException {
+    registerPatternFromClasspath(path, StandardCharsets.UTF_8);
+  }
+
+  public void registerPatternFromClasspath(String path, Charset charset) throws GrokException {
     final InputStream inputStream = this.getClass().getResourceAsStream(path);
-    try (Reader reader = new InputStreamReader(inputStream)) {
-      register(inputStream);
+    try (Reader reader = new InputStreamReader(inputStream, charset)) {
+      register(reader);
     } catch (IOException e) {
       throw new GrokException(e.getMessage(), e);
     }
   }
 
   /**
-   * Registers multiple pattern definitions from a given inputStream.
+   * Registers multiple pattern definitions from a given inputStream, and decoded as a UTF-8 source.
    */
   public void register(InputStream input) throws IOException {
-    // We don't want \n and commented line
-    Pattern pattern = Pattern.compile("^([A-z0-9_]+)\\s+(.*)$");
+    register(input, StandardCharsets.UTF_8);
+  }
 
+  /**
+   * Registers multiple pattern definitions from a given inputStream.
+   */
+  public void register(InputStream input, Charset charset) throws IOException {
     try (
-        BufferedReader in = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
+        BufferedReader in = new BufferedReader(new InputStreamReader(input, charset))) {
       in.lines()
-        .map(pattern::matcher)
-        .filter(Matcher::matches)
+      .map(patternLinePattern::matcher)
+      .filter(Matcher::matches)
         .forEach(m -> register(m.group(1), m.group(2)));
     }
+  }
+
+  /**
+   * Registers multiple pattern definitions from a given Reader.
+   */
+  public void register(Reader input) throws IOException {
+    new BufferedReader(input).lines()
+    .map(patternLinePattern::matcher)
+    .filter(Matcher::matches)
+      .forEach(m -> register(m.group(1), m.group(2)));
   }
 
   /**
@@ -175,6 +198,6 @@ public class GrokCompiler {
         namedRegexCollection,
         patternDefinitions,
         defaultTimeZone
-    );
+        );
   }
 }
