@@ -1,34 +1,16 @@
 package io.krakens.grok.api;
-/*******************************************************************************
- * Copyright 2014 Anthony Corbacho and contributors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
+
 
 import static java.lang.String.format;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 
-import io.krakens.grok.api.Converter.KeyValue;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import io.krakens.grok.api.Converter.IConverter;
 
 /**
  * {@code Match} is a representation in {@code Grok} world of your log.
@@ -36,91 +18,40 @@ import com.google.gson.GsonBuilder;
  * @since 0.0.1
  */
 public class Match {
+  private final CharSequence subject;
+  private final Grok grok;
+  private final Matcher match;
+  private final int start;
+  private final int end;
 
-  // Create Empty grok matcher.
-  public static final Match EMPTY = new Match();
-
-  private static final Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().create();
-  private static final Gson GSON = new GsonBuilder().create();
-
-  private String subject;
-  private Map<String, Object> capture;
-  private Garbage garbage;
-  private Grok grok;
-  private Matcher match;
-  private int start;
-  private int end;
-
-  /**
-   * For thread safety.
-   */
-  private static ThreadLocal<Match> matchHolder = ThreadLocal.withInitial(() -> new Match());
+  private Map<String, Object> capture = Collections.emptyMap();
 
   /**
    * Create a new {@code Match} object.
    */
-  public Match() {
-    subject = "Nothing";
-    grok = null;
-    match = null;
-    capture = new TreeMap<String, Object>();
-    garbage = new Garbage();
-    start = 0;
-    end = 0;
+  public Match(CharSequence subject, Grok grok, Matcher match, int start, int end) {
+    this.subject = subject;
+    this.grok = grok;
+    this.match = match;
+    this.start = start;
+    this.end = end;
   }
 
-  public void setGrok(Grok grok) {
-    if (grok != null) {
-      this.grok = grok;
-    }
-  }
+  /**
+   * Create Empty grok matcher.
+   */
+  public static final Match EMPTY = new Match("", null, null, 0, 0);
 
   public Matcher getMatch() {
     return match;
-  }
-
-  public void setMatch(Matcher match) {
-    this.match = match;
   }
 
   public int getStart() {
     return start;
   }
 
-  public void setStart(int start) {
-    this.start = start;
-  }
-
   public int getEnd() {
     return end;
-  }
-
-  public void setEnd(int end) {
-    this.end = end;
-  }
-
-  /**
-   * Singleton.
-   *
-   * @return instance of Match
-   */
-  public static Match getInstance() {
-    return matchHolder.get();
-  }
-
-  /**
-   * Set the single line of log to parse.
-   *
-   * @param text : single line of log
-   */
-  public void setSubject(String text) {
-    if (text == null) {
-      return;
-    }
-    if (text.isEmpty()) {
-      return;
-    }
-    subject = text;
   }
 
   /**
@@ -128,7 +59,7 @@ public class Match {
    *
    * @return the single line of log
    */
-  public String getSubject() {
+  public CharSequence getSubject() {
     return subject;
   }
 
@@ -136,14 +67,14 @@ public class Match {
    * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map.
    *
    * Multiple values for the same key are stored as list.
+   *
    */
-  public void captures() {
-    capture(false);
-
+  public Map<String, Object> capture() {
+    return capture(false);
   }
 
   /**
-   * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map.
+   * Match to the <tt>subject</tt> the <tt>regex</tt> and save the matched element into a map
    *
    * Multiple values to the same key are flattened to one value: the sole non-null value will be captured.
    * Should there be multiple non-null values a RuntimeException is being thrown.
@@ -151,60 +82,57 @@ public class Match {
    * This can be used in cases like: (foo (.*:message) bar|bar (.*:message) foo) where the regexp guarantees that only
    * one value will be captured.
    *
-   * See also {@link #captures} which returns multiple values of the same key as list.
+   * See also {@link #capture} which returns multiple values of the same key as list.
+   *
    */
-  public void capturesFlattened() {
-    capture(true);
+  public Map<String, Object> captureFlattened() {
+    return capture(true);
   }
 
-  @SuppressWarnings("unchecked")
-  private void capture(boolean flattened) {
+  private Map<String, Object> capture(boolean flattened ) {
     if (match == null) {
-      return;
+      return Collections.emptyMap();
     }
-    capture.clear();
-    boolean automaticConversionEnabled = grok.isAutomaticConversionEnabled();
+
+    if (!capture.isEmpty()) {
+      return capture;
+    }
+
+    capture = new HashMap<>();
 
     // _capture.put("LINE", this.line);
     // _capture.put("LENGTH", this.line.length() +"");
 
-    Map<String, String> mappedw = GrokUtils.namedGroups(this.match, this.subject);
-    Iterator<Entry<String, String>> it = mappedw.entrySet().iterator();
-    while (it.hasNext()) {
+    Map<String, String> mappedw = GrokUtils.namedGroups(this.match, this.grok.namedGroups);
 
-      @SuppressWarnings("rawtypes")
-      Map.Entry pairs = (Map.Entry) it.next();
-      String key = null;
-      Object value = null;
-      if (this.grok.getNamedRegexCollectionById(pairs.getKey().toString()) == null) {
-        key = pairs.getKey().toString();
-      } else if (!this.grok.getNamedRegexCollectionById(pairs.getKey().toString()).isEmpty()) {
-        key = this.grok.getNamedRegexCollectionById(pairs.getKey().toString());
+    mappedw.forEach((key, valueString) -> {
+      String id = this.grok.getNamedRegexCollectionById(key);
+      if (id != null && !id.isEmpty()) {
+        key = id;
       }
-      if (pairs.getValue() != null) {
-        value = pairs.getValue().toString();
 
-        if (automaticConversionEnabled) {
-          KeyValue keyValue = Converter.convert(key, value);
+      if ("UNWANTED".equals(key)) {
+        return;
+      }
 
-          // get validated key
-          key = keyValue.getKey();
+      Object value = valueString;
+      if (valueString != null) {
+        IConverter converter = grok.converters.get(key);
 
-          // resolve value
-          if (keyValue.getValue() instanceof String) {
-            value = cleanString((String) keyValue.getValue());
-          } else {
-            value = keyValue.getValue();
+        if (converter != null) {
+          key = Converter.extractKey(key);
+          try {
+            value = converter.convert(valueString);
+          } catch (Exception e) {
+            capture.put(key + "_grokfailure", e.toString());
           }
 
-          // set if grok failure
-          if (keyValue.hasGrokFailure()) {
-            capture.put(key + "_grokfailure", keyValue.getGrokFailure());
+          if (value instanceof String) {
+            value = cleanString((String) value);
           }
+        } else {
+          value = cleanString(valueString);
         }
-      } else if (!grok.isKeepEmptyCaptures()) {
-        it.remove();
-        continue;
       }
 
       if (capture.containsKey(key)) {
@@ -216,8 +144,7 @@ public class Match {
           }
           if (currentValue != null && value != null) {
             throw new RuntimeException(
-                format(
-                    "key '%s' has multiple non-null values, this is not allowed in flattened mode, values:'%s', '%s'",
+                format("key '%s' has multiple non-null values, this is not allowed in flattened mode, values:'%s', '%s'",
                     key,
                     currentValue,
                     value));
@@ -235,9 +162,11 @@ public class Match {
       } else {
         capture.put(key, value);
       }
+    });
 
-      it.remove(); // avoids a ConcurrentModificationException
-    }
+    capture = Collections.unmodifiableMap(capture);
+
+    return capture;
   }
 
   /**
@@ -247,78 +176,22 @@ public class Match {
    * @return unquoted string: my/text
    */
   private String cleanString(String value) {
-    if (value == null) {
-      return null;
-    }
-    if (value.isEmpty()) {
+    if (value == null || value.isEmpty()) {
       return value;
     }
-    char[] tmp = value.toCharArray();
-    if (tmp.length == 1 && (tmp[0] == '"' || tmp[0] == '\'')) {
-      value = "";//empty string
-    } else if ((tmp[0] == '"' && tmp[value.length() - 1] == '"')
-        || (tmp[0] == '\'' && tmp[value.length() - 1] == '\'')) {
-      value = value.substring(1, value.length() - 1);
+
+    char firstChar = value.charAt(0);
+    char lastChar = value.charAt(value.length() - 1);
+
+    if (firstChar == lastChar && (firstChar == '"' || firstChar == '\'')) {
+      if (value.length() == 1) {
+        return "";
+      } else {
+        return value.substring(1, value.length() - 1);
+      }
     }
+
     return value;
-  }
-
-
-  /**
-   * Get the json representation of the matched element.
-   * <p>
-   * example: map [ {IP: 127.0.0.1}, {status:200}] will return {"IP":"127.0.0.1", "status":200}
-   * </p>
-   * If pretty is set to true, json will return prettyprint json string.
-   *
-   * @return Json of the matched element in the text
-   */
-  public String toJson(Boolean pretty) {
-    if (capture == null) {
-      return "{}";
-    }
-    if (capture.isEmpty()) {
-      return "{}";
-    }
-
-    this.cleanMap();
-    Gson gs;
-    if (pretty) {
-      gs = PRETTY_GSON;
-    } else {
-      gs = GSON;
-    }
-    return gs.toJson(/* cleanMap( */capture/* ) */);
-  }
-
-  /**
-   * Get the json representation of the matched element.
-   * <p>
-   * example: map [ {IP: 127.0.0.1}, {status:200}] will return {"IP":"127.0.0.1", "status":200}
-   * </p>
-   *
-   * @return Json of the matched element in the text
-   */
-  public String toJson() {
-    return toJson(false);
-  }
-
-  /**
-   * Get the map representation of the matched element in the text.
-   *
-   * @return map object from the matched element in the text
-   */
-  public Map<String, Object> toMap() {
-    this.cleanMap();
-    return capture;
-  }
-
-  /**
-   * Remove and rename the unwanted elelents in the matched map.
-   */
-  private void cleanMap() {
-    garbage.rename(capture);
-    garbage.remove(capture);
   }
 
   /**

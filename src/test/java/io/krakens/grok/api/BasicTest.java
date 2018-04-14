@@ -1,10 +1,11 @@
 package io.krakens.grok.api;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,20 +14,26 @@ import java.util.regex.PatternSyntaxException;
 
 import io.krakens.grok.api.exception.GrokException;
 
+import com.google.common.io.Resources;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BasicTest {
 
+  private GrokCompiler compiler;
+
+  @Before
+  public void setup() throws Exception {
+    compiler = GrokCompiler.newInstance();
+    compiler.register(Resources.getResource(ResourceManager.PATTERNS).openStream());
+  }
+
   @Test
   public void test001_compileFailOnInvalidExpression() throws GrokException {
-
-    Grok grok = Grok.create(ResourceManager.PATTERNS, null);
-
-    List<String> badRegxp = new ArrayList<String>();
+    List<String> badRegxp = new ArrayList<>();
     badRegxp.add("[");
     badRegxp.add("[foo");
     badRegxp.add("?");
@@ -35,10 +42,10 @@ public class BasicTest {
 
     boolean thrown = false;
 
-    /** This should always throw. */
+    /** This should always throw */
     for (String regx : badRegxp) {
       try {
-        grok.compile(regx);
+        compiler.compile(regx);
       } catch (PatternSyntaxException e) {
         thrown = true;
       }
@@ -49,48 +56,41 @@ public class BasicTest {
 
   @Test
   public void test002_compileSuccessValidExpression() throws GrokException {
-
-    Grok grok = Grok.create(ResourceManager.PATTERNS);
-
-    List<String> regxp = new ArrayList<String>();
+    List<String> regxp = new ArrayList<>();
     regxp.add("[hello]");
     regxp.add("(test)");
     regxp.add("(?:hello)");
     regxp.add("(?=testing)");
 
     for (String regx : regxp) {
-      grok.compile(regx);
+      compiler.compile(regx);
     }
   }
 
   @Test
   public void test003_samePattern() throws GrokException {
-    Grok grok = Grok.create(ResourceManager.PATTERNS);
-
     String pattern = "Hello World";
-    grok.compile(pattern);
+    Grok grok = compiler.compile(pattern);
     assertEquals(pattern, grok.getOriginalGrokPattern());
   }
 
   @Test
   public void test004_sameExpantedPatern() throws GrokException {
-    Grok grok = Grok.create(ResourceManager.PATTERNS);
-
-    grok.addPattern("test", "hello world");
-    grok.compile("%{test}");
+    compiler.register("test", "hello world");
+    Grok grok = compiler.compile("%{test}");
     assertEquals("(?<name0>hello world)", grok.getNamedRegex());
   }
 
   @Test
   public void test005_testLoadPatternFromFile() throws IOException, GrokException {
     File temp = File.createTempFile("grok-tmp-pattern", ".tmp");
-    getClass();
     BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
     bw.write("TEST \\d+");
     bw.close();
 
-    Grok grok = Grok.create(temp.getAbsolutePath());
-    grok.compile("%{TEST}");
+    GrokCompiler compiler = GrokCompiler.newInstance();
+    compiler.register(new FileInputStream(temp));
+    Grok grok = compiler.compile("%{TEST}");
     assertEquals("(?<name0>\\d+)", grok.getNamedRegex());
     temp.delete();
   }

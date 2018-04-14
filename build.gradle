@@ -4,6 +4,8 @@ apply {
     plugin "maven-publish"
     plugin "checkstyle"
     plugin "jacoco"
+    plugin "idea"
+    plugin "eclipse"
 }
 
 task wrapper(type: Wrapper) {
@@ -16,29 +18,29 @@ repositories {
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
-group = "oi.thekraken"
-archivesBaseName = "grok"
-version = '0.1.6-SNAPSHOT'
+group = "oi.krakens"
+archivesBaseName = "java-grok"
+version = '0.1.9-SNAPSHOT'
 
 ext {
     checkStyleToolVersion = "6.19"
     jacocoToolVersion = "0.7.9"
 
-    namedRegexpVersion = "0.2.4"
     commonsLang3Version = "3.7"
-    gsonVersion = "2.7"
     log4jVersion = "1.7.21"
 
     junitVersion = "4.12"
+    assertjVersion = "3.9.1"
+    guavaVersion = "24.0-jre"
 }
 
 dependencies {
-    compile "com.github.tony19:named-regexp:$namedRegexpVersion"
     compile "org.apache.commons:commons-lang3:$commonsLang3Version"
-    compile "com.google.code.gson:gson:$gsonVersion"
     compile "org.slf4j:slf4j-api:$log4jVersion"
 
     testCompile "junit:junit:$junitVersion"
+    testCompile "org.assertj:assertj-core:$assertjVersion"
+    testCompile "com.google.guava:guava:$guavaVersion"
 }
 
 checkstyle {
