@@ -144,7 +144,8 @@ public class Match {
           }
           if (currentValue != null && value != null) {
             throw new RuntimeException(
-                format("key '%s' has multiple non-null values, this is not allowed in flattened mode, values:'%s', '%s'",
+                format(
+                    "key '%s' has multiple non-null values, this is not allowed in flattened mode, values:'%s', '%s'",
                     key,
                     currentValue,
                     value));
