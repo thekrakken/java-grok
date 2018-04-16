@@ -22,11 +22,16 @@ import io.krakens.grok.api.exception.GrokException;
 import com.google.common.io.Resources;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BasicTest {
+  
+  @Rule
+  public TemporaryFolder tempFolder = new TemporaryFolder();
 
   private GrokCompiler compiler;
 
@@ -88,31 +93,29 @@ public class BasicTest {
 
   @Test
   public void test005_testLoadPatternFromFile() throws IOException, GrokException {
-    File temp = File.createTempFile("grok-tmp-pattern", ".tmp");
-    BufferedWriter bw = new BufferedWriter(new FileWriter(temp));
-    bw.write("TEST \\d+");
-    bw.close();
+    File temp = tempFolder.newFile("grok-tmp-pattern");
+    try (BufferedWriter bw = new BufferedWriter(new FileWriter(temp))) {
+      bw.write("TEST \\d+");
+    }
 
     GrokCompiler compiler = GrokCompiler.newInstance();
     compiler.register(new FileInputStream(temp));
     Grok grok = compiler.compile("%{TEST}");
     assertEquals("(?<name0>\\d+)", grok.getNamedRegex());
-    temp.delete();
   }
 
   @Test
   public void test006_testLoadPatternFromFileIso_8859_1() throws IOException, GrokException {
-    File temp = File.createTempFile("grok-tmp-pattern", ".tmp");
-    FileOutputStream fis = new FileOutputStream(temp);
-    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fis, StandardCharsets.ISO_8859_1));
-    bw.write("TEST §");
-    bw.close();
+    File temp = tempFolder.newFile("grok-tmp-pattern");
+    try (FileOutputStream fis = new FileOutputStream(temp);
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fis, StandardCharsets.ISO_8859_1))) {
+      bw.write("TEST §");
+    }
 
     GrokCompiler compiler = GrokCompiler.newInstance();
     compiler.register(new FileInputStream(temp), StandardCharsets.ISO_8859_1);
     Grok grok = compiler.compile("%{TEST}");
     assertEquals("(?<name0>§)", grok.getNamedRegex());
-    temp.delete();
   }
 
   @Test
