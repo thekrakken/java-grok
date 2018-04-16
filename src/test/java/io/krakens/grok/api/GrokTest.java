@@ -523,7 +523,7 @@ public class GrokTest {
   public void test025_datetime_pattern_with_slashes() throws Throwable {
     final ZonedDateTime expectedDate = ZonedDateTime.of(2015, 7, 31, 0, 0, 0, 0, ZoneOffset.UTC);
 
-    final Grok grok = compiler.compile("Foo %{DATA:result;date;yyyy/MM/dd} Bar");
+    final Grok grok = compiler.compile("Foo %{DATA:result;date;yyyy/MM/dd} Bar", ZoneOffset.UTC, false);
 
     final Match gm = grok.match("Foo 2015/07/31 Bar");
 
@@ -535,7 +535,7 @@ public class GrokTest {
   public void test026_datetime_pattern_with_with_dots() throws Throwable {
     final ZonedDateTime expectedDate = ZonedDateTime.of(2015, 7, 31, 0, 0, 0, 0, ZoneOffset.UTC);
 
-    final Grok grok = compiler.compile("Foo %{DATA:result;date;yyyy.MM.dd} Bar");
+    final Grok grok = compiler.compile("Foo %{DATA:result;date;yyyy.MM.dd} Bar", ZoneOffset.UTC, false);
     final Match gm = grok.match("Foo 2015.07.31 Bar");
 
     assertEquals(1, gm.getMatch().groupCount());
@@ -546,7 +546,7 @@ public class GrokTest {
   public void test027_datetime_pattern_with_with_hyphens() throws Throwable {
     final ZonedDateTime expectedDate = ZonedDateTime.of(2015, 7, 31, 0, 0, 0, 0, ZoneOffset.UTC);
 
-    final Grok grok = compiler.compile("Foo %{DATA:result;date;yyyy-MM-dd} Bar");
+    final Grok grok = compiler.compile("Foo %{DATA:result;date;yyyy-MM-dd} Bar", ZoneOffset.UTC, false);
     final Match gm = grok.match("Foo 2015-07-31 Bar");
 
     assertEquals(1, gm.getMatch().groupCount());
@@ -597,12 +597,12 @@ public class GrokTest {
 
   @Test
   public void testTimeZone() {
-    // no timezone. default to UTC
+    // no timezone. default to sytem default
     String date = "03/19/2018 14:11:00";
     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss");
     Grok grok = compiler.compile("%{DATESTAMP:timestamp;date;MM/dd/yyyy HH:mm:ss}", true);
     Instant instant = (Instant) grok.match(date).capture().get("timestamp");
-    assertEquals(ZonedDateTime.parse(date, dtf.withZone(ZoneOffset.UTC)).toInstant(), instant);
+    assertEquals(ZonedDateTime.parse(date, dtf.withZone(ZoneOffset.systemDefault())).toInstant(), instant);
 
     // set default timezone to PST
     ZoneId pst = ZoneId.of("PST", ZoneId.SHORT_IDS);

@@ -98,7 +98,7 @@ public class GrokCompiler {
   }
 
   public Grok compile(final String pattern, boolean namedOnly) {
-    return compile(pattern, ZoneOffset.UTC, namedOnly);
+    return compile(pattern, ZoneOffset.systemDefault(), namedOnly);
   }
 
   /**
