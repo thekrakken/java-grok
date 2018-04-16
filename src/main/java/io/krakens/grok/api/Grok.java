@@ -9,6 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.krakens.grok.api.Converter.IConverter;
+import io.krakens.grok.api.exception.GrokException;
 
 import org.apache.commons.lang3.StringUtils;
 
