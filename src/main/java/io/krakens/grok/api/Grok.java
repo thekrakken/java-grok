@@ -50,7 +50,7 @@ public class Grok {
 
   public final Map<String, Converter.Type> groupTypes;
 
-  public final Map<String, IConverter> converters;
+  public final Map<String, IConverter<? extends Object>> converters;
 
   /**
    * {@code Grok} discovery.

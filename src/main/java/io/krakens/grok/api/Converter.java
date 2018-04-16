@@ -35,10 +35,10 @@ public class Converter {
     DATETIME(new DateConverter(), "date"),
     STRING(v -> v, "text");
 
-    public final IConverter<?> converter;
+    public final IConverter<? extends Object> converter;
     public final List<String> aliases;
 
-    Type(IConverter<?> converter, String... aliases) {
+    Type(IConverter<? extends Object> converter, String... aliases) {
       this.converter = converter;
       this.aliases = Arrays.asList(aliases);
     }
@@ -64,12 +64,13 @@ public class Converter {
     return type;
   }
 
-  public static Map<String, IConverter> getConverters(Collection<String> groupNames, Object... params) {
+  public static Map<String, IConverter<? extends Object>>
+      getConverters(Collection<String> groupNames, Object... params) {
     return groupNames.stream()
         .filter(Converter::containsDelimiter)
         .collect(Collectors.toMap(Function.identity(), key -> {
           String[] list = splitGrokPattern(key);
-          IConverter converter = getType(list[1]).converter;
+          IConverter<? extends Object> converter = getType(list[1]).converter;
           if (list.length == 3) {
             converter = converter.newConverter(list[2], params);
           }

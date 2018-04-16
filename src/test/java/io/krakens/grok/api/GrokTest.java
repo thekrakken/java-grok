@@ -312,14 +312,16 @@ public class GrokTest {
   public void test013_IpSet() throws Throwable {
     Grok grok = compiler.compile("%{IP}");
 
-    BufferedReader br = new BufferedReader(new FileReader(Resources.getResource(ResourceManager.IP).getFile()));
-    String line;
-    System.out.println("Starting test with ip");
-    while ((line = br.readLine()) != null) {
-      Match gm = grok.match(line);
-      final Map<String, Object> map = gm.capture();
-      Assertions.assertThat(map).doesNotContainKey("Error");
-      assertEquals(map.get("IP"), line);
+    try (FileReader fr = new FileReader(Resources.getResource(ResourceManager.IP).getFile());
+        BufferedReader br = new BufferedReader(fr)) {
+      String line;
+      System.out.println("Starting test with ip");
+      while ((line = br.readLine()) != null) {
+        Match gm = grok.match(line);
+        final Map<String, Object> map = gm.capture();
+        Assertions.assertThat(map).doesNotContainKey("Error");
+        assertEquals(map.get("IP"), line);
+      }
     }
   }
 
