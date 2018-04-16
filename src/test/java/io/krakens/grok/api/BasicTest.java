@@ -6,8 +6,13 @@ import static org.junit.Assert.assertEquals;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
@@ -93,6 +98,30 @@ public class BasicTest {
     Grok grok = compiler.compile("%{TEST}");
     assertEquals("(?<name0>\\d+)", grok.getNamedRegex());
     temp.delete();
+  }
+
+  @Test
+  public void test006_testLoadPatternFromFileIso_8859_1() throws IOException, GrokException {
+    File temp = File.createTempFile("grok-tmp-pattern", ".tmp");
+    FileOutputStream fis = new FileOutputStream(temp);
+    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fis, StandardCharsets.ISO_8859_1));
+    bw.write("TEST §");
+    bw.close();
+
+    GrokCompiler compiler = GrokCompiler.newInstance();
+    compiler.register(new FileInputStream(temp), StandardCharsets.ISO_8859_1);
+    Grok grok = compiler.compile("%{TEST}");
+    assertEquals("(?<name0>§)", grok.getNamedRegex());
+    temp.delete();
+  }
+
+  @Test
+  public void test007_testLoadPatternFromReader() throws IOException, GrokException {
+    Reader reader = new StringReader("TEST €");
+    GrokCompiler compiler = GrokCompiler.newInstance();
+    compiler.register(reader);
+    Grok grok = compiler.compile("%{TEST}");
+    assertEquals("(?<name0>€)", grok.getNamedRegex());
   }
 
 }
