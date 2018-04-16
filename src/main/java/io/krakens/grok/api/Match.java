@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import io.krakens.grok.api.Converter.IConverter;
+import io.krakens.grok.api.exception.GrokException;
 
 /**
  * {@code Match} is a representation in {@code Grok} world of your log.
@@ -84,12 +85,20 @@ public class Match {
    *
    * See also {@link #capture} which returns multiple values of the same key as list.
    *
+   * @return the matched elements
+   * @throws GrokException if a keys has multiple non-null values.
    */
-  public Map<String, Object> captureFlattened() {
+  public Map<String, Object> captureFlattened() throws GrokException {
     return capture(true);
   }
 
-  private Map<String, Object> capture(boolean flattened ) {
+  /**
+   * Private implementation of captureFlattened and capture.
+   * @param will it flatten values.
+   * @return the matched elements.
+   * @throws GrokException if a keys has multiple non-null values, but only if flattened is set to true.
+   */
+  private Map<String, Object> capture(boolean flattened ) throws GrokException {
     if (match == null) {
       return Collections.emptyMap();
     }
@@ -143,7 +152,7 @@ public class Match {
             capture.put(key, value);
           }
           if (currentValue != null && value != null) {
-            throw new RuntimeException(
+            throw new GrokException(
                 format(
                     "key '%s' has multiple non-null values, this is not allowed in flattened mode, values:'%s', '%s'",
                     key,
