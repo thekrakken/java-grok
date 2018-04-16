@@ -123,7 +123,6 @@ public class CaptureTest {
     assertEquals(((List<Object>) (map.get("id"))).get(1), "456");
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void test008_flattenDuplicateKeys() throws GrokException {
     Grok grok = compiler.compile("(?:foo %{INT:id} bar|bar %{INT:id} foo)");

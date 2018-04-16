@@ -117,7 +117,7 @@ public class Match {
 
       Object value = valueString;
       if (valueString != null) {
-        IConverter converter = grok.converters.get(key);
+        IConverter<?> converter = grok.converters.get(key);
 
         if (converter != null) {
           key = Converter.extractKey(key);
@@ -152,7 +152,9 @@ public class Match {
           }
         } else {
           if (currentValue instanceof List) {
-            ((List<Object>) currentValue).add(value);
+            @SuppressWarnings("unchecked")
+            List<Object> cvl = (List<Object>) currentValue;
+            cvl.add(value);
           } else {
             List<Object> list = new ArrayList<Object>();
             list.add(currentValue);
