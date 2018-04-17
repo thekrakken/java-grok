@@ -1,8 +1,6 @@
 apply {
     plugin "base"
     plugin "java"
-    plugin "maven"
-    plugin "signing"
     plugin "checkstyle"
     plugin "jacoco"
     plugin "idea"
@@ -19,7 +17,7 @@ repositories {
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
-group = "oi.krakens"
+group = "io.krakens"
 archivesBaseName = "java-grok"
 
 ext {
@@ -51,58 +49,9 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
 }
 
-artifacts {
-    archives javadocJar, sourcesJar
-}
-
-ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
-signing {
-    required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: ossrhUsername, password: ossrhPassword)
-            }
-
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: "anthony-corbacho", password: "lm:8pQ6{")
-            }
-
-            pom.project {
-                name 'Java Grok'
-                packaging 'jar'
-                description 'Java Grok is simple API that allows you to easily parse logs and other files (single line). With Java Grok, you can turn unstructured log and event data into structured data (JSON).'
-                url 'https://github.com/thekrakken/java-grok'
-
-                scm {
-                    connection 'scm:git:git@github.com:thekrakken/java-grok.git'
-                    developerConnection 'scm:git:git@github.com:thekrakken/java-grok.git'
-                    url 'scm:git:git@github.com:thekrakken/java-grok.git'
-                }
-
-                licenses {
-                    license {
-                        name 'The Apache License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id 'anthony-corbacho'
-                        name 'Anthony Corbacho'
-                        email 'manfred@sonatype.com'
-                    }
-                }
-            }
-        }
-    }
+// Needed to avoid including all the jar signing and sonatype setup.
+if (project.hasProperty("withDeployment")) {
+    apply from: "$rootProject.projectDir/gradle/sonatype.gradle"
 }
 
 checkstyle {
