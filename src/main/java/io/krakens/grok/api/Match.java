@@ -24,7 +24,7 @@ public class Match {
   private final Matcher match;
   private final int start;
   private final int end;
-
+  private boolean keepEmptyCaptures = true;
   private Map<String, Object> capture = Collections.emptyMap();
 
   /**
@@ -53,6 +53,21 @@ public class Match {
 
   public int getEnd() {
     return end;
+  }
+
+  /**
+   * Ignore empty captures.
+   */
+  public void setKeepEmptyCaptures(boolean ignore) {
+    // clear any cached captures
+    if ( capture.size() > 0) {
+      capture = new HashMap<>();
+    }
+    this.keepEmptyCaptures = ignore;
+  }
+
+  public boolean isKeepEmptyCaptures() {
+    return this.keepEmptyCaptures;
   }
 
   /**
@@ -94,7 +109,7 @@ public class Match {
 
   /**
    * Private implementation of captureFlattened and capture.
-   * @param will it flatten values.
+   * @param flattened will it flatten values.
    * @return the matched elements.
    * @throws GrokException if a keys has multiple non-null values, but only if flattened is set to true.
    */
@@ -142,9 +157,8 @@ public class Match {
         } else {
           value = cleanString(valueString);
         }
-      } else if (!grok.isKeepEmptyCaptures()) {
-        it.remove();
-        continue;
+      } else if (!isKeepEmptyCaptures()) {
+        return;
       }
 
       if (capture.containsKey(key)) {

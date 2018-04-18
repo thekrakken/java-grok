@@ -59,10 +59,6 @@ public class Grok {
 
   /** only use in grok discovery. */
   private String savedPattern = "";
-  /**
-   * ignore empty captures.
-   */
-  private boolean keepEmptyCaptures = true;
 
   public Grok(String pattern,
       String namedRegex,
@@ -121,17 +117,6 @@ public class Grok {
    */
   public String getNamedRegexCollectionById(String id) {
     return namedRegexCollection.get(id);
-  }
-
-  /**
-   * Ignore empty captures.
-   */
-  public void setKeepEmptyCaptures(boolean ignore) {
-    this.keepEmptyCaptures = ignore;
-  }
-
-  public boolean isKeepEmptyCaptures() {
-    return this.keepEmptyCaptures;
   }
 
   /**
