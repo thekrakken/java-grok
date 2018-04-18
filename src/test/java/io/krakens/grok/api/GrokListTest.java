@@ -5,9 +5,12 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import io.krakens.grok.api.exception.GrokException;
 
+import com.google.common.io.Resources;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -15,9 +18,17 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GrokListTest {
 
+  GrokCompiler compiler;
+
+  @Before
+  public void setUp() throws Exception {
+    compiler = GrokCompiler.newInstance();
+    compiler.register(Resources.getResource(ResourceManager.PATTERNS).openStream());
+  }
+
   @Test
   public void test_001() throws GrokException {
-    List<String> logs = new ArrayList<String>();
+    List<String> logs = new ArrayList<>();
 
     logs.add("178.21.82.201");
     logs.add("11.178.94.216");
@@ -29,22 +40,20 @@ public class GrokListTest {
     logs.add("170.36.40.12");
     logs.add("124.2.84.36");
 
-    Grok grok = Grok.create(ResourceManager.PATTERNS, "%{IP}");
-    List<String> json = grok.captures(logs);
-    assertNotNull(json);
+    Grok grok = compiler.compile("%{IP}");
+    ArrayList<Map<String, Object>> capture = grok.capture(logs);
+    assertNotNull(capture);
     int counter = 0;
-    for (String elem : json) {
+    for (Map<String, Object> elem : capture) {
       assertNotNull(elem);
       assertEquals(elem, grok.capture(logs.get(counter)));
       counter++;
-      //assert
     }
-
   }
 
   @Test
   public void test_002() throws GrokException {
-    List<String> logs = new ArrayList<String>();
+    List<String> logs = new ArrayList<>();
 
     logs.add("178.21.82.201");
     logs.add("11.178.94.216");
@@ -56,17 +65,14 @@ public class GrokListTest {
     logs.add("170.36.40.12");
     logs.add("124.2.84.36");
 
-    Grok grok = Grok.create(ResourceManager.PATTERNS, "%{IP}");
-    List<String> json = grok.captures(logs);
-    assertNotNull(json);
+    Grok grok = compiler.compile("%{IP}");
+    ArrayList<Map<String, Object>> capture = grok.capture(logs);
+    assertNotNull(capture);
     int counter = 0;
-    for (String elem : json) {
-      System.out.println(elem);
+    for (Map<String, Object> elem : capture) {
       assertNotNull(elem);
       assertEquals(elem, grok.capture(logs.get(counter)));
       counter++;
-      //assert
     }
-
   }
 }

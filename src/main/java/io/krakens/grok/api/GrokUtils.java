@@ -22,7 +22,7 @@ public class GrokUtils {
       "%\\{"
           + "(?<name>"
           + "(?<pattern>[A-z0-9]+)"
-          + "(?::(?<subname>[A-z0-9_:;\\/\\s\\.]+))?"
+          + "(?::(?<subname>[A-z0-9_:;\\-\\/\\s\\.']+))?"
           + ")"
           + "(?:=(?<definition>"
           + "(?:"
@@ -32,27 +32,23 @@ public class GrokUtils {
           + ")?"
           + "\\}");
 
-  public static final Pattern NAMED_REGEX = Pattern.compile("\\(\\?<([a-zA-Z][a-zA-Z0-9]*)>");
+  public static final Pattern NAMED_REGEX = Pattern
+      .compile("\\(\\?<([a-zA-Z][a-zA-Z0-9]*)>");
 
-  private static Set<String> getNameGroups(String regex) {
-    Set<String> namedGroups = new LinkedHashSet<String>();
-    Matcher match = NAMED_REGEX.matcher(regex);
-    while (match.find()) {
-      namedGroups.add(match.group(1));
+  public static Set<String> getNameGroups(String regex) {
+    Set<String> namedGroups = new LinkedHashSet<>();
+    Matcher matcher = NAMED_REGEX.matcher(regex);
+    while (matcher.find()) {
+      namedGroups.add(matcher.group(1));
     }
     return namedGroups;
   }
 
-  public static Map<String, String> namedGroups(Matcher matcher,
-      String namedRegex) {
-    Set<String> groupNames = getNameGroups(matcher.pattern().pattern());
-    Matcher localMatcher = matcher.pattern().matcher(namedRegex);
-    Map<String, String> namedGroups = new LinkedHashMap<String, String>();
-    if (localMatcher.find()) {
-      for (String groupName : groupNames) {
-        String groupValue = localMatcher.group(groupName);
-        namedGroups.put(groupName, groupValue);
-      }
+  public static Map<String, String> namedGroups(Matcher matcher, Set<String> groupNames) {
+    Map<String, String> namedGroups = new LinkedHashMap<>();
+    for (String groupName : groupNames) {
+      String groupValue = matcher.group(groupName);
+      namedGroups.put(groupName, groupValue);
     }
     return namedGroups;
   }

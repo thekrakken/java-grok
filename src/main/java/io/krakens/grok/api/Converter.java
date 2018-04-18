@@ -1,11 +1,22 @@
 package io.krakens.grok.api;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Convert String argument to the right type.
@@ -13,189 +24,133 @@ import java.util.Map;
  */
 public class Converter {
 
-  public static Map<String, IConverter<?>> converters = new HashMap<String, IConverter<?>>();
-  public static Locale locale = Locale.ENGLISH;
+  public enum Type {
+    BYTE(Byte::valueOf),
+    BOOLEAN(Boolean::valueOf),
+    SHORT(Short::valueOf),
+    INT(Integer::valueOf, "integer"),
+    LONG(Long::valueOf),
+    FLOAT(Float::valueOf),
+    DOUBLE(Double::valueOf),
+    DATETIME(new DateConverter(), "date"),
+    STRING(v -> v, "text");
 
-  static {
-    converters.put("byte", new ByteConverter());
-    converters.put("boolean", new BooleanConverter());
-    converters.put("short", new ShortConverter());
-    converters.put("int", new IntegerConverter());
-    converters.put("long", new LongConverter());
-    converters.put("float", new FloatConverter());
-    converters.put("double", new DoubleConverter());
-    converters.put("date", new DateConverter());
-    converters.put("datetime", new DateConverter());
-    converters.put("string", new StringConverter());
+    public final IConverter<? extends Object> converter;
+    public final List<String> aliases;
 
-  }
-
-  private static IConverter getConverter(String key) throws Exception {
-    IConverter converter = converters.get(key);
-    if (converter == null) {
-      throw new Exception("Invalid data type :" + key);
+    Type(IConverter<? extends Object> converter, String... aliases) {
+      this.converter = converter;
+      this.aliases = Arrays.asList(aliases);
     }
-    return converter;
   }
 
-  public static KeyValue convert(String key, Object value) {
-    String[] spec = key.split(";|:", 3);
-    try {
-      if (spec.length == 1) {
-        return new KeyValue(spec[0], value);
-      } else if (spec.length == 2) {
-        return new KeyValue(spec[0], getConverter(spec[1]).convert(String.valueOf(value)));
-      } else if (spec.length == 3) {
-        return new KeyValue(spec[0], getConverter(spec[1]).convert(String.valueOf(value), spec[2]));
+  private static final Pattern SPLITTER = Pattern.compile("[:;]");
+
+  private static final Map<String, Type> TYPES =
+      Arrays.stream(Type.values())
+          .collect(Collectors.toMap(t -> t.name().toLowerCase(), t -> t));
+
+  private static final Map<String, Type> TYPE_ALIASES =
+      Arrays.stream(Type.values())
+          .flatMap(type -> type.aliases.stream().map(alias -> new AbstractMap.SimpleEntry<>(alias, type)))
+          .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+  private static Type getType(String key) {
+    key = key.toLowerCase();
+    Type type = TYPES.getOrDefault(key, TYPE_ALIASES.get(key));
+    if (type == null) {
+      throw new IllegalArgumentException("Invalid data type :" + key);
+    }
+    return type;
+  }
+
+  public static Map<String, IConverter<? extends Object>>
+      getConverters(Collection<String> groupNames, Object... params) {
+    return groupNames.stream()
+        .filter(Converter::containsDelimiter)
+        .collect(Collectors.toMap(Function.identity(), key -> {
+          String[] list = splitGrokPattern(key);
+          IConverter<? extends Object> converter = getType(list[1]).converter;
+          if (list.length == 3) {
+            converter = converter.newConverter(list[2], params);
+          }
+          return converter;
+        }));
+  }
+
+  public static Map<String, Type> getGroupTypes(Collection<String> groupNames) {
+    return groupNames.stream()
+        .filter(Converter::containsDelimiter)
+        .map(Converter::splitGrokPattern)
+        .collect(Collectors.toMap(
+            l -> l[0],
+            l -> getType(l[1])
+        ));
+  }
+
+  public static String extractKey(String key) {
+    return splitGrokPattern(key)[0];
+  }
+
+  private static boolean containsDelimiter(String string) {
+    return string.indexOf(':') >= 0 || string.indexOf(';') >= 0;
+  }
+
+  private static String[] splitGrokPattern(String string) {
+    return SPLITTER.split(string, 3);
+  }
+
+  interface IConverter<T> {
+
+    T convert(String value);
+
+    default IConverter<T> newConverter(String param, Object... params) {
+      return this;
+    }
+  }
+
+
+  static class DateConverter implements IConverter<Instant> {
+
+    private final DateTimeFormatter formatter;
+    private final ZoneId timeZone;
+
+    public DateConverter() {
+      this.formatter = DateTimeFormatter.ISO_DATE_TIME;
+      this.timeZone = ZoneOffset.UTC;
+    }
+
+    private DateConverter(DateTimeFormatter formatter, ZoneId timeZone) {
+      this.formatter = formatter;
+      this.timeZone = timeZone;
+    }
+
+    @Override
+    public Instant convert(String value) {
+      TemporalAccessor dt = formatter
+          .parseBest(value.trim(), ZonedDateTime::from, LocalDateTime::from, OffsetDateTime::from, Instant::from,
+              LocalDate::from);
+      if (dt instanceof ZonedDateTime) {
+        return ((ZonedDateTime) dt).toInstant();
+      } else if (dt instanceof LocalDateTime) {
+        return ((LocalDateTime) dt).atZone(timeZone).toInstant();
+      } else if (dt instanceof OffsetDateTime) {
+        return ((OffsetDateTime) dt).atZoneSameInstant(timeZone).toInstant();
+      } else if (dt instanceof Instant) {
+        return ((Instant) dt);
+      } else if (dt instanceof LocalDate) {
+        return ((LocalDate) dt).atStartOfDay(timeZone).toInstant();
       } else {
-        return new KeyValue(spec[0], value, "Unsupported spec :" + key);
+        return null;
       }
-    } catch (Exception e) {
-      return new KeyValue(spec[0], value, e.toString());
-    }
-  }
-
-  static class KeyValue {
-
-    private String key = null;
-    private Object value = null;
-    private String grokFailure = null;
-
-    public KeyValue(String key, Object value) {
-      this.key = key;
-      this.value = value;
-    }
-
-    public KeyValue(String key, Object value, String grokFailure) {
-      this.key = key;
-      this.value = value;
-      this.grokFailure = grokFailure;
-    }
-
-    public boolean hasGrokFailure() {
-      return grokFailure != null;
-    }
-
-    public String getGrokFailure() {
-      return this.grokFailure;
-    }
-
-    public String getKey() {
-      return key;
-    }
-
-    public void setKey(String key) {
-      this.key = key;
-    }
-
-    public Object getValue() {
-      return value;
-    }
-
-    public void setValue(Object value) {
-      this.value = value;
-    }
-  }
-
-
-  abstract static class IConverter<T> {
-
-    public T convert(String value, String informat) throws Exception {
-      return null;
-    }
-
-    public abstract T convert(String value) throws Exception;
-  }
-
-
-  static class ByteConverter extends IConverter<Byte> {
-
-    @Override
-    public Byte convert(String value) throws Exception {
-      return Byte.parseByte(value);
-    }
-  }
-
-
-  static class BooleanConverter extends IConverter<Boolean> {
-
-    @Override
-    public Boolean convert(String value) throws Exception {
-      return Boolean.parseBoolean(value);
-    }
-  }
-
-
-  static class ShortConverter extends IConverter<Short> {
-
-    @Override
-    public Short convert(String value) throws Exception {
-      return Short.parseShort(value);
-    }
-  }
-
-
-  static class IntegerConverter extends IConverter<Integer> {
-
-    @Override
-    public Integer convert(String value) throws Exception {
-      return Integer.parseInt(value);
-    }
-  }
-
-
-  static class LongConverter extends IConverter<Long> {
-
-    @Override
-    public Long convert(String value) throws Exception {
-      return Long.parseLong(value);
-    }
-  }
-
-
-  static class FloatConverter extends IConverter<Float> {
-
-    @Override
-    public Float convert(String value) throws Exception {
-      return Float.parseFloat(value);
-    }
-  }
-
-
-  static class DoubleConverter extends IConverter<Double> {
-
-    @Override
-    public Double convert(String value) throws Exception {
-      return Double.parseDouble(value);
-    }
-  }
-
-
-  static class StringConverter extends IConverter<String> {
-
-    @Override
-    public String convert(String value) throws Exception {
-      return value;
-    }
-  }
-
-
-  static class DateConverter extends IConverter<Date> {
-
-    @Override
-    public Date convert(String value) throws Exception {
-      return DateFormat.getDateTimeInstance(DateFormat.SHORT,
-          DateFormat.SHORT,
-          Converter.locale).parse(value);
     }
 
     @Override
-    public Date convert(String value, String informat) throws Exception {
-      SimpleDateFormat formatter = new SimpleDateFormat(informat, Converter.locale);
-      return formatter.parse(value);
+    public DateConverter newConverter(String param, Object... params) {
+      if (!(params.length == 1 && params[0] instanceof ZoneId)) {
+        throw new IllegalArgumentException("Invalid parameters");
+      }
+      return new DateConverter(DateTimeFormatter.ofPattern(param), (ZoneId) params[0]);
     }
-
   }
-
 }
-

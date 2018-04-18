@@ -31,33 +31,33 @@ compile "io.thekraken:grok:0.1.5"
 Example of how to use java-grok:
 
 ```java
-/* Create a new grok instance */
-Grok grok = Grok.create();
+/* Create a new grokCompiler instance */
+GrokCompiler grokCompiler = GrokCompiler.newInstance();
+grokCompiler.registerDefaultPatterns();
 
 /* Grok pattern to compile, here httpd logs */
-grok.compile("%{COMBINEDAPACHELOG}");
+final Grok grok = grokCompiler.compile("%{COMBINEDAPACHELOG}");
 
 /* Line of log to match */
 String log = "112.169.19.192 - - [06/Mar/2013:01:36:30 +0900] \"GET / HTTP/1.1\" 200 44346 \"-\" \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_2) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.152 Safari/537.22\"";
 
 Match gm = grok.match(log);
-gm.captures();
-
-/* Get the output */
-System.out.println(gm.toJson());
 
 /* Get the map with matches */
-Map myMap = gm.toMap();
+final Map<String, Object> capture = gm.capture();
 ```
 
 ### Build Java Grok
 
-Java Grok support Gradle: ``./gradlew build``
+Java Grok support Gradle: `./gradlew assemble`
  
 ### Getting help
 [Mailling List](https://groups.google.com/forum/#!forum/java-grok)
 
-### Thankx to
+### Thanks to
+ * [@joschi](https://github.com/joschi)
+ * [@keitaf](https://github.com/keitaf)
+ * [@anthonycorbacho](https://github.com/anthonycorbacho)
  * [@nokk](https://github.com/nokk)
  * [@wouterdb](https://github.com/wouterdb)
  * [@Leemoonsoo](https://github.com/Leemoonsoo)

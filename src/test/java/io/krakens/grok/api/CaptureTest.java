@@ -8,10 +8,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
+import java.util.Map;
 
 import io.krakens.grok.api.exception.GrokException;
 
-import org.junit.BeforeClass;
+import com.google.common.io.Resources;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -19,65 +21,65 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class CaptureTest {
 
-  static Grok grok;
+  GrokCompiler compiler;
 
-  @BeforeClass
-  public static void setUp() throws GrokException {
-
-    grok = Grok.create(ResourceManager.PATTERNS, null);
+  @Before
+  public void setUp() throws Exception {
+    compiler = GrokCompiler.newInstance();
+    compiler.register(Resources.getResource(ResourceManager.PATTERNS).openStream());
   }
 
   @Test
-  public void test001_captureMathod() throws GrokException {
-    grok.addPattern("foo", ".*");
-    grok.compile("%{foo}");
+  public void test001_captureMathod() {
+    compiler.register("foo", ".*");
+    Grok grok = compiler.compile("%{foo}");
     Match match = grok.match("Hello World");
     assertEquals("(?<name0>.*)", grok.getNamedRegex());
     assertEquals("Hello World", match.getSubject());
-    match.captures();
-    assertEquals(1, match.toMap().size());
-    assertEquals("Hello World", match.toMap().get("foo"));
-    assertEquals("{foo=Hello World}", match.toMap().toString());
+    Map<String, Object> map = match.capture();
+    assertEquals(1, map.size());
+    assertEquals("Hello World", map.get("foo"));
+    assertEquals("{foo=Hello World}", map.toString());
   }
 
   @Test
-  public void test002_captureMethodMulti() throws GrokException {
-    grok.addPattern("foo", ".*");
-    grok.addPattern("bar", ".*");
-    grok.compile("%{foo} %{bar}");
+  public void test002_captureMathodMulti() throws GrokException {
+    compiler.register("foo", ".*");
+    compiler.register("bar", ".*");
+    Grok grok = compiler.compile("%{foo} %{bar}");
     Match match = grok.match("Hello World");
     assertEquals("(?<name0>.*) (?<name1>.*)", grok.getNamedRegex());
     assertEquals("Hello World", match.getSubject());
-    match.captures();
-    assertEquals(2, match.toMap().size());
-    assertEquals("Hello", match.toMap().get("foo"));
-    assertEquals("World", match.toMap().get("bar"));
-    assertEquals("{bar=World, foo=Hello}", match.toMap().toString());
+    Map<String, Object> map = match.capture();
+    assertEquals(2, map.size());
+    assertEquals("Hello", map.get("foo"));
+    assertEquals("World", map.get("bar"));
+    assertEquals("{bar=World, foo=Hello}", map.toString());
   }
 
   @Test
   public void test003_captureMathodNasted() throws GrokException {
-    grok.addPattern("foo", "\\w+ %{bar}");
-    grok.addPattern("bar", "\\w+");
-    grok.compile("%{foo}");
+    compiler.register("foo", "\\w+ %{bar}");
+    compiler.register("bar", "\\w+");
+    Grok grok = compiler.compile("%{foo}");
     Match match = grok.match("Hello World");
     assertEquals("(?<name0>\\w+ (?<name1>\\w+))", grok.getNamedRegex());
     assertEquals("Hello World", match.getSubject());
-    match.captures();
-    assertEquals(2, match.toMap().size());
-    assertEquals("Hello World", match.toMap().get("foo"));
-    assertEquals("World", match.toMap().get("bar"));
-    assertEquals("{bar=World, foo=Hello World}", match.toMap().toString());
+    Map<String, Object> map = match.capture();
+    assertEquals(2, map.size());
+    assertEquals("Hello World", map.get("foo"));
+    assertEquals("World", map.get("bar"));
+    assertEquals("{bar=World, foo=Hello World}", map.toString());
   }
 
   @Test
   public void test004_captureNastedRecustion() throws GrokException {
-    grok.addPattern("foo", "%{foo}");
+    compiler.register("foo", "%{foo}");
     boolean thrown = false;
     /** Must raise `Deep recursion pattern` execption */
     try {
-      grok.compile("%{foo}");
-    } catch (GrokException e) {
+      compiler.compile("%{foo}");
+    } catch (Exception e) {
       thrown = true;
     }
     assertTrue(thrown);
@@ -87,62 +89,61 @@ public class CaptureTest {
   public void test005_captureSubName() throws GrokException {
     String name = "foo";
     String subname = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_abcdef";
-    grok.addPattern(name, "\\w+");
-    grok.compile("%{" + name + ":" + subname + "}");
+    compiler.register(name, "\\w+");
+    Grok grok = compiler.compile("%{" + name + ":" + subname + "}");
     Match match = grok.match("Hello");
-    match.captures();
-    assertEquals(1, match.toMap().size());
-    assertEquals("Hello", match.toMap().get(subname).toString());
+    Map<String, Object> map = match.capture();
+    assertEquals(1, map.size());
+    assertEquals("Hello", map.get(subname).toString());
     assertEquals("{abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_abcdef=Hello}",
-        match.toMap().toString());
+        map.toString());
   }
 
   @Test
   public void test006_captureOnlyNamed() throws GrokException {
-    grok.addPattern("abcdef", "[a-zA-Z]+");
-    grok.addPattern("ghijk", "\\d+");
-    grok.compile("%{abcdef:abcdef}%{ghijk}", true);
+    compiler.register("abcdef", "[a-zA-Z]+");
+    compiler.register("ghijk", "\\d+");
+    Grok grok = compiler.compile("%{abcdef:abcdef}%{ghijk}", true);
     Match match = grok.match("abcdef12345");
-    match.captures();
-    assertEquals(match.toMap().size(), 1);
-    assertNull(match.toMap().get("ghijk"));
-    assertEquals(match.toMap().get("abcdef"), "abcdef");
+    Map<String, Object> map = match.capture();
+    assertEquals(map.size(), 1);
+    assertNull(map.get("ghijk"));
+    assertEquals(map.get("abcdef"), "abcdef");
   }
 
   @SuppressWarnings("unchecked")
   @Test
   public void test007_captureDuplicateName() throws GrokException {
-    grok.compile("%{INT:id} %{INT:id}");
+    Grok grok = compiler.compile("%{INT:id} %{INT:id}");
     Match match = grok.match("123 456");
-    match.captures();
-    assertEquals(match.toMap().size(), 1);
-    assertEquals(((List<Object>) (match.toMap().get("id"))).size(), 2);
-    assertEquals(((List<Object>) (match.toMap().get("id"))).get(0), "123");
-    assertEquals(((List<Object>) (match.toMap().get("id"))).get(1), "456");
+    Map<String, Object> map = match.capture();
+    assertEquals(map.size(), 1);
+    assertEquals(((List<Object>) (map.get("id"))).size(), 2);
+    assertEquals(((List<Object>) (map.get("id"))).get(0), "123");
+    assertEquals(((List<Object>) (map.get("id"))).get(1), "456");
   }
 
-  @SuppressWarnings("unchecked")
   @Test
   public void test008_flattenDuplicateKeys() throws GrokException {
-    grok.compile("(?:foo %{INT:id} bar|bar %{INT:id} foo)");
+    Grok grok = compiler.compile("(?:foo %{INT:id} bar|bar %{INT:id} foo)");
     Match match = grok.match("foo 123 bar");
-    match.capturesFlattened();
-    assertEquals(match.toMap().size(), 1);
-    assertEquals(match.toMap().get("id"), "123");
-    Match match2 = grok.match("bar 123 foo");
-    match2.capturesFlattened();
-    assertEquals(match2.toMap().size(), 1);
-    assertEquals(match2.toMap().get("id"), "123");
+    Map<String, Object> map = match.captureFlattened();
+    assertEquals(map.size(), 1);
+    assertEquals(map.get("id"), "123");
+    Match m2 = grok.match("bar 123 foo");
+    map = m2.captureFlattened();
+    assertEquals(map.size(), 1);
+    assertEquals(map.get("id"), "123");
 
-    grok.compile("%{INT:id} %{INT:id}");
-    Match match1 = grok.match("123 456");
+    grok = compiler.compile("%{INT:id} %{INT:id}");
+    Match m3 = grok.match("123 456");
 
     try {
-      match1.capturesFlattened();
+      m3.captureFlattened();
       fail("should report error due tu ambiguity");
     } catch (RuntimeException e) {
-      assertThat(e.getMessage(), containsString("has multiple non-null values, this is not allowed in flattened mode"));
+      assertThat(e.getMessage(),
+          containsString("has multiple non-null values, this is not allowed in flattened mode"));
     }
   }
-
 }

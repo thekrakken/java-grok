@@ -1,24 +1,8 @@
 package io.krakens.grok.api;
-/*******************************************************************************
- * Copyright 2014 Anthony Corbacho and contributors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *******************************************************************************/
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +11,8 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.krakens.grok.api.exception.GrokException;
-
 import org.apache.commons.lang3.StringUtils;
+
 
 /**
  * {@code Discovery} try to find the best pattern for the given string.
@@ -60,10 +43,8 @@ public class Discovery {
     List<Grok> groky = new ArrayList<Grok>(groks.values());
     Map<String, Grok> grokMap = new LinkedHashMap<String, Grok>();
     Collections.sort(groky, new Comparator<Grok>() {
-
       public int compare(Grok g1, Grok g2) {
-        return (this.complexity(g1.getNamedRegex()) < this.complexity(g2.getNamedRegex())) ? 1
-            : 0;
+        return (this.complexity(g1.getNamedRegex()) < this.complexity(g2.getNamedRegex())) ? 1 : 0;
       }
 
       private int complexity(String expandedPattern) {
@@ -74,8 +55,8 @@ public class Discovery {
       }
     });
 
-    for (Grok g : groky) {
-      grokMap.put(g.getSaved_pattern(), g);
+    for (Grok grok : groky) {
+      grokMap.put(grok.getSaved_pattern(), grok);
     }
     return grokMap;
 
@@ -111,24 +92,21 @@ public class Discovery {
     Map<String, String> grokPatterns = grok.getPatterns();
     // Boolean done = false;
     String texte = text;
+    GrokCompiler compiler = GrokCompiler.newInstance();
+    compiler.register(grokPatterns);
 
     // Compile the pattern
-    Iterator<Entry<String, String>> it = grokPatterns.entrySet().iterator();
-    while (it.hasNext()) {
+    for (Entry<String, String> stringStringEntry : grokPatterns.entrySet()) {
       @SuppressWarnings("rawtypes")
-      Map.Entry pairs = (Map.Entry) it.next();
+      Entry pairs = (Entry) stringStringEntry;
       String key = pairs.getKey().toString();
-      Grok grok = new Grok();
 
-      // g.patterns.putAll( gPatterns );
       try {
-        grok.copyPatterns(grokPatterns);
+        Grok grok = compiler.compile("%{" + key + "}");
         grok.setSaved_pattern(key);
-        grok.compile("%{" + key + "}");
         groks.put(key, grok);
-      } catch (GrokException e) {
+      } catch (Exception e) {
         // Add logger
-        continue;
       }
 
     }
@@ -138,12 +116,9 @@ public class Discovery {
 
     // while (!done){
     // done = true;
-    Iterator<Entry<String, Grok>> pit = patterns.entrySet().iterator();
-    while (pit.hasNext()) {
-      @SuppressWarnings("rawtypes")
-      Map.Entry pairs = (Map.Entry) pit.next();
-      String key = pairs.getKey().toString();
-      Grok value = (Grok) pairs.getValue();
+    for (Entry<String, Grok> pairs : patterns.entrySet()) {
+      String key = pairs.getKey();
+      Grok value = pairs.getValue();
 
       // We want to search with more complex pattern
       // We avoid word, small number, space....
