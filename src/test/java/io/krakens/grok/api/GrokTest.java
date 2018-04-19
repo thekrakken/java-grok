@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import io.krakens.grok.api.exception.GrokException;
 
@@ -571,6 +573,28 @@ public class GrokTest {
     assertTrue(captures.containsKey("pos"));
   }
 
+  @Test
+  public void testIssue64() throws Throwable {
+    String pattern = "(?<message>client id): (?<clientid>.*)";
+    String input = "client id: \"name\" \"Mac OS X Mail\" \"version\" \"10.2 (3259)\" \"os\" \"Mac OS X\""
+        + "\"os-version\" \"10.12.3 (16D32)\" \"vendor\" \"Apple Inc.\"";
+
+    // Validate the search is good
+    Pattern javaPattern = Pattern.compile(pattern);
+    Matcher javaMatcher = javaPattern.matcher(input);
+    if (javaMatcher.matches()) {
+      System.out.println(javaMatcher.group("clientid"));
+    }
+
+    GrokCompiler grokCompiler = GrokCompiler.newInstance();
+    grokCompiler.registerDefaultPatterns();
+
+    io.krakens.grok.api.Grok grok = grokCompiler.compile(pattern, true);
+
+    Match gm = grok.match(input);
+    Map<String, Object> captures = gm.capture();
+    assertEquals(captures.get("clientid"), gm.getMatch().group("clientid"));
+  }
 
   @Test
   public void allowClassPathPatternFiles() throws Exception {
