@@ -571,6 +571,16 @@ public class GrokTest {
     assertTrue(captures.containsKey("pos"));
   }
 
+  @Test
+  public void test029_datetime_pattern_with_with_commas() throws Throwable {
+    final ZonedDateTime expectedDate = ZonedDateTime.of(2015, 7, 31, 0, 0, 0, 0, ZoneOffset.UTC);
+
+    final Grok grok = compiler.compile("Foo %{DATA:result;date;yyyy,MM,dd} Bar", ZoneOffset.UTC, false);
+    final Match gm = grok.match("Foo 2015,07,31 Bar");
+
+    assertEquals(1, gm.getMatch().groupCount());
+    assertEquals(expectedDate.toInstant(), gm.capture().get("result"));
+  }
 
   @Test
   public void allowClassPathPatternFiles() throws Exception {
