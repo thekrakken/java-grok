@@ -1,0 +1,58 @@
+apply {
+    plugin "maven"
+    plugin "signing"
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+signing {
+    required { isReleaseVersion }
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'Java Grok'
+                packaging 'jar'
+                description 'Java Grok is simple API that allows you to easily parse logs and other files (single line). With Java Grok, you can turn unstructured log and event data into structured data (JSON).'
+                url 'https://github.com/thekrakken/java-grok'
+
+                scm {
+                    connection 'scm:git:git@github.com:thekrakken/java-grok.git'
+                    developerConnection 'scm:git:git@github.com:thekrakken/java-grok.git'
+                    url 'scm:git:git@github.com:thekrakken/java-grok.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'anthony-corbacho'
+                        name 'Anthony Corbacho'
+                        email 'manfred@sonatype.com'
+                    }
+                }
+            }
+        }
+    }
+}

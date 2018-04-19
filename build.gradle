@@ -1,7 +1,6 @@
 apply {
     plugin "base"
     plugin "java"
-    plugin "maven-publish"
     plugin "checkstyle"
     plugin "jacoco"
     plugin "idea"
@@ -18,9 +17,8 @@ repositories {
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
-group = "oi.krakens"
+group = "io.krakens"
 archivesBaseName = "java-grok"
-version = '0.1.9-SNAPSHOT'
 
 ext {
     checkStyleToolVersion = "6.19"
@@ -39,6 +37,21 @@ dependencies {
     testCompile "junit:junit:$junitVersion"
     testCompile "org.assertj:assertj-core:$assertjVersion"
     testCompile "com.google.guava:guava:$guavaVersion"
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+// Needed to avoid including all the jar signing and sonatype setup.
+if (project.hasProperty("withDeployment")) {
+    apply from: "$rootProject.projectDir/gradle/sonatype.gradle"
 }
 
 checkstyle {
