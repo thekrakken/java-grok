@@ -212,11 +212,21 @@ public class Match {
     char firstChar = value.charAt(0);
     char lastChar = value.charAt(value.length() - 1);
 
-    if (firstChar == lastChar && (firstChar == '"' || firstChar == '\'')) {
-      if (value.length() == 1) {
+    if (firstChar == lastChar
+        && (firstChar == '"' || firstChar == '\'')
+        ) {
+      if (value.length() <= 2) {
         return "";
       } else {
-        return value.substring(1, value.length() - 1);
+        int found = 0;
+        for (int i = 1; i < value.length() - 1; i++ ) {
+          if (value.charAt(i) == firstChar) {
+            found++;
+          }
+        }
+        if (found == 0) {
+          return value.substring(1, value.length() - 1);
+        }
       }
     }
 
