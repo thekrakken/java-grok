@@ -22,7 +22,7 @@ public class GrokUtils {
       "%\\{"
           + "(?<name>"
           + "(?<pattern>[A-z0-9]+)"
-          + "(?::(?<subname>[A-z0-9_:;\\-\\/\\s\\.']+))?"
+          + "(?::(?<subname>[A-z0-9_:;,\\-\\/\\s\\.']+))?"
           + ")"
           + "(?:=(?<definition>"
           + "(?:"
