@@ -15,17 +15,19 @@ Java Grok is simple API that allows you to easily parse logs and other files (si
 
 ```maven
 <dependency>
-  <groupId>io.thekraken</groupId>
-  <artifactId>grok</artifactId>
-  <version>0.1.5</version>
+  <groupId>io.krakens</groupId>
+  <artifactId>java-grok</artifactId>
+  <version>0.1.9</version>
 </dependency>
 ```
 
 Or with gradle
 
 ```gradle
-compile "io.thekraken:grok:0.1.5"
+compile "io.krakens:java-grok:0.1.9"
 ```
+
+Old release ([Link](https://mvnrepository.com/artifact/io.thekraken/grok))
 
 ### Usage ([Grok java documentation](http://grok.nflabs.com/javadoc))
 Example of how to use java-grok:
