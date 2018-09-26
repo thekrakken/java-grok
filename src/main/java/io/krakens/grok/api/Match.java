@@ -5,7 +5,7 @@ import static java.lang.String.format;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -61,7 +61,7 @@ public class Match {
   public void setKeepEmptyCaptures(boolean ignore) {
     // clear any cached captures
     if ( capture.size() > 0) {
-      capture = new HashMap<>();
+      capture = new LinkedHashMap<>();
     }
     this.keepEmptyCaptures = ignore;
   }
@@ -122,7 +122,7 @@ public class Match {
       return capture;
     }
 
-    capture = new HashMap<>();
+    capture = new LinkedHashMap<>();
 
     // _capture.put("LINE", this.line);
     // _capture.put("LENGTH", this.line.length() +"");

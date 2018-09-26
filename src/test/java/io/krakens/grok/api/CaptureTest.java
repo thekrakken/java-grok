@@ -54,7 +54,7 @@ public class CaptureTest {
     assertEquals(2, map.size());
     assertEquals("Hello", map.get("foo"));
     assertEquals("World", map.get("bar"));
-    assertEquals("{bar=World, foo=Hello}", map.toString());
+    assertEquals("{foo=Hello, bar=World}", map.toString());
   }
 
   @Test
@@ -69,7 +69,7 @@ public class CaptureTest {
     assertEquals(2, map.size());
     assertEquals("Hello World", map.get("foo"));
     assertEquals("World", map.get("bar"));
-    assertEquals("{bar=World, foo=Hello World}", map.toString());
+    assertEquals("{foo=Hello World, bar=World}", map.toString());
   }
 
   @Test
