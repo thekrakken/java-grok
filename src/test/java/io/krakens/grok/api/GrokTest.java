@@ -671,4 +671,17 @@ public class GrokTest {
     instant = (Instant) grok.match(dateWithTimeZone).capture().get("timestamp");
     assertEquals(ZonedDateTime.parse(dateWithTimeZone, dtf.withZone(ZoneOffset.ofHours(8))).toInstant(), instant);
   }
+
+  @Test
+  public void testEmptyLine() {
+    GrokCompiler grokCompiler = GrokCompiler.newInstance();
+    grokCompiler.registerDefaultPatterns();
+    final Grok grok = grokCompiler.compile("%{GREEDYDATA}");
+
+    // empty line
+    String line = "     ";
+    Match gm = grok.match(line);
+    Map<String, Object> capture = gm.capture();
+    assertEquals(1, capture.size());
+  }
 }

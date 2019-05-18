@@ -162,7 +162,7 @@ public class Grok {
    * @return Grok Match
    */
   public Match match(CharSequence text) {
-    if (compiledNamedRegex == null || StringUtils.isBlank(text)) {
+    if (compiledNamedRegex == null || text == null) {
       return Match.EMPTY;
     }
 
