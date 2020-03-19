@@ -1,5 +1,6 @@
 package io.krakens.grok.api;
 
+import java.io.Serializable;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @since 0.0.1
  */
-public class Grok {
+public class Grok implements Serializable {
   /**
    * Named regex of the originalGrokPattern.
    */
