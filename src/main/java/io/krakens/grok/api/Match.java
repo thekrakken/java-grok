@@ -124,9 +124,6 @@ public class Match {
 
     capture = new LinkedHashMap<>();
 
-    // _capture.put("LINE", this.line);
-    // _capture.put("LENGTH", this.line.length() +"");
-
     Map<String, String> mappedw = GrokUtils.namedGroups(this.match, this.grok.namedGroups);
 
     mappedw.forEach((key, valueString) -> {
