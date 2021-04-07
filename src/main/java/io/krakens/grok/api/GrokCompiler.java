@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
@@ -22,7 +23,7 @@ import io.krakens.grok.api.exception.GrokException;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class GrokCompiler {
+public class GrokCompiler implements Serializable {
 
   // We don't want \n and commented line
   private static final Pattern patternLinePattern = Pattern.compile("^([A-z0-9_]+)\\s+(.*)$");
